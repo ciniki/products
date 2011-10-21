@@ -1,0 +1,43 @@
+#
+# Description
+# -----------
+# The product_reviews table stores all the product reviews
+# and rating from customers.
+#
+# Fields
+# ------
+# id:				The id of the review.
+# 
+# product_id:		The product the review is attached to.
+#
+# user_id:			The users who wrote the review.
+#
+# rating:			The rating from 1 - 10.
+#					
+#					 0 - unrated
+#					 1 - lowest
+#					10 - highest
+#
+# title:			The title of the review.
+#
+# content:			The content of the review.
+#
+# status:			0 - unknown
+# 					1 - approved
+#					2 - pending review
+#					3 - draft
+#
+create table product_reviews (
+	id int not null,
+	product_id int not null,
+	user_id int not null,
+	rating tinyint unsigned not null,
+	title varchar(100) not null,
+	content text,
+	status tinyint unsigned not null,
+	date_added datetime not null,
+	last_updated datetime not null,
+	primary key (id),
+	index (product_id),
+	index (user_id)
+) ENGINE='InnoDB', COMMENT='v1.01';

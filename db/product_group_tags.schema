@@ -1,0 +1,16 @@
+#
+# Description
+# -----------
+# This table stores the tags that are associated with a product group,
+# and any products which have this tag will be included in this group.
+#
+# Fields
+# ------
+# group_id:			The product the tag is attached to.
+# tag:				Any products with the this tag will be included in this group.
+#
+create table product_group_tags (
+	group_id int not null,
+	tag varchar(255) not null,
+	primary key (group_id, tag)
+) ENGINE='InnoDB', COMMENT='v1.01';

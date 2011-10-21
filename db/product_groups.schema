@@ -1,0 +1,25 @@
+#
+# Description
+# -----------
+#
+# Fields
+# ------
+# product_id:		The product the tag is attached to.
+# tag:				The tag text.
+#
+# type:				The type of group:
+#					Products with a tag
+#					0 - unknown
+#					1 - by tag
+#					2 - products
+#					
+create table product_groups (
+	id int not null,
+	parent_id int not null,
+	business_id int not null,
+	type tinyint unsigned not null,
+	name varchar(50) not null,
+	primary key (id),
+	index (parent_id),
+	index (business_id)
+) ENGINE='InnoDB', COMMENT='v1.01';

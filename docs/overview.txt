@@ -1,0 +1,3 @@
+The Products module manages the product data for businesses. 
+
+This module is still in development, only type of products handled right now are winekits.

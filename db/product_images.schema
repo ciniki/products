@@ -1,0 +1,36 @@
+#
+# Description
+# -----------
+# the product_images table connect images from the Images module
+# to products in this module.  Images can be attached to 1 or more
+# products.
+#
+# Fields
+# ------
+# product_id:		The product the image is attached to.
+# image_id:			The image to be linked to the product.
+# image_flags:		The different bit flags for the image.
+#
+#					The primary image for a image, does not 
+# 					also need to be the same image as square thumbnail image, but can be.
+#
+#					0x01 - primary image
+#					0x02 - customer contributed image
+#					0x02 - square thumbnail image
+#					0x08 - unused
+#					0x10 - unused
+#					0x20 - unused
+#					0x40 - unused
+#					0x80 - unused
+#
+# date_added:		The date and time the image was added to the product.
+# last_updated:		The date and time the image was last updated.
+#
+create table product_images (
+	product_id int not null,
+	image_id int not null,
+	image_flags tinyint unsigned not null,
+	date_added datetime not null,
+	last_updated datetime not null,
+	primary key (product_id, image_id)
+) ENGINE='InnoDB', COMMENT='v1.01';

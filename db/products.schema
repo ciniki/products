@@ -1,0 +1,89 @@
+#
+# Description
+# -----------
+# The products table stores the root or base information for
+# all products in the system.  
+#
+# All child items for a package, or pieces of a manufactured product
+# are stored in the product_pieces table.
+#
+# Fields
+# ------
+# id: 				The unique id number for each product in the database.
+# business_id:		The business the product is attached to.  Products
+#					can only be assigned to one business at a time.
+#
+# cateogry_id:		The category the product is located in.  
+#
+# sales_category_id:	The category for sales reporting.  (future)
+#
+# type:				 0 - unknown
+#					 1 - generic
+#					 2 - package (collection of products) (future)
+#					 3 - time (time based billing) (future)
+#					 4 - adhoc item (future)
+#					 5 - custom item (eg: must have measurements to be made) (future)
+#					 6 - one of a kind (future)
+#					..
+#					64 - wine kit
+#
+# source:			 0 - unknown
+# 					 1 - supplied
+#					 2 - manufactured
+#
+# flags:			0 - nothing
+#					0x01 - backordered
+#					0x02 - 
+#					0x04 - 
+#					0x08 - 
+#					0x10 - 
+#					0x20 -
+#					0x40 -
+#					0x80 -
+#
+# status:			 0 - unknown
+#					 1 - active
+#					 2 - discontinued (active while inventory left)
+#					20 - hidden
+#					21 - inactive
+#					22 - deleted
+#
+# barcode:			The barcode number for this product.
+#
+# supplier_business_id:		If the product is supplied from another business in the system.
+#
+# supplier_product_id:		The ID of the product in the suppliers system.
+#
+# price:			The dollar amount in the stores currency that the item sells for.
+#
+# cost:				The cost to the business for the item.
+#
+# msrp:				The manufacturer's suggested retail price.
+#
+# date_added:		The date and time the product was added to the database.
+#
+# last_updated:		The date and time of the last update.
+#
+create table products (
+	id int not null auto_increment,
+	business_id int not null,
+	category_id int not null,
+	sales_category_id int not null,
+	name varchar(100) not null,
+	type tinyint unsigned not null,	
+	source tinyint unsigned not null,
+	flags tinyint unsigned not null,
+	status tinyint unsigned not null,
+	barcode varchar(100) not null,
+	supplier_business_id int not null,		
+	supplier_product_id int not null,
+	price decimal(10,2) not null,
+	cost decimal(10,2) not null,
+	msrp decimal(10,2) not null,
+	date_added datetime not null,
+	last_updated datetime not null,
+	primary key (id),
+	index (business_id, category_id),
+	index (name),
+	index (supplier_business_id, supplier_product_id)
+) ENGINE='InnoDB', COMMENT='v1.02';

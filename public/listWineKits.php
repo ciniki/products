@@ -78,7 +78,7 @@ function ciniki_products_listWineKits($ciniki) {
 	}
 
 	if( !isset($rc['orders']) ) {
-		return array('stat'=>'fail', 'err'=>array('code'=>'435', 'msg'=>'Unable to find any orders'));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'435', 'msg'=>'Unable to find any orders'));
 	}
 
 	return $rc;

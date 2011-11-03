@@ -90,7 +90,7 @@ function ciniki_products_add($ciniki) {
 	}
 	if( !isset($rc['insert_id']) || $rc['insert_id'] < 1 ) {
 		ciniki_core_dbTransactionRollback($ciniki, 'products');
-		return array('stat'=>'fail', 'err'=>array('code'=>'403', 'msg'=>'Unable to add product'));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'403', 'msg'=>'Unable to add product'));
 	}
 	$product_id = $rc['insert_id'];
 

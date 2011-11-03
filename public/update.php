@@ -101,7 +101,7 @@ function ciniki_products_update($ciniki) {
 	}
 	if( !isset($rc['num_affected_rows']) || $rc['num_affected_rows'] != 1 ) {
 		ciniki_core_dbTransactionRollback($ciniki, 'products');
-		return array('stat'=>'fail', 'err'=>array('code'=>'405', 'msg'=>'Unable to add product'));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'405', 'msg'=>'Unable to add product'));
 	}
 
 	//

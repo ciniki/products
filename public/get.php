@@ -59,7 +59,7 @@ function ciniki_products_get($ciniki) {
 		return $rc;
 	}
 	if( !isset($rc['product']) ) {
-		return array('stat'=>'fail', 'err'=>array('code'=>'438', 'msg'=>'Invalid product'));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'438', 'msg'=>'Invalid product'));
 	}
 	$product = $rc['product'];
 

@@ -1,6 +1,6 @@
 #
 # This file will upgrade the database table wineproductions to version 1.02.
 #
-ALTER TABLE products CHANGE type source tinyint unsigned NOT NULL;
-ALTER TABLE products ADD COLUMN type tinyint unsigned NOT NULL after name;
-ALTER TABLE products COMMENT='v1.02';
+ALTER TABLE ciniki_products CHANGE type source tinyint unsigned NOT NULL;
+ALTER TABLE ciniki_products ADD COLUMN type tinyint unsigned NOT NULL after name;
+ALTER TABLE ciniki_products COMMENT='v1.02';

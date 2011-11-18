@@ -24,7 +24,7 @@
 #
 # last_updated:		The date and time of the last update.
 #
-create table products (
+create table ciniki_products (
 	product_id int not null,
 	supplier_id int not null,		
 	status tinyint unsigned not null,

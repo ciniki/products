@@ -66,7 +66,7 @@ function ciniki_products_update($ciniki) {
 	//
 	// Add the product to the database
 	//
-	$strsql = "UPDATE products SET last_updated = UTC_TIMESTAMP()";
+	$strsql = "UPDATE ciniki_products SET last_updated = UTC_TIMESTAMP()";
 
 	//
 	// Add all the fields to the change log
@@ -89,7 +89,7 @@ function ciniki_products_update($ciniki) {
 		if( isset($args[$field]) ) {
 			$strsql .= ", $field = '" . ciniki_core_dbQuote($ciniki, $args[$field]) . "' ";
 			$rc = ciniki_core_dbAddChangeLog($ciniki, 'products', $args['business_id'], 
-				'products', $args['product_id'], $field, $args[$field]);
+				'ciniki_products', $args['product_id'], $field, $args[$field]);
 		}
 	}
 	$strsql .= "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "

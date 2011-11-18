@@ -70,7 +70,7 @@ function ciniki_products_updateWineKit($ciniki) {
 	//
 	// Add the product to the database
 	//
-	$strsql = "UPDATE products SET last_updated = UTC_TIMESTAMP()";
+	$strsql = "UPDATE ciniki_products SET last_updated = UTC_TIMESTAMP()";
 
 	//
 	// Add all the fields to the change log
@@ -92,7 +92,7 @@ function ciniki_products_updateWineKit($ciniki) {
 		if( isset($args[$field]) ) {
 			$strsql .= ", $field = '" . ciniki_core_dbQuote($ciniki, $args[$field]) . "' ";
 			$rc = ciniki_core_dbAddChangeLog($ciniki, 'products', $args['business_id'], 
-				'products', $args['product_id'], $field, $args[$field]);
+				'ciniki_products', $args['product_id'], $field, $args[$field]);
 		}
 	}
 	$strsql .= "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
@@ -116,7 +116,7 @@ function ciniki_products_updateWineKit($ciniki) {
 		);
 	foreach($detail_fields as $field => $detail_field) {
 		if( isset($args[$field]) ) {
-			$strsql = "INSERT INTO product_details (product_id, detail_key, detail_value, date_added, last_updated) VALUES ("
+			$strsql = "INSERT INTO ciniki_product_details (product_id, detail_key, detail_value, date_added, last_updated) VALUES ("
 				. "'" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "', "
 				. "'" . ciniki_core_dbQuote($ciniki, $detail_field) . "', "
 				. "'" . ciniki_core_dbQuote($ciniki, $args[$field]) . "', "
@@ -130,8 +130,8 @@ function ciniki_products_updateWineKit($ciniki) {
 				ciniki_core_dbTransactionRollback($ciniki, 'products');
 				return $rc;
 			}
-			$rc = ciniki_core_dbAddChangeLog($ciniki, 'product_details', $args['business_id'], 
-				'product_details', $args['product_id'] . "-$detail_field", 'detail_value', $args[$field]);
+			$rc = ciniki_core_dbAddChangeLog($ciniki, 'products', $args['business_id'], 
+				'ciniki_product_details', $args['product_id'] . "-$detail_field", 'detail_value', $args[$field]);
 		}
 	}
 

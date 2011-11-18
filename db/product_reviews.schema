@@ -27,7 +27,7 @@
 #					2 - pending review
 #					3 - draft
 #
-create table product_reviews (
+create table ciniki_product_reviews (
 	id int not null,
 	product_id int not null,
 	user_id int not null,

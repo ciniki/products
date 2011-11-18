@@ -48,10 +48,10 @@ function ciniki_products_get($ciniki) {
 	//
 	// Get the basic product information
 	//
-	$strsql = "SELECT products.id, products.name, price, cost, msrp "
-		. "FROM products "
+	$strsql = "SELECT ciniki_products.id, ciniki_products.name, price, cost, msrp "
+		. "FROM ciniki_products "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-		. "AND products.id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
+		. "AND ciniki_products.id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
 		. "";
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbHashQuery.php');
 	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'products', 'product');
@@ -66,7 +66,7 @@ function ciniki_products_get($ciniki) {
 	//
 	// Get the product details
 	//
-	$strsql = "SELECT detail_key, detail_value FROM product_details "
+	$strsql = "SELECT detail_key, detail_value FROM ciniki_product_details "
 		. "WHERE product_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' ";
     require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbQuery.php');
     require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbFetchHashRow.php');

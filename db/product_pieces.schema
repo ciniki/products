@@ -22,7 +22,7 @@
 #
 # quantity:			The number of this piece required
 #
-create table product_pieces (
+create table ciniki_product_pieces (
 	id int not null,
 	product_id int not null,
 	type tinyint unsigned not null,

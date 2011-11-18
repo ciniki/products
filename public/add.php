@@ -66,7 +66,7 @@ function ciniki_products_add($ciniki) {
 	//
 	// Add the product to the database
 	//
-	$strsql = "INSERT INTO products (business_id, category_id, sales_category_id, name, type, source, flags, status, "
+	$strsql = "INSERT INTO ciniki_products (business_id, category_id, sales_category_id, name, type, source, flags, status, "
 		. "barcode, supplier_business_id, supplier_product_id, "
 		. "price, cost, msrp, "
 		. "date_added, last_updated) VALUES ("
@@ -115,7 +115,7 @@ function ciniki_products_add($ciniki) {
 	foreach($changelog_fields as $field) {
 		if( isset($args[$field]) && $args[$field] != '' ) {
 			$rc = ciniki_core_dbAddChangeLog($ciniki, 'products', $args['business_id'], 
-				'products', $product_id, $field, $args[$field]);
+				'ciniki_products', $product_id, $field, $args[$field]);
 		}
 	}
 

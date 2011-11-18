@@ -11,7 +11,7 @@
 # tag:				The tag text.
 #
 
-create table product_tags (
+create table ciniki_product_tags (
 	product_id int not null,
 	tag varchar(50) not null,
 	primary key (product_id, tag)

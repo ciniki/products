@@ -46,7 +46,7 @@ function ciniki_products_searchQuick($ciniki) {
 	// Get the number of products in each status for the business, 
 	// if no rows found, then return empty array
 	//
-	$strsql = "SELECT id, name, status FROM products "
+	$strsql = "SELECT id, name, status FROM ciniki_products "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "AND status = 1 ";
 	if( $args['category_id'] > 0 ) {

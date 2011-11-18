@@ -13,7 +13,7 @@
 #					1 - by tag
 #					2 - products
 #					
-create table product_groups (
+create table ciniki_product_groups (
 	id int not null,
 	parent_id int not null,
 	business_id int not null,

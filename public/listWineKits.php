@@ -55,20 +55,20 @@ function ciniki_products_listWineKits($ciniki) {
     require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbQuote.php');
     require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbQuoteIDs.php');
 
-	$strsql = "SELECT products.id, products.name, "
+	$strsql = "SELECT ciniki_products.id, ciniki_products.name, "
 		. "IFNULL(d1.detail_value, '') AS wine_type, "
 		. "IFNULL(d2.detail_value, '') AS kit_length "
-		. "FROM products "
-		. "LEFT JOIN product_details AS d1 ON (products.id = d1.product_id AND d1.detail_key = 'wine_type') "
-		. "LEFT JOIN product_details AS d2 ON (products.id = d2.product_id AND d2.detail_key = 'kit_length') "
-		. "WHERE products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-		. "AND products.type = 64 "
+		. "FROM ciniki_products "
+		. "LEFT JOIN ciniki_product_details AS d1 ON (ciniki_products.id = d1.product_id AND d1.detail_key = 'wine_type') "
+		. "LEFT JOIN ciniki_product_details AS d2 ON (ciniki_products.id = d2.product_id AND d2.detail_key = 'kit_length') "
+		. "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+		. "AND ciniki_products.type = 64 "
 		. "";
 
 	if( $args['sorting'] != 'name' ) {
-		$strsql .= "ORDER BY products.name, wine_type DESC ";
+		$strsql .= "ORDER BY ciniki_products.name, wine_type DESC ";
 	} else {
-		$strsql .= "ORDER BY products.name DESC ";
+		$strsql .= "ORDER BY ciniki_products.name DESC ";
 	}
 
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbRspQuery.php');

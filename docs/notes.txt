@@ -1,0 +1,17 @@
+Wine Kit Fields Required:
+
+- wine name
+- in a category
+- cost
+- purchase tax code
+- account
+- preferred vendor
+
+- supplier info
+
+- sales invoice info
+- description, 
+- sales price
+- tax code
+- zero rated
+- income account (which account received under)

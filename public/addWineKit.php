@@ -68,10 +68,11 @@ function ciniki_products_addWineKit($ciniki) {
 	//
 	// Add the product to the database
 	//
-	$strsql = "INSERT INTO ciniki_products (business_id, category_id, sales_category_id, name, type, source, flags, status, "
+	$strsql = "INSERT INTO ciniki_products (uuid, business_id, category_id, sales_category_id, name, type, source, flags, status, "
 		. "barcode, supplier_business_id, supplier_product_id, "
 		. "price, cost, msrp, "
 		. "date_added, last_updated) VALUES ("
+		. "UUID(), "
 		. "'" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "', "
 		. "'" . ciniki_core_dbQuote($ciniki, $args['category_id']) . "', "
 		. "'" . ciniki_core_dbQuote($ciniki, $args['sales_category_id']) . "', "

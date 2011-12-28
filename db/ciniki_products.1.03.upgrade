@@ -1,0 +1,7 @@
+#
+# This file will upgrade the database table products to version 1.03.
+#
+ALTER TABLE ciniki_products ADD COLUMN uuid char(36) not null after id;
+UPDATE ciniki_products SET uuid = uuid();
+CREATE UNIQUE INDEX idx_uuid ON ciniki_products (uuid);
+ALTER TABLE ciniki_products COMMENT='v1.03';

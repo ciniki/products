@@ -49,51 +49,57 @@ function ciniki_products_checkAccess($ciniki, $business_id, $method, $product_id
 	//
 	// Check the session user is a business owner
 	//
-	if( $business_id > 0 ) {
-		require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbQuote.php');
-		//
-		// Find any users which are owners of the requested business_id
-		//
-		$strsql = "SELECT business_id, user_id FROM ciniki_business_users "
-			. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
-			. "AND user_id = '" . ciniki_core_dbQuote($ciniki, $ciniki['session']['user']['id']) . "' "
-			. "AND (groups&0x03) > 0 " //	Check for business owner or employee
-			. "";
-		require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbRspQuery.php');
-		$rsp = ciniki_core_dbRspQuery($ciniki, $strsql, 'businesses', 'perms', 'perm', array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'398', 'msg'=>'Access denied')));
-		if( $rsp['stat'] != 'ok' ) {
-			return $rsp;
-		}
-		if( $rsp['num_rows'] != 1 
-			|| $rsp['perms'][0]['perm']['business_id'] != $business_id
-			|| $rsp['perms'][0]['perm']['user_id'] != $ciniki['session']['user']['id'] ) {
-			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'399', 'msg'=>'Access denied'));
-		}
-	} else {
+	if( $business_id <= 0 ) {
 		// If no business_id specified, then fail
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'400', 'msg'=>'Access denied'));
 	}
 
+	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbQuote.php');
 	//
-	// Check the session user is a business owner
+	// Find any users which are owners of the requested business_id
+	//
+	$strsql = "SELECT business_id, user_id FROM ciniki_business_users "
+		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+		. "AND user_id = '" . ciniki_core_dbQuote($ciniki, $ciniki['session']['user']['id']) . "' "
+		. "AND package = 'ciniki' "
+		. "AND (permission_group = 'owners' OR permission_group = 'employees') "
+		. "";
+	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbRspQuery.php');
+	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'businesses', 'user');
+	if( $rc['stat'] != 'ok' ) {
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'398', 'msg'=>'Access denied', 'err'=>$rc['err']));
+	}
+	//
+	// If the user has permission, return ok
+	//
+	if( !isset($rc['rows']) 
+		|| !isset($rc['rows'][0]) 
+		|| $rc['rows'][0]['user_id'] <= 0 
+		|| $rc['rows'][0]['user_id'] != $ciniki['session']['user']['id'] ) {
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'399', 'msg'=>'Access denied'));
+	}
+
+	// 
+	// At this point, we have ensured the user is a part of the business.
+	//
+
+	//
+	// Check the product is attached to the business
 	//
 	if( $product_id > 0 ) {
 		require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbQuote.php');
-		//
-		// Make sure the product is attached to the business
-		//
 		$strsql = "SELECT business_id, id FROM ciniki_products "
 			. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 			. "AND id = '" . ciniki_core_dbQuote($ciniki, $product_id) . "' "
 			. "";
 		require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbRspQuery.php');
-		$rsp = ciniki_core_dbRspQuery($ciniki, $strsql, 'products', 'products', 'product', array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'401', 'msg'=>'Access denied')));
-		if( $rsp['stat'] != 'ok' ) {
-			return $rsp;
+		$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'products', 'products', 'product', array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'401', 'msg'=>'Access denied')));
+		if( $rc['stat'] != 'ok' ) {
+			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'517', 'msg'=>'Access denied', 'err'=>$rc['err']));
 		}
-		if( $rsp['num_rows'] != 1 
-			|| $rsp['products'][0]['product']['business_id'] != $business_id
-			|| $rsp['products'][0]['product']['id'] != $product_id ) {
+		if( $rc['num_rows'] != 1 
+			|| $rc['products'][0]['product']['business_id'] != $business_id
+			|| $rc['products'][0]['product']['id'] != $product_id ) {
 			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'402', 'msg'=>'Access denied'));
 		}
 	}

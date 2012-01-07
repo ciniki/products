@@ -46,11 +46,11 @@ function ciniki_products_searchQuick($ciniki) {
 	// Get the number of products in each status for the business, 
 	// if no rows found, then return empty array
 	//
-	$strsql = "SELECT id, name, status FROM ciniki_products "
+	$strsql = "SELECT id, name, type, status FROM ciniki_products "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "AND status = 1 ";
 	if( $args['category_id'] > 0 ) {
-		$strsql .= "AND category_id = '" . ciniki_core_dbQuote($ciniki, $args['category_id']) . "' "
+		$strsql .= "AND category_id = '" . ciniki_core_dbQuote($ciniki, $args['category_id']) . "' ";
 	}
 	$strsql .= "AND (name LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
 			. ") "

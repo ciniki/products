@@ -61,7 +61,7 @@ function ciniki_products_updateWineKit($ciniki) {
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbQuote.php');
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbUpdate.php');
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbInsert.php');
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbAddChangeLog.php');
+	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbAddModuleHistory.php');
 	$rc = ciniki_core_dbTransactionStart($ciniki, 'products');
 	if( $rc['stat'] != 'ok' ) { 
 		return $rc;
@@ -91,8 +91,8 @@ function ciniki_products_updateWineKit($ciniki) {
 	foreach($changelog_fields as $field) {
 		if( isset($args[$field]) ) {
 			$strsql .= ", $field = '" . ciniki_core_dbQuote($ciniki, $args[$field]) . "' ";
-			$rc = ciniki_core_dbAddChangeLog($ciniki, 'products', $args['business_id'], 
-				'ciniki_products', $args['product_id'], $field, $args[$field]);
+			$rc = ciniki_core_dbAddModuleHistory($ciniki, 'products', 'ciniki_product_history', $args['business_id'], 
+				2, 'ciniki_products', $args['product_id'], $field, $args[$field]);
 		}
 	}
 	$strsql .= "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
@@ -130,8 +130,8 @@ function ciniki_products_updateWineKit($ciniki) {
 				ciniki_core_dbTransactionRollback($ciniki, 'products');
 				return $rc;
 			}
-			$rc = ciniki_core_dbAddChangeLog($ciniki, 'products', $args['business_id'], 
-				'ciniki_product_details', $args['product_id'] . "-$detail_field", 'detail_value', $args[$field]);
+			$rc = ciniki_core_dbAddModuleHistory($ciniki, 'products', 'ciniki_product_history', $args['business_id'], 
+				2, 'ciniki_product_details', $args['product_id'], $detail_field, $args[$field]);
 		}
 	}
 

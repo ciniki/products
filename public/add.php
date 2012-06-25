@@ -57,7 +57,7 @@ function ciniki_products_add($ciniki) {
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbTransactionCommit.php');
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbQuote.php');
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbInsert.php');
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbAddChangeLog.php');
+	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbAddModuleHistory.php');
 	$rc = ciniki_core_dbTransactionStart($ciniki, 'products');
 	if( $rc['stat'] != 'ok' ) { 
 		return $rc;
@@ -115,8 +115,8 @@ function ciniki_products_add($ciniki) {
 		);
 	foreach($changelog_fields as $field) {
 		if( isset($args[$field]) && $args[$field] != '' ) {
-			$rc = ciniki_core_dbAddChangeLog($ciniki, 'products', $args['business_id'], 
-				'ciniki_products', $product_id, $field, $args[$field]);
+			$rc = ciniki_core_dbAddModuleHistory($ciniki, 'products', 'ciniki_product_history', $args['business_id'], 
+				1, 'ciniki_products', $product_id, $field, $args[$field]);
 		}
 	}
 

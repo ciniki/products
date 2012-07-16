@@ -15,9 +15,11 @@
 # business_id:		The business the product is attached to.  Products
 #					can only be assigned to one business at a time.
 #
-# cateogry_id:		The category the product is located in.  
+# category_id:		The category the product is located in.  
 #
 # sales_category_id:	The category for sales reporting.  (future)
+#
+# name:				The name of the product.
 #
 # type:				 0 - unknown
 #					 1 - generic

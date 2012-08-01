@@ -53,6 +53,6 @@ function ciniki_products_getHistory($ciniki) {
 	}
 
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbGetModuleHistory.php');
-	return ciniki_core_dbGetModuleHistory($ciniki, 'products', 'ciniki_product_history', $args['business_id'], 'ciniki_products', $args['product_id'], $args['field'], 'products');
+	return ciniki_core_dbGetModuleHistory($ciniki, 'ciniki.products', 'ciniki_product_history', $args['business_id'], 'ciniki_products', $args['product_id'], $args['field'], 'products');
 }
 ?>

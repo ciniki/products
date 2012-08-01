@@ -12,7 +12,10 @@
 //
 // Arguments
 // ---------
-// business_id: 		The ID of the business the request is for.
+// ciniki:
+// business_id:			The ID of the business to check access for.
+// method:				The requested method.
+// product_id:			The ID of the product requested.
 // 
 // Returns
 // -------
@@ -58,7 +61,7 @@ function ciniki_products_checkAccess($ciniki, $business_id, $method, $product_id
 		. "AND (permission_group = 'owners' OR permission_group = 'employees') "
 		. "";
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbRspQuery.php');
-	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'businesses', 'user');
+	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.businesses', 'user');
 	if( $rc['stat'] != 'ok' ) {
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'398', 'msg'=>'Access denied', 'err'=>$rc['err']));
 	}
@@ -86,7 +89,7 @@ function ciniki_products_checkAccess($ciniki, $business_id, $method, $product_id
 			. "AND id = '" . ciniki_core_dbQuote($ciniki, $product_id) . "' "
 			. "";
 		require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbRspQuery.php');
-		$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'products', 'products', 'product', array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'401', 'msg'=>'Access denied')));
+		$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.products', 'products', 'product', array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'401', 'msg'=>'Access denied')));
 		if( $rc['stat'] != 'ok' ) {
 			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'517', 'msg'=>'Access denied', 'err'=>$rc['err']));
 		}

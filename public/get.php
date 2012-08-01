@@ -54,7 +54,7 @@ function ciniki_products_get($ciniki) {
 		. "AND ciniki_products.id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
 		. "";
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbHashQuery.php');
-	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'products', 'product');
+	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'product');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}

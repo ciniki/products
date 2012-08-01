@@ -62,6 +62,6 @@ function ciniki_products_searchQuick($ciniki) {
 	}
 
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbRspQuery.php');
-	return ciniki_core_dbRspQuery($ciniki, $strsql, 'products', 'products', 'product', array('stat'=>'ok', 'products'=>array()));
+	return ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.products', 'products', 'product', array('stat'=>'ok', 'products'=>array()));
 }
 ?>

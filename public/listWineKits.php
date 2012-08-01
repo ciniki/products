@@ -72,7 +72,7 @@ function ciniki_products_listWineKits($ciniki) {
 	}
 
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbRspQuery.php');
-	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'products', 'products', 'product', array('stat'=>'ok', 'products'=>array()));
+	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.products', 'products', 'product', array('stat'=>'ok', 'products'=>array()));
 	if( $rc != 'ok' ) {
 		return $rc;
 	}

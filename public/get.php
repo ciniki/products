@@ -70,7 +70,7 @@ function ciniki_products_get($ciniki) {
 		. "WHERE product_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' ";
     require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbQuery.php');
     require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbFetchHashRow.php');
-	$rc = ciniki_core_dbQuery($ciniki, $strsql, 'products');
+	$rc = ciniki_core_dbQuery($ciniki, $strsql, 'ciniki.products');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}

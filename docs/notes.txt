@@ -15,3 +15,6 @@ Wine Kit Fields Required:
 - tax code
 - zero rated
 - income account (which account received under)
+
+Packages
+- ability to group products into a package for one line item/cost

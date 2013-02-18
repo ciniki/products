@@ -19,7 +19,7 @@ function ciniki_products_get($ciniki) {
     //  
     // Find all the required and optional arguments
     //  
-    require_once($ciniki['config']['core']['modules_dir'] . '/core/private/prepareArgs.php');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
 		'product_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No product specified'),
@@ -33,15 +33,15 @@ function ciniki_products_get($ciniki) {
     // Make sure this module is activated, and
     // check permission to run this function for this business
     //  
-    require_once($ciniki['config']['core']['modules_dir'] . '/products/private/checkAccess.php');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
     $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.get', $args['product_id']); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
 
-    require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbQuote.php');
-    require_once($ciniki['config']['core']['modules_dir'] . '/users/private/dateFormat.php');
-    require_once($ciniki['config']['core']['modules_dir'] . '/users/private/datetimeFormat.php');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'dateFormat');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'datetimeFormat');
 	$date_format = ciniki_users_dateFormat($ciniki);
 	$datetime_format = ciniki_users_datetimeFormat($ciniki);
 
@@ -53,7 +53,7 @@ function ciniki_products_get($ciniki) {
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "AND ciniki_products.id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
 		. "";
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbHashQuery.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
 	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'product');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
@@ -68,8 +68,8 @@ function ciniki_products_get($ciniki) {
 	//
 	$strsql = "SELECT detail_key, detail_value FROM ciniki_product_details "
 		. "WHERE product_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' ";
-    require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbQuery.php');
-    require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbFetchHashRow.php');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuery');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbFetchHashRow');
 	$rc = ciniki_core_dbQuery($ciniki, $strsql, 'ciniki.products');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;

@@ -24,7 +24,7 @@ function ciniki_products_checkAccess($ciniki, $business_id, $method, $product_id
 	//
 	// Check if the business is active and the module is enabled
 	//
-	require_once($ciniki['config']['core']['modules_dir'] . '/businesses/private/checkModuleAccess.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'checkModuleAccess');
 	$rc = ciniki_businesses_checkModuleAccess($ciniki, $business_id, 'ciniki', 'products');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
@@ -50,7 +50,7 @@ function ciniki_products_checkAccess($ciniki, $business_id, $method, $product_id
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'400', 'msg'=>'Access denied'));
 	}
 
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbQuote.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
 	//
 	// Find any users which are owners of the requested business_id
 	//
@@ -61,7 +61,7 @@ function ciniki_products_checkAccess($ciniki, $business_id, $method, $product_id
 		. "AND status = 10 "
 		. "AND (permission_group = 'owners' OR permission_group = 'employees') "
 		. "";
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbRspQuery.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbRspQuery');
 	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.businesses', 'user');
 	if( $rc['stat'] != 'ok' ) {
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'398', 'msg'=>'Access denied', 'err'=>$rc['err']));
@@ -84,12 +84,12 @@ function ciniki_products_checkAccess($ciniki, $business_id, $method, $product_id
 	// Check the product is attached to the business
 	//
 	if( $product_id > 0 ) {
-		require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbQuote.php');
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
 		$strsql = "SELECT business_id, id FROM ciniki_products "
 			. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 			. "AND id = '" . ciniki_core_dbQuote($ciniki, $product_id) . "' "
 			. "";
-		require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbRspQuery.php');
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbRspQuery');
 		$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.products', 'products', 'product', array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'401', 'msg'=>'Access denied')));
 		if( $rc['stat'] != 'ok' ) {
 			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'517', 'msg'=>'Access denied', 'err'=>$rc['err']));

@@ -22,7 +22,7 @@ function ciniki_products_listWineKits($ciniki) {
     //  
     // Find all the required and optional arguments
     //  
-    require_once($ciniki['config']['core']['modules_dir'] . '/core/private/prepareArgs.php');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
 		'type'=>array('required'=>'no', 'default'=>'', 'errmsg'=>'No type specified'),
@@ -37,7 +37,7 @@ function ciniki_products_listWineKits($ciniki) {
     // Make sure this module is activated, and
     // check permission to run this function for this business
     //  
-    require_once($ciniki['config']['core']['modules_dir'] . '/products/private/checkAccess.php');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
     $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.listWineKits', 0); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -49,11 +49,11 @@ function ciniki_products_listWineKits($ciniki) {
 	date_default_timezone_set('America/Toronto');
 	$todays_date = strftime("%Y-%m-%d");
 
-	require_once($ciniki['config']['core']['modules_dir'] . '/users/private/dateFormat.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'dateFormat');
 	$date_format = ciniki_users_dateFormat($ciniki);
 
-    require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbQuote.php');
-    require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbQuoteIDs.php');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuoteIDs');
 
 	$strsql = "SELECT ciniki_products.id, ciniki_products.name, "
 		. "IFNULL(d1.detail_value, '') AS wine_type, "
@@ -71,7 +71,7 @@ function ciniki_products_listWineKits($ciniki) {
 		$strsql .= "ORDER BY ciniki_products.name DESC ";
 	}
 
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbRspQuery.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbRspQuery');
 	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.products', 'products', 'product', array('stat'=>'ok', 'products'=>array()));
 	if( $rc != 'ok' ) {
 		return $rc;

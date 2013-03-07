@@ -15,15 +15,13 @@
 // -------
 // <rsp stat='ok' id='34' />
 //
-function ciniki_products_addWineKit($ciniki) {
+function ciniki_products_addWineKit(&$ciniki) {
     //  
     // Find all the required and optional arguments
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
-		'category_id'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'errmsg'=>'No category specified'),
-		'sales_category_id'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'errmsg'=>'No sales category specified'),
 		'name'=>array('required'=>'yes', 'trimblanks'=>'yes', 'blank'=>'no', 'errmsg'=>'No name specified'),
 		'type'=>array('required'=>'no', 'default'=>'0', 'trimblanks'=>'yes', 'blank'=>'yes', 'errmsg'=>'No type specified'),
         'barcode'=>array('required'=>'no', 'default'=>'', 'trimblanks'=>'yes', 'blank'=>'yes', 'errmsg'=>'No barcode specified'), 
@@ -65,16 +63,25 @@ function ciniki_products_addWineKit($ciniki) {
 	}   
 
 	//
+	// Get a new UUID
+	//
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbUUID');
+	$rc = ciniki_core_dbUUID($ciniki, 'ciniki.services');
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+	$args['uuid'] = $rc['uuid'];
+
+	//
 	// Add the product to the database
 	//
-	$strsql = "INSERT INTO ciniki_products (uuid, business_id, category_id, sales_category_id, name, type, source, flags, status, "
+	$strsql = "INSERT INTO ciniki_products (uuid, business_id, name, type, "
+		. "source, flags, status, "
 		. "barcode, supplier_business_id, supplier_product_id, "
 		. "price, cost, msrp, "
 		. "date_added, last_updated) VALUES ("
-		. "UUID(), "
+		. "'" . ciniki_core_dbQuote($ciniki, $args['uuid']) . "', "
 		. "'" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "', "
-		. "'" . ciniki_core_dbQuote($ciniki, $args['category_id']) . "', "
-		. "'" . ciniki_core_dbQuote($ciniki, $args['sales_category_id']) . "', "
 		. "'" . ciniki_core_dbQuote($ciniki, $args['name']) . "', "
 		. "64, 0, 0, 1, "
 		. "'" . ciniki_core_dbQuote($ciniki, $args['barcode']) . "', "
@@ -100,11 +107,10 @@ function ciniki_products_addWineKit($ciniki) {
 	//
 
 	$changelog_fields = array(
+		'uuid',
 		'name',
 		'type',
 		'source',
-		'category_id',
-		'sales_category_id',
 		'type',
 		'barcode',
 		'supplier_business_id',
@@ -140,7 +146,8 @@ function ciniki_products_addWineKit($ciniki) {
 				ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
 				return $rc;
 			}
-			$rc = ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.products', 'ciniki_product_history', $args['business_id'], 
+			$rc = ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.products', 
+				'ciniki_product_history', $args['business_id'], 
 				1, 'ciniki_product_details', $product_id, $detail_field, $args[$field]);
 		}
 	}
@@ -159,6 +166,9 @@ function ciniki_products_addWineKit($ciniki) {
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
 	ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'products');
+
+	$ciniki['syncqueue'][] = array('push'=>'ciniki.products.product',
+		'args'=>array('id'=>$product_id));
 
 	return array('stat'=>'ok', 'id'=>$product_id);
 }

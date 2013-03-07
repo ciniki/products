@@ -30,10 +30,11 @@
 # last_updated:		The date and time the record was last updated.
 #
 create table ciniki_product_details (
+	business_id int not null,
 	product_id int not null,
 	detail_key varchar(50) not null,
 	detail_value varchar(60000) not null,
 	date_added datetime not null,
 	last_updated datetime not null,
-	primary key (product_id, detail_key)
-) ENGINE='InnoDB', COMMENT='v1.01';
+	primary key (business_id, product_id, detail_key)
+) ENGINE='InnoDB', COMMENT='v1.02';

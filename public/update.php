@@ -15,7 +15,7 @@
 // -------
 // <rsp stat='ok' id='34' />
 //
-function ciniki_products_update($ciniki) {
+function ciniki_products_update(&$ciniki) {
     //  
     // Find all the required and optional arguments
     //  
@@ -23,8 +23,6 @@ function ciniki_products_update($ciniki) {
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
         'product_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No product specified'), 
-		'category_id'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'errmsg'=>'No category specified'),
-		'sales_category_id'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'errmsg'=>'No sales category specified'),
 		'name'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No name specified'),
 		'type'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'errmsg'=>'No name specified'),
         'barcode'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'errmsg'=>'No barcode specified'), 
@@ -75,8 +73,6 @@ function ciniki_products_update($ciniki) {
 	$changelog_fields = array(
 		'name',
 		'type',
-		'category_id',
-		'sales_category_id',
 		'type',
 		'barcode',
 		'supplier_business_id',
@@ -88,7 +84,8 @@ function ciniki_products_update($ciniki) {
 	foreach($changelog_fields as $field) {
 		if( isset($args[$field]) ) {
 			$strsql .= ", $field = '" . ciniki_core_dbQuote($ciniki, $args[$field]) . "' ";
-			$rc = ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.products', 'ciniki_product_history', $args['business_id'], 
+			$rc = ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.products', 
+				'ciniki_product_history', $args['business_id'], 
 				2, 'ciniki_products', $args['product_id'], $field, $args[$field]);
 		}
 	}
@@ -118,6 +115,9 @@ function ciniki_products_update($ciniki) {
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
 	ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'products');
+
+	$ciniki['syncqueue'][] = array('push'=>'ciniki.products.product',
+		'args'=>array('id'=>$args['product_id']));
 
 	return array('stat'=>'ok');
 }

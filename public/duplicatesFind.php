@@ -14,6 +14,7 @@ function ciniki_products_duplicatesFind($ciniki) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
 	$rc = ciniki_core_prepareArgs($ciniki, 'no', array(
 		'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+		'type'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Type'), 
 		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
@@ -40,10 +41,14 @@ function ciniki_products_duplicatesFind($ciniki) {
 		. "FROM ciniki_products AS p1, ciniki_products AS p2 "
 		. "WHERE p1.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "AND p2.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-		. "AND p1.id < p2.id "
-		. "AND SOUNDEX(p1.name) = SOUNDEX(p2.name) "
-		. "ORDER BY p1_name, p1.id "
-		. "";
+		. "AND p1.id < p2.id ";
+	if( isset($args['type']) && $args['type'] == 'soundex' ) {
+		$strsql .= "AND SOUNDEX(p1.name) = SOUNDEX(p2.name) ";
+	} else {
+		$strsql .= "AND p1.name = p2.name ";
+	}
+	$strsql .= "ORDER BY p1_name, p1.id ";
+
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
 	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
 		array('container'=>'matches', 'fname'=>'p1_id', 'name'=>'match',

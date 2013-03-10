@@ -114,7 +114,9 @@ function ciniki_products_updateWineKit(&$ciniki) {
 		);
 	foreach($detail_fields as $field => $detail_field) {
 		if( isset($args[$field]) ) {
-			$strsql = "INSERT INTO ciniki_product_details (product_id, detail_key, detail_value, date_added, last_updated) VALUES ("
+			$strsql = "INSERT INTO ciniki_product_details (business_id, product_id, "
+				. "detail_key, detail_value, date_added, last_updated) VALUES ("
+				. "'" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "', "
 				. "'" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "', "
 				. "'" . ciniki_core_dbQuote($ciniki, $detail_field) . "', "
 				. "'" . ciniki_core_dbQuote($ciniki, $args[$field]) . "', "

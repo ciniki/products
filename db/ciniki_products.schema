@@ -82,8 +82,7 @@ create table ciniki_products (
 	date_added datetime not null,
 	last_updated datetime not null,
 	primary key (id),
-	unique index (uuid),
-	index (business_id, category_id),
 	index (name),
-	index (supplier_business_id, supplier_product_id)
-) ENGINE='InnoDB', COMMENT='v1.04';
+	index (supplier_business_id, supplier_product_id),
+	index (business_id, uuid, last_updated)
+) ENGINE='InnoDB', COMMENT='v1.05';

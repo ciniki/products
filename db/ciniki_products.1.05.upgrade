@@ -1,0 +1,6 @@
+#
+# This file will upgrade the database table products to version 1.03.
+#
+ALTER TABLE ciniki_products DROP INDEX business_id;
+CREATE INDEX business_id ON ciniki_products (business_id, uuid, last_updated);
+ALTER TABLE ciniki_products COMMENT='v1.05';

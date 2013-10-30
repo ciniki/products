@@ -24,9 +24,9 @@ function ciniki_products_listWineKits($ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
-		'type'=>array('required'=>'no', 'default'=>'', 'errmsg'=>'No type specified'),
-		'sorting'=>array('required'=>'no', 'default'=>'', 'errmsg'=>'No type specified'),
+        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+		'type'=>array('required'=>'no', 'default'=>'', 'name'=>'Type'),
+		'sorting'=>array('required'=>'no', 'default'=>'', 'name'=>'Sort Method'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;

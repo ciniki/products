@@ -21,18 +21,18 @@ function ciniki_products_updateWineKit(&$ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
-        'product_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No product specified'), 
-		'name'=>array('required'=>'no', 'blank'=>'no', 'errmsg'=>'No name specified'),
-		'source'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No name specified'),
-        'barcode'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No barcode specified'), 
-        'supplier_business_id'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No supplier specified'), 
-        'supplier_product_id'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No supplier product specified'), 
-        'price'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No price specified'), 
-        'cost'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No cost specified'), 
-        'msrp'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No msrp specified'), 
-        'wine_type'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No wine type specified'), 
-        'kit_length'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No duration specified'), 
+        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'product_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Product'), 
+		'name'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Name'),
+		'source'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Source'),
+        'barcode'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Barcode'), 
+        'supplier_business_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Supplier'), 
+        'supplier_product_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Supplier Product'), 
+        'price'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Price'), 
+        'cost'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Cost'), 
+        'msrp'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'MSRP'), 
+        'wine_type'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Wine Type'), 
+        'kit_length'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Rack Length'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;

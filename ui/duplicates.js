@@ -218,7 +218,6 @@ function ciniki_products_duplicates() {
 	};
 
 	this.showMatch = function(cb, pid1, pid2) {
-		var mods = M.curBusiness.modules;
 		if( pid1 != null ) {
 			this.match1.product_id = pid1;
 			this.match2.product_id = pid2;
@@ -239,86 +238,89 @@ function ciniki_products_duplicates() {
 					'wine_type':{'label':'Type', 'value':rsp.product.wine_type},
 					'kit_length':{'label':'Length', 'value':rsp.product.kit_length},
 				}
-				M.ciniki_products_duplicates.showMatch(cb, rsp);
+				M.ciniki_products_duplicates.showMatchFinish(cb);
 			});
 	};
 
-	this.showMatchFinish = function(cb, rsp) {
-		var rsp = M.api.getJSON('ciniki.products.get', {'business_id':M.curBusinessID, 
-			'product_id':this.match2.product_id});
-		if( rsp.stat != 'ok' ) {
-			M.stopLoad();
-			M.api.err(rsp);
-			return false;
-		}
-		this.match2.data = rsp.product;
-		this.match2.data.details = {
-			'prefix':{'label':'Name', 'value':rsp.product.name},
-			'wine_type':{'label':'Type', 'value':rsp.product.wine_type},
-			'kit_length':{'label':'Length', 'value':rsp.product.kit_length},
-			};
-
-		// Reset visible sections
-		this.match1.sections.currentwineproduction.visible = 'no';
-		this.match2.sections.currentwineproduction.visible = 'no';
-		this.match1.sections.pastwineproduction.visible = 'no';
-		this.match2.sections.pastwineproduction.visible = 'no';
-
-		if( mods['ciniki.wineproduction'] != null ) {
-			this.match1.sections.currentwineproduction.visible = 'yes';
-			this.match2.sections.currentwineproduction.visible = 'yes';
-			this.match1.sections.pastwineproduction.visible = 'yes';
-			this.match2.sections.pastwineproduction.visible = 'yes';
-			// Get wine production
-			var rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 
-				'product_id':this.match1.product_id});
-			if( rsp.stat != 'ok' ) {
-				M.stopLoad();
-				M.api.err(rsp);
-				return false;
-			} 
-			this.match1.data.currentwineproduction = [];
-			this.match1.data.pastwineproduction = [];
-			var i = 0;
-			for(i in rsp.orders) {
-				var order = rsp.orders[i].order;
-				if( order.status < 50 ) {
-					this.match1.data.currentwineproduction.push(rsp.orders[i]);
-				} else  {
-					this.match1.data.pastwineproduction.push(rsp.orders[i]);
+	this.showMatchFinish = function(cb) {
+		M.api.getJSONCb('ciniki.products.get', {'business_id':M.curBusinessID, 
+			'product_id':this.match2.product_id}, function(rsp) {
+				if( rsp.stat != 'ok' ) {
+					M.stopLoad();
+					M.api.err(rsp);
+					return false;
 				}
-			}
-			if( rsp.orders.length > 0 ) {
-				this.match1.sections._buttons.buttons.delete.visible = 'no';
-			}
+				var p1 = M.ciniki_products_duplicates.match1;
+				var p2 = M.ciniki_products_duplicates.match2;
+				p2.data = rsp.product;
+				p2.data.details = {
+					'prefix':{'label':'Name', 'value':rsp.product.name},
+					'wine_type':{'label':'Type', 'value':rsp.product.wine_type},
+					'kit_length':{'label':'Length', 'value':rsp.product.kit_length},
+					};
 
-			// Get second product wine production
-			var rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 
-				'product_id':this.match2.product_id});
-			if( rsp.stat != 'ok' ) {
-				M.stopLoad();
-				M.api.err(rsp);
-				return false;
-			} 
-			this.match2.data.currentwineproduction = [];
-			this.match2.data.pastwineproduction = [];
-			var i = 0;
-			for(i in rsp.orders) {
-				var order = rsp.orders[i].order;
-				if( order.status < 50 ) {
-					this.match2.data.currentwineproduction.push(rsp.orders[i]);
-				} else  {
-					this.match2.data.pastwineproduction.push(rsp.orders[i]);
+				// Reset visible sections
+				p1.sections.currentwineproduction.visible = 'no';
+				p2.sections.currentwineproduction.visible = 'no';
+				p1.sections.pastwineproduction.visible = 'no';
+				p2.sections.pastwineproduction.visible = 'no';
+
+				if( M.curBusiness.modules['ciniki.wineproduction'] != null ) {
+					p1.sections.currentwineproduction.visible = 'yes';
+					p2.sections.currentwineproduction.visible = 'yes';
+					p1.sections.pastwineproduction.visible = 'yes';
+					p2.sections.pastwineproduction.visible = 'yes';
+					// Get wine production
+					var rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 
+						'product_id':p1.product_id});
+					if( rsp.stat != 'ok' ) {
+						M.stopLoad();
+						M.api.err(rsp);
+						return false;
+					} 
+					p1.data.currentwineproduction = [];
+					p1.data.pastwineproduction = [];
+					var i = 0;
+					for(i in rsp.orders) {
+						var order = rsp.orders[i].order;
+						if( order.status < 50 ) {
+							p1.data.currentwineproduction.push(rsp.orders[i]);
+						} else  {
+							p1.data.pastwineproduction.push(rsp.orders[i]);
+						}
+					}
+					if( rsp.orders.length > 0 ) {
+						p1.sections._buttons.buttons.delete.visible = 'no';
+					}
+
+					// Get second product wine production
+					var rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 
+						'product_id':p2.product_id});
+					if( rsp.stat != 'ok' ) {
+						M.stopLoad();
+						M.api.err(rsp);
+						return false;
+					} 
+					p2.data.currentwineproduction = [];
+					p2.data.pastwineproduction = [];
+					var i = 0;
+					for(i in rsp.orders) {
+						var order = rsp.orders[i].order;
+						if( order.status < 50 ) {
+							p2.data.currentwineproduction.push(rsp.orders[i]);
+						} else  {
+							p2.data.pastwineproduction.push(rsp.orders[i]);
+						}
+					}
+					if( rsp.orders.length > 0 ) {
+						p2.sections._buttons.buttons.delete.visible = 'no';
+					}
 				}
-			}
-			if( rsp.orders.length > 0 ) {
-				this.match2.sections._buttons.buttons.delete.visible = 'no';
-			}
-		}
 
-		M.stopLoad();
-		this.match1.refresh();
-		this.match1.show(cb);
+				M.stopLoad();
+				p1.refresh();
+				p1.show(cb);
+			});
 	};
 
 	this.mergeProduct = function(pid1, pid2) {
@@ -335,7 +337,7 @@ function ciniki_products_duplicates() {
 	this.deleteProduct = function(pid) {
 		if( pid != null && pid > 0 ) {
 			if( confirm("Are you sure you want to remove this product?") ) {
-				var rsp = M.api.postJSONCb('ciniki.products.delete', {'business_id':M.curBusinessID, 'product_id':pid}, function(rsp) {
+				var rsp = M.api.getJSONCb('ciniki.products.delete', {'business_id':M.curBusinessID, 'product_id':pid}, function(rsp) {
 					if( rsp.stat != 'ok' ) {
 						M.api.err(rsp);
 						return false;

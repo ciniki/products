@@ -7,7 +7,7 @@
 // Returns
 // -------
 //
-function ciniki_products_merge($ciniki) {
+function ciniki_products_productMerge($ciniki) {
     //  
     // Find all the required and optional arguments
     //  
@@ -27,7 +27,7 @@ function ciniki_products_merge($ciniki) {
     // check permission to run this function for this business
     //  
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.merge', 0); 
+    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.productMerge', 0); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   

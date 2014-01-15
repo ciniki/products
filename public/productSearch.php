@@ -16,14 +16,13 @@
 // Returns
 // -------
 //
-function ciniki_products_searchQuick($ciniki) {
+function ciniki_products_productSearch($ciniki) {
     //  
     // Find all the required and optional arguments
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
-		'category_id'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'name'=>'Category'),
         'start_needle'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Search String'), 
         'limit'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Limit'), 
         )); 
@@ -37,7 +36,7 @@ function ciniki_products_searchQuick($ciniki) {
     // check permission to run this function for this business
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.searchQuick', 0); 
+    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.productSearch', 0); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -46,13 +45,12 @@ function ciniki_products_searchQuick($ciniki) {
 	// Get the number of products in each status for the business, 
 	// if no rows found, then return empty array
 	//
-	$strsql = "SELECT id, name, type, status FROM ciniki_products "
+	$strsql = "SELECT id, category, name, type, status "
+		. "FROM ciniki_products "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-		. "AND status = 1 ";
-	if( $args['category_id'] > 0 ) {
-		$strsql .= "AND category_id = '" . ciniki_core_dbQuote($ciniki, $args['category_id']) . "' ";
-	}
-	$strsql .= "AND (name LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
+		. "AND status = 10 "
+		. "AND (name LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
+			. "OR name LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
 			. ") "
 		. "ORDER BY name DESC ";
 	if( isset($args['limit']) && is_numeric($args['limit']) && $args['limit'] > 0 ) {

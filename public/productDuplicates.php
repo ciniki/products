@@ -7,7 +7,7 @@
 // Returns
 // -------
 //
-function ciniki_products_duplicatesFind($ciniki) {
+function ciniki_products_productDuplicates($ciniki) {
 	//
 	// Find all the required and optional arguments
 	//
@@ -25,7 +25,7 @@ function ciniki_products_duplicatesFind($ciniki) {
 	// Check access to business_id
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-	$ac = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.duplicatesFind', 0);
+	$ac = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.productDuplicates', 0);
 	if( $ac['stat'] != 'ok' ) {
 		return $ac;
 	}

@@ -204,7 +204,7 @@ function ciniki_products_duplicates() {
 		//
 		// Grab list of recently updated products
 		//
-		var rsp = M.api.getJSONCb('ciniki.products.duplicatesFind', {'business_id':M.curBusinessID,
+		var rsp = M.api.getJSONCb('ciniki.products.productDuplicates', {'business_id':M.curBusinessID,
 			'type':this.list.find_type}, function(rsp) {
 				if( rsp.stat != 'ok' ) {
 					M.api.err(rsp);
@@ -225,7 +225,7 @@ function ciniki_products_duplicates() {
 		this.match1.sections._buttons.buttons.delete.visible = 'yes';
 		this.match2.sections._buttons.buttons.delete.visible = 'yes';
 		M.startLoad();
-		var rsp = M.api.getJSONCb('ciniki.products.get', {'business_id':M.curBusinessID, 
+		var rsp = M.api.getJSONCb('ciniki.products.productGet', {'business_id':M.curBusinessID, 
 			'product_id':this.match1.product_id}, function(rsp) {
 				if( rsp.stat != 'ok' ) {
 					M.stopLoad();
@@ -243,7 +243,7 @@ function ciniki_products_duplicates() {
 	};
 
 	this.showMatchFinish = function(cb) {
-		M.api.getJSONCb('ciniki.products.get', {'business_id':M.curBusinessID, 
+		M.api.getJSONCb('ciniki.products.productGet', {'business_id':M.curBusinessID, 
 			'product_id':this.match2.product_id}, function(rsp) {
 				if( rsp.stat != 'ok' ) {
 					M.stopLoad();
@@ -324,7 +324,7 @@ function ciniki_products_duplicates() {
 	};
 
 	this.mergeProduct = function(pid1, pid2) {
-		var rsp = M.api.getJSONCb('ciniki.products.merge', {'business_id':M.curBusinessID, 
+		var rsp = M.api.getJSONCb('ciniki.products.productMerge', {'business_id':M.curBusinessID, 
 			'primary_product_id':pid1, 'secondary_product_id':pid2}, function(rsp) {
 				if( rsp.stat != 'ok' ) {
 					M.api.err(rsp);
@@ -337,13 +337,14 @@ function ciniki_products_duplicates() {
 	this.deleteProduct = function(pid) {
 		if( pid != null && pid > 0 ) {
 			if( confirm("Are you sure you want to remove this product?") ) {
-				var rsp = M.api.getJSONCb('ciniki.products.delete', {'business_id':M.curBusinessID, 'product_id':pid}, function(rsp) {
-					if( rsp.stat != 'ok' ) {
-						M.api.err(rsp);
-						return false;
-					}
-					M.ciniki_products_duplicates.match1.close();
-				});
+				var rsp = M.api.getJSONCb('ciniki.products.productDelete', 
+					{'business_id':M.curBusinessID, 'product_id':pid}, function(rsp) {
+						if( rsp.stat != 'ok' ) {
+							M.api.err(rsp);
+							return false;
+						}
+						M.ciniki_products_duplicates.match1.close();
+					});
 			}
 		}
 	}

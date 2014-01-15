@@ -8,7 +8,7 @@
 // Returns
 // -------
 //
-function ciniki_products_delete(&$ciniki) {
+function ciniki_products_productDelete(&$ciniki) {
     //  
     // Find all the required and optional arguments
     //  
@@ -27,7 +27,7 @@ function ciniki_products_delete(&$ciniki) {
     // check permission to run this function for this business
     //  
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.delete', 0); 
+    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.productDelete', 0); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   

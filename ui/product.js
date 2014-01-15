@@ -15,15 +15,19 @@ function ciniki_products_product() {
 			'_image':{'label':'', 'aside':'yes', 'fields':{
 				'primary_image_id':{'label':'', 'type':'image_id', 'hidelabel':'yes', 'history':'no'},
 				}},
-			'info':{'label':'', 'list':{
+			'info':{'label':'', 'aside':'yes', 'list':{
 				'type_text':{'label':'Type'},
 				'name':{'label':'Name'},
 				'category':{'label':'Category'},
 				'status_text':{'label':'Status'},
 //				'barcode':{'label':'Barcode', 'visible':'no'},
 				'price':{'label':'Price'},
+				'cost':{'label':'Cost'},
 				'wine_type':{'label':'Wine Type', 'visible':'no'},
 				'kit_length':{'label':'Kit Length', 'visible':'no'},
+				'winekit_oak':{'label':'Oak', 'visible':'no'},
+				'winekit_body':{'label':'Body', 'visible':'no'},
+				'winekit_sweetness':{'label':'Sweetness', 'visible':'no'},
 				'webvisible':{'label':'Web', 'visible':'yes'},
 				}},
 			'short_description':{'label':'Description', 'type':'htmlcontent'},
@@ -136,7 +140,7 @@ function ciniki_products_product() {
 				}
 				var p = M.ciniki_products_product.product;
 				p.data = rsp.product;
-				var fields = ['wine_type', 'kit_length'];
+				var fields = ['wine_type', 'kit_length', 'winekit_oak', 'winekit_body', 'winekit_sweetness'];
 				for(i in fields) {
 					p.sections.info.list[fields[i]].visible=rsp.product[fields[i]]!=null&&rsp.product[fields[i]]!=''?'yes':'no';
 				}

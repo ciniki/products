@@ -90,10 +90,15 @@ function ciniki_products_productAdd(&$ciniki) {
 	$detail_fields = array(
 		'wine_type'=>'wine_type',
 		'kit_length'=>'kit_length',
+		'winekit_oak'=>'winekit_oak',
+		'winekit_body'=>'winekit_body',
+		'winekit_sweetness'=>'winekit_sweetness',
 		);
 	foreach($detail_fields as $field => $detail_field) {
 		if( isset($args[$field]) && $args[$field] != '' ) {
-			$strsql = "INSERT INTO ciniki_product_details (product_id, detail_key, detail_value, date_added, last_updated) VALUES ("
+			$strsql = "INSERT INTO ciniki_product_details (business_id, product_id, "
+				. "detail_key, detail_value, date_added, last_updated) VALUES ("
+				. "'" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "', "
 				. "'" . ciniki_core_dbQuote($ciniki, $product_id) . "', "
 				. "'" . ciniki_core_dbQuote($ciniki, $detail_field) . "', "
 				. "'" . ciniki_core_dbQuote($ciniki, $args[$field]) . "', "

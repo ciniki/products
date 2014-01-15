@@ -10,6 +10,28 @@ function ciniki_products_edit() {
 		'1':{'name':'Hidden'},
 		'5':{'name':'Category Highlight'},
 		};
+	this.oakToggles = {
+		'1':'1',
+		'2':'2',
+		'3':'3',
+		'4':'4',
+		'5':'5',
+		};
+	this.bodyToggles = {
+		'1':'1',
+		'2':'2',
+		'3':'3',
+		'4':'4',
+		'5':'5',
+		};
+	this.sweetnessToggles = {
+		'0':'0',
+		'1':'1',
+		'2':'2',
+		'3':'3',
+		'4':'4',
+		'5':'5',
+		};
 	this.init = function() {
 		//
 		// The edit panel
@@ -34,6 +56,7 @@ function ciniki_products_edit() {
 				'name':{'label':'Name', 'hint':'Product Name', 'type':'text'},
 				'category':{'label':'Category', 'hint':'', 'type':'text', 'livesearch':'yes', 'livesearchempty':'yes'},
 				'price':{'label':'Price', 'hint':'', 'type':'text'},
+				'cost':{'label':'Cost', 'hint':'', 'type':'text'},
 				'status':{'label':'Status', 'type':'select', 'options':this.statusOptions},
 				'webflags':{'label':'Website', 'type':'flags', 'join':'yes', 'flags':this.webFlags},
 				}},
@@ -56,6 +79,9 @@ function ciniki_products_edit() {
 			'details':{'label':'', 'fields':{
 				'wine_type':{'label':'Wine Type', 'hint':'red, white or other', 'type':'text', 'size':'medium'},
 				'kit_length':{'label':'Kit Length', 'hint':'4, 5, 6, 8', 'type':'text', 'size':'small'},
+				'winekit_oak':{'label':'Oak', 'type':'toggle', 'default':'1', 'toggles':this.oakToggles},
+				'winekit_body':{'label':'Body', 'type':'toggle', 'default':'1', 'toggles':this.bodyToggles},
+				'winekit_sweetness':{'label':'Sweetness', 'type':'toggle', 'default':'0', 'toggles':this.sweetnessToggles},
 			}},
 			'_description':this.edit.forms.generic._description,
 			'_long_description':this.edit.forms.generic._long_description,

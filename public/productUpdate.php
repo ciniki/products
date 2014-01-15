@@ -42,6 +42,9 @@ function ciniki_products_productUpdate(&$ciniki) {
 		// Details
         'wine_type'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Wine Type'), 
         'kit_length'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Rack Length'), 
+        'winekit_oak'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Oak'), 
+        'winekit_body'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Body'), 
+        'winekit_sweetness'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Sweetness'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -89,6 +92,9 @@ function ciniki_products_productUpdate(&$ciniki) {
 	$detail_fields = array(
 		'wine_type'=>'wine_type',
 		'kit_length'=>'kit_length',
+		'winekit_oak'=>'winekit_oak',
+		'winekit_body'=>'winekit_body',
+		'winekit_sweetness'=>'winekit_sweetness',
 		);
 	foreach($detail_fields as $field => $detail_field) {
 		if( isset($args[$field]) ) {

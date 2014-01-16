@@ -159,10 +159,10 @@ function ciniki_products_edit() {
 			return false;
 		}
 
-		this.showEdit(cb, args.product_id, args.category);
+		this.showEdit(cb, args.product_id, args.category, args.supplier_id, args.supplier_name);
 	}
 
-	this.showEdit = function(cb, pid, category) {
+	this.showEdit = function(cb, pid, category, supplier_id, supplier_name) {
 		this.edit.reset();
 		if( pid != null ) { this.edit.product_id = pid; }
 		if( this.edit.product_id > 0 ) {
@@ -182,6 +182,10 @@ function ciniki_products_edit() {
 			this.edit.data = {'type':1};
 			if( category != '' ) {
 				this.edit.data.category = category;
+			}
+			if( supplier_id != null ) {
+				this.edit.data.supplier_id = supplier_id;
+				this.edit.data.supplier_name = unescape(supplier_name);
 			}
 			this.edit.refresh();
 			this.edit.show(cb);

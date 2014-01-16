@@ -21,13 +21,14 @@ function ciniki_products_productList($ciniki) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
-		'category'=>array('required'=>'no', 'default'=>'', 'name'=>'Category'),
+		'category'=>array('required'=>'no', 'name'=>'Category'),
+		'supplier_id'=>array('required'=>'no', 'name'=>'Supplier'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
     $args = $rc['args'];
-    
+
     //  
     // Make sure this module is activated, and
     // check permission to run this function for this business
@@ -53,6 +54,20 @@ function ciniki_products_productList($ciniki) {
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
 			array('container'=>'products', 'fname'=>'id', 'name'=>'product',
 				'fields'=>array('id', 'category', 'name')),
+			));
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		if( !isset($rc['products']) ) {
+			return array('stat'=>'ok', 'products'=>array());
+		}
+		return array('stat'=>'ok', 'products'=>$rc['products']);
+	} elseif( isset($args['supplier_id']) ) {
+		$strsql .= "AND supplier_id = '" . ciniki_core_dbQuote($ciniki, $args['supplier_id']) . "' ";
+		$strsql .= "ORDER BY name ";
+		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
+			array('container'=>'products', 'fname'=>'id', 'name'=>'product',
+				'fields'=>array('id', 'name')),
 			));
 		if( $rc['stat'] != 'ok' ) {
 			return $rc;

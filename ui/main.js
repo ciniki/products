@@ -21,10 +21,13 @@ function ciniki_products_main() {
 				'hint':'product name', 
 				'noData':'No products found',
 				},
-			'categories':{'label':'', 'type':'simplegrid', 'num_cols':1,
+			'categories':{'label':'Categories', 'type':'simplegrid', 'num_cols':1,
 				'headerValues':null,
 				'addTxt':'Add',
 				'addFn':'M.startApp(\'ciniki.products.edit\',null,\'M.ciniki_products_main.showMenu();\',\'mc\',{\'product_id\':\'0\'});',
+				},
+			'suppliers':{'label':'Suppliers', 'type':'simplegrid', 'num_cols':1,
+				'headerValues':null,
 				},
 			};
 		this.menu.liveSearchCb = function(s, i, value) {
@@ -57,9 +60,18 @@ function ciniki_products_main() {
 					case 0: return ((d.category.name!='')?d.category.name:'Uncategorized') + ' <span class="count">' + d.category.product_count + '</span>';
 				}
 			}
+			if( s == 'suppliers' ) {
+				switch(j) {
+					case 0: return ((d.supplier.name!='')?d.supplier.name:'Unspecified') + ' <span class="count">' + d.supplier.product_count + '</span>';
+				}
+			}
 		};
 		this.menu.rowFn = function(s, i, d) {
-			return 'M.ciniki_products_main.showList(\'M.ciniki_products_main.showMenu();\',\'category\',\'' + escape(d.category.name) + '\');';
+			if( s == 'categories' ) {
+				return 'M.ciniki_products_main.showList(\'M.ciniki_products_main.showMenu();\',\'category\',\'' + escape(d.category.name) + '\');';
+			} else if( s == 'suppliers' ) {
+				return 'M.ciniki_products_main.showList(\'M.ciniki_products_main.showMenu();\',\'supplier_id\',\'' + d.supplier.id + '\',\'' + escape(d.supplier.name) + '\');';
+			}
 		};
 		this.menu.addButton('add', 'Add', 'M.startApp(\'ciniki.products.edit\',null,\'M.ciniki_products_main.showMenu();\',\'mc\',{\'product_id\':\'0\'});');
 		this.menu.addButton('tools', 'Tools', 'M.ciniki_products_main.tools.show(\'M.ciniki_products_main.showMenu();\');');
@@ -77,7 +89,8 @@ function ciniki_products_main() {
 			'products':{'label':'Products', 'type':'simplegrid', 'num_cols':2,
 				'headerValues':null, 
 				'addTxt':'Add Product',
-				'addFn':'M.startApp(\'ciniki.products.edit\',null,\'M.ciniki_products_main.showList();\',\'mc\',{\'product_id\':\'0\',\'category\':M.ciniki_products_main.list._type});',
+				'addFn':'M.ciniki_products_main.addProduct();',
+//				'addFn':'M.startApp(\'ciniki.products.edit\',null,\'M.ciniki_products_main.showList();\',\'mc\',{\'product_id\':\'0\',\'' + M.ciniki_products_main.list._listtype + '\':M.ciniki_products_main.list._type});',
 				},
 		};
 		this.list.sectionData = function(s) {
@@ -168,14 +181,14 @@ function ciniki_products_main() {
 	// Grab the stats for the business from the database and present the list of products.
 	//
 	this.showMenu = function(cb) {
-		M.api.getJSONCb('ciniki.products.productCategories', 
+		M.api.getJSONCb('ciniki.products.productStats', 
 			{'business_id':M.curBusinessID, 'status':10}, function(rsp) {
 				if( rsp.stat != 'ok' ) {
 					M.api.err(rsp);
 					return false;
 				}
 				var p = M.ciniki_products_main.menu;
-				p.data = {'categories':rsp.categories};
+				p.data = {'categories':rsp.categories, 'suppliers':rsp.suppliers};
 				p.refresh();
 				p.show(cb);
 			});
@@ -184,16 +197,20 @@ function ciniki_products_main() {
 	//
 	// Show the list of products for a category
 	//
-	this.showList = function(cb, listtype, type) {
+	this.showList = function(cb, listtype, type, title) {
 		var args = {'business_id':M.curBusinessID};
 		if( listtype != null ) {
 			this.list._listtype = listtype;
 			this.list._type = unescape(type);
+			this.list._title = unescape(title);
 		}
 		this.list.sections.products.label = 'Products';
 		if( this.list._listtype == 'category' ) {
 			args['category'] = this.list._type;
 			this.list.sections.products.label = unescape(this.list._type);
+		} else if( this.list._listtype == 'supplier_id' ) {
+			args['supplier_id'] = this.list._type;
+			this.list.sections.products.label = unescape(this.list._title);
 		} else {
 			return false;
 		}
@@ -207,6 +224,14 @@ function ciniki_products_main() {
 			p.refresh();
 			p.show(cb);
 		});
+	};
+
+	this.addProduct = function() {
+		if( this.list._listtype == 'category' ) {
+			M.startApp('ciniki.products.edit',null,'M.ciniki_products_main.showList();','mc',{'product_id':'0','category':M.ciniki_products_main.list._type});
+		} else if( this.list._listtype == 'supplier_id' ) {
+			M.startApp('ciniki.products.edit',null,'M.ciniki_products_main.showList();','mc',{'product_id':'0','supplier_id':M.ciniki_products_main.list._type,'supplier_name':escape(M.ciniki_products_main.list.sections.products.label)});
+		}
 	};
 
 	//
@@ -225,4 +250,5 @@ function ciniki_products_main() {
 				p.show(cb);
 			});
 	};
+
 }

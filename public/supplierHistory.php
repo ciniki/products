@@ -28,14 +28,14 @@
 //		...
 //	</users>
 //
-function ciniki_products_productHistory($ciniki) {
+function ciniki_products_supplierHistory($ciniki) {
 	//
 	// Find all the required and optional arguments
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
 	$rc = ciniki_core_prepareArgs($ciniki, 'no', array(
 		'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
-		'product_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Product'), 
+		'supplier_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Supplier'), 
 		'field'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Field'), 
 		));
 	if( $rc['stat'] != 'ok' ) {
@@ -47,13 +47,13 @@ function ciniki_products_productHistory($ciniki) {
 	// Check access to business_id as owner, or sys admin
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-	$rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.productHistory', 0);
+	$rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.supplierHistory', 0);
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}
 
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbGetModuleHistory');
 	return ciniki_core_dbGetModuleHistory($ciniki, 'ciniki.products', 'ciniki_product_history', 
-		$args['business_id'], 'ciniki_products', $args['product_id'], $args['field']);
+		$args['business_id'], 'ciniki_product_suppliers', $args['supplier_id'], $args['field']);
 }
 ?>

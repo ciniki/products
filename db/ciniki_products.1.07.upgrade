@@ -1,0 +1,12 @@
+#
+# This file will upgrade the database table products to version 1.07.
+#
+DROP INDEX supplier_business_id ON ciniki_products;
+ALTER TABLE ciniki_products DROP COLUMN supplier_business_id;
+ALTER TABLE ciniki_products ADD COLUMN supplier_id int not null after barcode;
+ALTER TABLE ciniki_products ADD COLUMN supplier_item_number varchar(100) not null after supplier_product_id;
+ALTER TABLE ciniki_products ADD COLUMN supplier_minimum_order int not null after supplier_item_number;
+ALTER TABLE ciniki_products ADD COLUMN supplier_order_multiple int not null after supplier_minimum_order;
+CREATE INDEX supplier ON ciniki_products (supplier_id, supplier_product_id, supplier_item_number);
+UPDATE ciniki_products SET supplier_minimum_order = 1, supplier_order_multiple = 1;
+ALTER TABLE ciniki_products COMMENT='v1.07';

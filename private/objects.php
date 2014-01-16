@@ -25,8 +25,11 @@ function ciniki_products_objects($ciniki) {
 			'flags'=>array(),
 			'status'=>array(),
 			'barcode'=>array(),
-			'supplier_business_id'=>array(),
+			'supplier_id'=>array('ref'=>'ciniki.products.supplier'),
 			'supplier_product_id'=>array(),
+			'supplier_item_number'=>array(),
+			'supplier_minimum_order'=>array(),
+			'supplier_order_multiple'=>array(),
 			'price'=>array(),
 			'cost'=>array(),
 			'msrp'=>array(),
@@ -38,6 +41,15 @@ function ciniki_products_objects($ciniki) {
 			'webflags'=>array(),
 			),
 		'details'=>array('key'=>'product_id', 'table'=>'ciniki_product_details'),
+		'history_table'=>'ciniki_product_history',
+		);
+	$objects['supplier'] = array(
+		'name'=>'Supplier',
+		'sync'=>'yes',
+		'table'=>'ciniki_product_suppliers',
+		'fields'=>array(
+			'name'=>array(),
+			),
 		'history_table'=>'ciniki_product_history',
 		);
 	$objects['image'] = array(

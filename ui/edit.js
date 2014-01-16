@@ -60,6 +60,12 @@ function ciniki_products_edit() {
 				'status':{'label':'Status', 'type':'select', 'options':this.statusOptions},
 				'webflags':{'label':'Website', 'type':'flags', 'join':'yes', 'flags':this.webFlags},
 				}},
+			'supplier':{'label':'Supplier', 'fields':{
+				'supplier_id':{'label':'Name', 'type':'fkid', 'livesearch':'yes', 'livesearchempty':'yes'},
+				'supplier_item_number':{'label':'Item Number', 'type':'text'},
+				'supplier_minimum_order':{'label':'Minimum Order', 'type':'text', 'size':'small'},
+				'supplier_order_multiple':{'label':'Multiples', 'type':'text', 'size':'small'},
+				}},
 			'details':{'label':'', 'visible':'no', 'fields':{
 				}},
 			'_description':{'label':'Brief Description', 'fields':{
@@ -76,6 +82,7 @@ function ciniki_products_edit() {
 		this.edit.forms.winekit = {
 			'_image':this.edit.forms.generic._image,
 			'info':this.edit.forms.generic.info,
+			'supplier':this.edit.forms.generic.supplier,
 			'details':{'label':'', 'fields':{
 				'wine_type':{'label':'Wine Type', 'hint':'red, white or other', 'type':'text', 'size':'medium'},
 				'kit_length':{'label':'Kit Length', 'hint':'4, 5, 6, 8', 'type':'text', 'size':'small'},
@@ -93,23 +100,37 @@ function ciniki_products_edit() {
 					'start_needle':value, 'limit':'25'}, function(rsp) { 
 						M.ciniki_products_edit.edit.liveSearchShow(s, i, M.gE(M.ciniki_products_edit.edit.panelUID + '_' + i), rsp.categories); 
 				}); 
-			return true;
-			}   
+				return true;
+			}
+			if( i == 'supplier_id' ) {
+				M.api.getJSONBgCb('ciniki.products.supplierSearch', {'business_id':M.curBusinessID, 
+					'start_needle':value, 'limit':25}, function(rsp) {
+						M.ciniki_products_edit.edit.liveSearchShow(s, i, M.gE(M.ciniki_products_edit.edit.panelUID + '_' + i), rsp.suppliers);
+					});
+			}
 		};  
 		this.edit.liveSearchResultValue = function(s, f, i, j, d) {
-			if( f == 'category' ) {
-				return d.category.name;
-			}
+			if( f == 'category' ) { return d.category.name; }
+			if( f == 'supplier_id' ) { return d.supplier.name; }
 			return ''; 
 		}   
 		this.edit.liveSearchResultRowFn = function(s, f, i, j, d) { 
+			if( f == 'supplier_id' ) {
+				return 'M.ciniki_products_edit.edit.updateSupplier(\'' + escape(d.supplier.name) + '\', \'' + d.supplier.id + '\');';
+			}
 			return 'M.ciniki_products_edit.edit.updateCategory(\'' + escape(d.category.name) + '\');';
 		};  
+		this.edit.updateSupplier = function(name, pid) {
+			M.gE(this.panelUID + '_supplier_id').value = pid;
+			M.gE(this.panelUID + '_supplier_id_fkidstr').value = unescape(name);
+			this.removeLiveSearch('supplier', 'supplier_id');
+		};
 		this.edit.updateCategory = function(name) {
 			M.gE(this.panelUID + '_category').value = unescape(name);
 			this.removeLiveSearch('info', 'category');
 		};
 		this.edit.fieldValue = function(s, i, d) {
+			if( i == 'supplier_id_fkidstr' ) { return this.data.supplier_name; }
 			if( this.data[i] != null ) { return this.data[i]; }
 			return '';
 		};
@@ -168,6 +189,24 @@ function ciniki_products_edit() {
 	};
 
 	this.saveProduct = function() {
+		var name = M.gE(this.edit.panelUID + '_supplier_id_fkidstr').value;
+		if( (this.edit.formValue('supplier_id') == 0 && name != '')
+			|| this.edit.data.supplier_name != name ) {
+			M.api.getJSONCb('ciniki.products.supplierAdd', {'business_id':M.curBusinessID,
+				'name':encodeURIComponent(name)}, function(rsp) {
+					if( rsp.stat != 'ok' ) {
+						M.api.err(rsp);
+						return false;
+					}
+					M.gE(M.ciniki_products_edit.edit.panelUID + '_supplier_id').value = rsp.id;
+					M.ciniki_products_edit.saveProductFinish();
+				});
+		} else {
+			this.saveProductFinish();
+		}
+	};
+
+	this.saveProductFinish = function() {
 		if( this.edit.product_id > 0 ) {
 			var c = this.edit.serializeForm('no');
 			if( c != '' ) {

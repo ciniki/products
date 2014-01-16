@@ -31,8 +31,11 @@ function ciniki_products_productAdd(&$ciniki) {
         'flags'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'name'=>'Flags'), 
         'status'=>array('required'=>'no', 'default'=>'10', 'blank'=>'yes', 'name'=>'Status'), 
         'barcode'=>array('required'=>'no', 'default'=>'', 'trimblanks'=>'yes', 'blank'=>'yes', 'name'=>'Barcode'), 
-        'supplier_business_id'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'name'=>'Supplier'), 
-        'supplier_product_id'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'name'=>'Supplier Product'), 
+        'supplier_id'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'name'=>'Supplier'), 
+        'supplier_product_id'=>array('required'=>'no', 'default'=>'0', 'blank'=>'no', 'name'=>'Supplier Product'), 
+        'supplier_item_number'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'name'=>'Supplier Item Number'), 
+        'supplier_minimum_order'=>array('required'=>'no', 'default'=>'1', 'blank'=>'yes', 'name'=>'Supplier Minimum Order'), 
+        'supplier_order_multiple'=>array('required'=>'no', 'default'=>'1', 'blank'=>'yes', 'name'=>'Supplier Order Multiple'), 
         'price'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'type'=>'currency', 'name'=>'Price'), 
         'cost'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'type'=>'currency', 'name'=>'Cost'),
         'msrp'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'type'=>'currency', 'name'=>'MSRP'),
@@ -45,6 +48,9 @@ function ciniki_products_productAdd(&$ciniki) {
 		// Details
         'wine_type'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Wine Type'), 
         'kit_length'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Rack Length'), 
+        'winekit_oak'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Oak'), 
+        'winekit_body'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Body'), 
+        'winekit_sweetness'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Sweetness'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -59,7 +65,11 @@ function ciniki_products_productAdd(&$ciniki) {
     $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.productAdd', 0); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
-    }   
+    }
+
+	if( $args['supplier_id'] == '' ) {
+		$args['supplier_id'] = 0;
+	}
 
 	//  
 	// Turn off autocommit

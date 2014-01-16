@@ -77,7 +77,7 @@ function ciniki_products_main() {
 			'products':{'label':'Products', 'type':'simplegrid', 'num_cols':2,
 				'headerValues':null, 
 				'addTxt':'Add Product',
-				'addFn':'M.startApp(\'ciniki.products.edit\',null,\'M.ciniki_products_main.sh    owList();\',\'mc\',{\'product_id\':\'0\',\'category\':M.ciniki_products_main.list._type});',
+				'addFn':'M.startApp(\'ciniki.products.edit\',null,\'M.ciniki_products_main.showList();\',\'mc\',{\'product_id\':\'0\',\'category\':M.ciniki_products_main.list._type});',
 				},
 		};
 		this.list.sectionData = function(s) {

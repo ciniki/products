@@ -88,6 +88,11 @@ function ciniki_products_productGet($ciniki) {
 		. "category, "
 		. "status, status AS status_text, "
 		. "barcode, "
+		. "ciniki_products.supplier_id, "
+		. "ciniki_product_suppliers.name AS supplier_name, "
+		. "supplier_item_number, "
+		. "supplier_minimum_order, "
+		. "supplier_order_multiple, "
 		. "price, "
 		. "cost, "
 		. "msrp, "
@@ -99,7 +104,10 @@ function ciniki_products_productGet($ciniki) {
 		. "webflags, "
 		. "IF((webflags&0x01)=1,'Hidden','Visible') AS webvisible "
 		. "FROM ciniki_products "
-		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+		. "LEFT JOIN ciniki_product_suppliers ON (ciniki_products.supplier_id = ciniki_product_suppliers.id "
+			. "AND ciniki_product_suppliers.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. ") "
+		. "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "AND ciniki_products.id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
 		. "";
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
@@ -107,6 +115,8 @@ function ciniki_products_productGet($ciniki) {
 		array('container'=>'products', 'fname'=>'id', 'name'=>'product',
 			'fields'=>array('id', 'name', 'type', 'type_text', 
 				'category', 'status', 'status_text',
+				'supplier_id', 'supplier_name', 'supplier_item_number', 
+				'supplier_minimum_order', 'supplier_order_multiple',
 				'barcode', 'price', 'cost', 'msrp', 'primary_image_id',
 				'short_description', 'long_description', 'start_date', 'end_date',
 				'webflags', 'webvisible'),

@@ -30,6 +30,12 @@ function ciniki_products_product() {
 				'winekit_sweetness':{'label':'Sweetness', 'visible':'no'},
 				'webvisible':{'label':'Web', 'visible':'yes'},
 				}},
+			'supplier':{'label':'Supplier', 'aside':'yes', 'list':{
+				'supplier_name':{'label':'Name',},
+				'supplier_item_number':{'label':'Item #', 'visible':'no'},
+				'supplier_minimum_order':{'label':'Minimum Order', 'visible':'no'},
+				'supplier_order_multiple':{'label':'Order Multiple', 'visible':'no'},
+				}},
 			'short_description':{'label':'Description', 'type':'htmlcontent'},
 			'long_description':{'label':'Full Description', 'type':'htmlcontent'},
 			'files':{'label':'Files', 'type':'simplegrid', 'num_cols':1,
@@ -58,7 +64,7 @@ function ciniki_products_product() {
 			return true;
 		};
 		this.product.sectionData = function(s) {
-			if( s == 'info' ) { return this.sections[s].list; }
+			if( s == 'info' || s == 'supplier' ) { return this.sections[s].list; }
 			if( s == 'short_description' || s == 'long_description' ) { return this.data[s].replace(/\n/g, '<br/>'); }
 			return this.data[s];
 		};
@@ -144,6 +150,9 @@ function ciniki_products_product() {
 				for(i in fields) {
 					p.sections.info.list[fields[i]].visible=rsp.product[fields[i]]!=null&&rsp.product[fields[i]]!=''?'yes':'no';
 				}
+				p.sections.supplier.list['supplier_item_number'].visible=rsp.product['supplier_item_number']!=null&&rsp.product['supplier_item_number']!=''?'yes':'no';
+				p.sections.supplier.list['supplier_minimum_order'].visible=rsp.product['supplier_minimum_order']!=null&&rsp.product['supplier_minimum_order']>1?'yes':'no';
+				p.sections.supplier.list['supplier_order_multiple'].visible=rsp.product['supplier_order_multiple']!=null&&rsp.product['supplier_order_multiple']>1?'yes':'no';
 				p.refresh();
 				p.show(cb);
 			});

@@ -3,6 +3,7 @@
 #
 ALTER TABLE ciniki_products ADD COLUMN category varchar(150) not null after type;
 ALTER TABLE ciniki_products ADD COLUMN permalink varchar(150) not null after category;
+UPDATE ciniki_products SET permalink = REPLACE(LCASE(name), ' ', '-');
 ALTER TABLE ciniki_products MODIFY price decimal(19,4) not null;
 ALTER TABLE ciniki_products MODIFY cost decimal(19,4) not null;
 ALTER TABLE ciniki_products MODIFY msrp decimal(19,4) not null;
@@ -12,6 +13,6 @@ ALTER TABLE ciniki_products ADD COLUMN long_description varchar(20000) not null 
 ALTER TABLE ciniki_products ADD COLUMN start_date datetime not null after long_description;
 ALTER TABLE ciniki_products ADD COLUMN end_date datetime not null after start_date;
 ALTER TABLE ciniki_products ADD COLUMN webflags tinyint unsigned not null after end_date;
-CREATE INDEX category ON ciniki_products (category, permalink);
+CREATE UNIQUE INDEX permalink ON ciniki_products (business_id, permalink);
 UPDATE ciniki_products SET status = 10 WHERE status = 1;
 ALTER TABLE ciniki_products COMMENT='v1.06';

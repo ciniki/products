@@ -64,6 +64,27 @@ function ciniki_products_productUpdate(&$ciniki) {
         return $rc;
     }   
 
+	if( isset($args['name']) ) {
+		$args['permalink'] = preg_replace('/ /', '-', preg_replace('/[^a-z0-9 \-]/', '', 
+			strtolower($args['name'])));
+
+		//
+		// Check the permalink does not already exist
+		//
+		$strsql = "SELECT id "
+			. "FROM ciniki_products "
+			. "WHERE permalink = '" . ciniki_core_dbQuote($ciniki, $args['permalink']) . "' "
+			. "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. "";
+		$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'product');
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		if( isset($rc['product']) || (isset($rc['rows']) && count($rc['rows']) > 0) ) {
+			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1494', 'msg'=>'You already have a product with that name, please choose another'));
+		}
+	}
+
 	//  
 	// Turn off autocommit
 	//  

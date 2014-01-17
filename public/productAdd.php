@@ -71,6 +71,26 @@ function ciniki_products_productAdd(&$ciniki) {
 		$args['supplier_id'] = 0;
 	}
 
+	if( !isset($args['permalink']) || $args['permalink'] == '' ) {
+		$args['permalink'] = preg_replace('/ /', '-', preg_replace('/[^a-z0-9 \-]/', '', strtolower($args['name    '])));
+	}
+
+	//
+	// Check the permalink does not already exist
+	//
+	$strsql = "SELECT id "
+		. "FROM ciniki_products "
+		. "WHERE permalink = '" . ciniki_core_dbQuote($ciniki, $args['permalink']) . "' "
+		. "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+		. "";
+	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'product');
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+	if( isset($rc['product']) || (isset($rc['rows']) && count($rc['rows']) > 0) ) {
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1493', 'msg'=>'You already have a product with that name, please choose another'));
+	}
+
 	//  
 	// Turn off autocommit
 	//  
@@ -87,6 +107,7 @@ function ciniki_products_productAdd(&$ciniki) {
 
 	//
 	// Add the product
+	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
 	$rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.products.product', $args, 0x04);
 	if( $rc['stat'] != 'ok' ) {

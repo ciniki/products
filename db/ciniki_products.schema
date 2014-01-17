@@ -113,7 +113,8 @@ create table ciniki_products (
 	last_updated datetime not null,
 	primary key (id),
 	index (name),
+	index (category),
 	index (business_id, uuid, last_updated),
 	index supplier (supplier_id, supplier_item_number),
-	index (category, permalink)
+	unique index permalink (business_id, permalink)
 ) ENGINE='InnoDB', COMMENT='v1.07';

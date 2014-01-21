@@ -72,7 +72,7 @@ function ciniki_products_productAdd(&$ciniki) {
 	}
 
 	if( !isset($args['permalink']) || $args['permalink'] == '' ) {
-		$args['permalink'] = preg_replace('/ /', '-', preg_replace('/[^a-z0-9 \-]/', '', strtolower($args['name    '])));
+		$args['permalink'] = preg_replace('/ /', '-', preg_replace('/[^a-z0-9 \-]/', '', strtolower($args['name'])));
 	}
 
 	//

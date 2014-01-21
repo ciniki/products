@@ -44,7 +44,7 @@ function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $p
 		return $rc;
 	}
 	if( !isset($rc['products']) || count($rc['products']) < 1 ) {
-		return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'1288', 'msg'=>"I'm sorry, but we can't find the product you requested."));
+		return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'1506', 'msg'=>"I'm sorry, but we can't find the product you requested."));
 	}
 	$product = array_pop($rc['products']);
 

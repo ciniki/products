@@ -65,7 +65,7 @@ function ciniki_products_productUpdate(&$ciniki) {
     }   
 
 	if( isset($args['name']) ) {
-		$args['permalink'] = preg_replace('/ /', '-', preg_replace('/[^a-z0-9 \-]/', '', 
+		$args['permalink'] = preg_replace('/[ \/]/', '-', preg_replace('/[^a-z0-9 \-\/]/', '', 
 			strtolower($args['name'])));
 
 		//

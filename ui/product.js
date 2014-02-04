@@ -50,6 +50,10 @@ function ciniki_products_product() {
 				'addTxt':'Add Additional Image',
 				'addFn':'M.startApp(\'ciniki.products.images\',null,\'M.ciniki_products_product.showProduct();\',\'mc\',{\'product_id\':M.ciniki_products_product.product.product_id,\'add\':\'yes\'});',
 				},
+			'similar':{'label':'Similar Products', 'visible':'no', 'type':'simplegrid', 'num_cols':1,
+				'addTxt':'Add similar product',
+				'addFn':'M.startApp(\'ciniki.products.relationships\',null,\'M.ciniki_products_product.showProduct();\',\'mc\',{\'product_id\':M.ciniki_products_product.product.product_id,\'add\':\'yes\'});',
+				},
 			'_buttons':{'label':'', 'buttons':{
 				'edit':{'label':'Edit', 'fn':'M.startApp(\'ciniki.products.edit\',null,\'M.ciniki_products_product.showProduct();\',\'mc\',{\'product_id\':M.ciniki_products_product.product.product_id});'},
 				}},
@@ -93,10 +97,17 @@ function ciniki_products_product() {
 			if( s == 'files' && j == 0 ) {
 				return '<span class="maintext">' + d.file.name + '</span>';
 			}
+			if( s == 'similar' && j == 0 ) {
+				return d.product.name;
+			}
 		};
-		this.product.rowFn = function(s, i, d) {
+		this.product.rowFn = function(s, i, d) {	
 			if( s == 'files' ) {
 				return 'M.startApp(\'ciniki.products.files\',null,\'M.ciniki_products_product.showProduct();\',\'mc\',{\'file_id\':\'' + d.file.id + '\'});';
+			}
+			if( s == 'similar' ) {
+				return 'M.startApp(\'ciniki.products.relationships\',null,\'M.ciniki_products_product.showProduct();\',\'mc\',{\'product_id\':M.ciniki_products_product.product.product_id,\'relationship_id\':\'' + d.product.relationship_id + '\'});';
+//				return 'M.ciniki_products_product.showProduct(\'M.ciniki_products_product.showProduct();\',\'' + d.product.id + '\');';
 			}
 		};
 		this.product.thumbSrc = function(s, i, d) {
@@ -137,9 +148,11 @@ function ciniki_products_product() {
 
 	this.showProduct = function(cb, pid) {
 		this.product.reset();
+		this.product.sections.similar.visible=(M.curBusiness.modules['ciniki.products'].flags&0x01)==1?'yes':'no';
 		if( pid != null ) { this.product.product_id = pid; }
 		M.api.getJSONCb('ciniki.products.productGet', {'business_id':M.curBusinessID,
-			'product_id':this.product.product_id, 'files':'yes', 'images':'yes'}, function(rsp) {
+			'product_id':this.product.product_id, 
+			'files':'yes', 'images':'yes', 'similar':'yes'}, function(rsp) {
 				if( rsp.stat != 'ok' ) {
 					M.api.err(rsp);
 					return false;

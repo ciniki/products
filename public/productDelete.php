@@ -47,6 +47,7 @@ function ciniki_products_productDelete(&$ciniki) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionCommit');
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbCount');
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDelete');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectDelete');
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbAddModuleHistory');
 
 	//
@@ -92,24 +93,35 @@ function ciniki_products_productDelete(&$ciniki) {
 	}
 
 	//
-	// Delete the product
+	// Delete any relationships
 	//
-	$strsql = "DELETE FROM ciniki_products "
-		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-		. "AND id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
+	$strsql = "SELECT id, uuid "
+		. "FROM ciniki_product_relationships "
+		. "WHERE (product_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
+			. "OR related_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
+			. ") "
+		. "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "";
-	$rc = ciniki_core_dbDelete($ciniki, $strsql, 'ciniki.products');
+	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'relationship');
 	if( $rc['stat'] != 'ok' ) {
 		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
-		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'898', 'msg'=>'Unable to delete, internal error.'));
+		return $rc;
 	}
-
+	if( isset($rc['rows']) ) {
+		$relationships = $rc['rows'];
+		foreach($relationships as $relationship) {
+			$rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.products.relationship',
+				$relationship['id'], $relationship['uuid'], 0x04);
+			if( $rc['stat'] != 'ok' ) {
+				ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
+				return $rc;
+			}
+		}
+	}
+	
 	//
-	// Log the deletion
+	// Delete the product details
 	//
-	$rc = ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.products', 'ciniki_product_history', 
-		$args['business_id'], 3, 'ciniki_products', $args['product_id'], '*', '');
-
 	$strsql = "DELETE FROM ciniki_product_details "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "AND product_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
@@ -118,6 +130,17 @@ function ciniki_products_productDelete(&$ciniki) {
 	if( $rc['stat'] != 'ok' ) {
 		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'901', 'msg'=>'Unable to delete, internal error.'));
+	}
+	// FIXME: Does this need history logged for details delete?
+
+	//
+	// Delete the product
+	//
+	$rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.products.product',
+		$args['product_id'], $uuid, 0x04);
+	if( $rc['stat'] != 'ok' ) {
+		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'898', 'msg'=>'Unable to delete, internal error.'));
 	}
 
 	//

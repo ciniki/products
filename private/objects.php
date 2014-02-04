@@ -83,6 +83,20 @@ function ciniki_products_objects($ciniki) {
 			),
 		'history_table'=>'ciniki_product_history',
 		);
+	$objects['relationship'] = array(
+		'name'=>'Relationship',
+		'sync'=>'yes',
+		'table'=>'ciniki_product_relationships',
+		'fields'=>array(
+			'product_id'=>array('ref'=>'ciniki.products.product'),
+			'relationship_type'=>array(),
+			'related_id'=>array('ref'=>'ciniki.products.product'),
+			'date_started'=>array(),
+			'date_ended'=>array(),
+			'notes'=>array(),
+			),
+		'history_table'=>'ciniki_product_history',
+		);
 	
 	return array('stat'=>'ok', 'objects'=>$objects);
 }

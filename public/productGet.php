@@ -25,6 +25,7 @@ function ciniki_products_productGet($ciniki) {
 		'product_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Product'),
 		'files'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Files'),
 		'images'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Images'),
+		'similar'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Similar Products'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -40,6 +41,7 @@ function ciniki_products_productGet($ciniki) {
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
+	$modules = $rc['modules'];
 
 	//
 	// Load currency and timezone settings
@@ -212,6 +214,36 @@ function ciniki_products_productGet($ciniki) {
 			}
 		} else {
 			$product['images'] = array();
+		}
+	}
+
+	//
+	// Check if similar products is enabled and requested
+	//
+	if( isset($args['similar']) && $args['similar'] == 'yes' && ($modules['ciniki.products']['flags']&0x01) > 0 ) {
+		$strsql = "SELECT ciniki_products.id, ciniki_product_relationships.id AS relationship_id, "
+			. "ciniki_products.name "
+			. "FROM ciniki_product_relationships "
+			. "LEFT JOIN ciniki_products ON ((ciniki_product_relationships.product_id = ciniki_products.id "
+					. "OR ciniki_product_relationships.related_id = ciniki_products.id) "
+				. "AND ciniki_products.id <> '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
+				. "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+				. ") "
+			. "WHERE (ciniki_product_relationships.product_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
+				. "OR ciniki_product_relationships.related_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
+				. ") "
+			. "AND ciniki_product_relationships.relationship_type = 10 "
+			. "AND ciniki_product_relationships.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. ""; 
+		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
+			array('container'=>'products', 'fname'=>'id', 'name'=>'product',
+				'fields'=>array('id', 'relationship_id', 'name')),
+			));
+		if( $rc['stat'] != 'ok' ) {	
+			return $rc;
+		}
+		if( isset($rc['products']) ) {
+			$product['similar'] = $rc['products'];
 		}
 	}
 

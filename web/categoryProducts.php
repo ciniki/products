@@ -31,11 +31,12 @@
 function ciniki_products_web_categoryProducts($ciniki, $settings, $business_id, $type, $type_name) {
 
 	$strsql = "SELECT ciniki_products.id, "
-		. "ciniki_products.name, "
+		. "ciniki_products.name AS title, "
 		. "ciniki_products.permalink, "
 		. "ciniki_products.primary_image_id AS image_id, "
 		. "ciniki_products.price, "
 		. "ciniki_products.short_description AS description, "
+		. "'yes' AS is_details, "
 		. "IF(ciniki_images.last_updated > ciniki_products.last_updated, UNIX_TIMESTAMP(ciniki_images.last_updated), UNIX_TIMESTAMP(ciniki_products.last_updated)) AS last_updated "
 		. "FROM ciniki_products "
 		. "LEFT JOIN ciniki_images ON (ciniki_products.primary_image_id = ciniki_images.id) "

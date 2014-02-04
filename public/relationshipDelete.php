@@ -49,10 +49,10 @@ function ciniki_products_relationshipDelete(&$ciniki) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
 	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'relationship');
 	if( $rc['stat'] != 'ok' ) {
-		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1150', 'msg'=>'Unable to get existing relationship information', 'err'=>$rc['err']));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1534', 'msg'=>'Unable to get existing relationship information', 'err'=>$rc['err']));
 	}
 	if( !isset($rc['relationship']) ) {
-		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1151', 'msg'=>'Unable to get existing relationship information'));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1535', 'msg'=>'Unable to get existing relationship information'));
 	}
 	$uuid = $rc['relationship']['uuid'];
 

@@ -52,7 +52,11 @@ function ciniki_products_product() {
 				},
 			'similar':{'label':'Similar Products', 'visible':'no', 'type':'simplegrid', 'num_cols':1,
 				'addTxt':'Add similar product',
-				'addFn':'M.startApp(\'ciniki.products.relationships\',null,\'M.ciniki_products_product.showProduct();\',\'mc\',{\'product_id\':M.ciniki_products_product.product.product_id,\'add\':\'yes\'});',
+				'addFn':'M.startApp(\'ciniki.products.relationships\',null,\'M.ciniki_products_product.showProduct();\',\'mc\',{\'product_id\':M.ciniki_products_product.product.product_id});',
+				},
+			'recipes':{'label':'Recommended Recipes', 'visible':'no', 'type':'simplegrid', 'num_cols':1,
+				'addTxt':'Add recipe',
+				'addFn':'M.startApp(\'ciniki.products.recipes\',null,\'M.ciniki_products_product.showProduct();\',\'mc\',{\'product_id\':M.ciniki_products_product.product.product_id});',
 				},
 			'_buttons':{'label':'', 'buttons':{
 				'edit':{'label':'Edit', 'fn':'M.startApp(\'ciniki.products.edit\',null,\'M.ciniki_products_product.showProduct();\',\'mc\',{\'product_id\':M.ciniki_products_product.product.product_id});'},
@@ -100,6 +104,9 @@ function ciniki_products_product() {
 			if( s == 'similar' && j == 0 ) {
 				return d.product.name;
 			}
+			if( s == 'recipes' && j == 0 ) {
+				return d.recipe.name;
+			}
 		};
 		this.product.rowFn = function(s, i, d) {	
 			if( s == 'files' ) {
@@ -107,7 +114,9 @@ function ciniki_products_product() {
 			}
 			if( s == 'similar' ) {
 				return 'M.startApp(\'ciniki.products.relationships\',null,\'M.ciniki_products_product.showProduct();\',\'mc\',{\'product_id\':M.ciniki_products_product.product.product_id,\'relationship_id\':\'' + d.product.relationship_id + '\'});';
-//				return 'M.ciniki_products_product.showProduct(\'M.ciniki_products_product.showProduct();\',\'' + d.product.id + '\');';
+			}
+			if( s == 'recipes' ) {
+				return 'M.startApp(\'ciniki.products.recipes\',null,\'M.ciniki_products_product.showProduct();\',\'mc\',{\'product_id\':M.ciniki_products_product.product.product_id,\'ref_id\':\'' + d.recipe.ref_id + '\'});';
 			}
 		};
 		this.product.thumbSrc = function(s, i, d) {
@@ -149,10 +158,11 @@ function ciniki_products_product() {
 	this.showProduct = function(cb, pid) {
 		this.product.reset();
 		this.product.sections.similar.visible=(M.curBusiness.modules['ciniki.products'].flags&0x01)==1?'yes':'no';
+		this.product.sections.recipes.visible=(M.curBusiness.modules['ciniki.products'].flags&0x02)==2?'yes':'no';
 		if( pid != null ) { this.product.product_id = pid; }
 		M.api.getJSONCb('ciniki.products.productGet', {'business_id':M.curBusinessID,
 			'product_id':this.product.product_id, 
-			'files':'yes', 'images':'yes', 'similar':'yes'}, function(rsp) {
+			'files':'yes', 'images':'yes', 'similar':'yes', 'recipes':'yes'}, function(rsp) {
 				if( rsp.stat != 'ok' ) {
 					M.api.err(rsp);
 					return false;

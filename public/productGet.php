@@ -4,17 +4,12 @@
 // -----------
 // This function will retreive the information about a product.
 //
-// Info
-// ----
-// Status: 			started
-//
 // Arguments
 // ---------
-// user_id: 		The user making the request
 // 
 // Returns
 // -------
-// <product id="1" name="CC Merlot" wine_type="red" kit_length="
+//
 function ciniki_products_productGet($ciniki) {
     //  
     // Find all the required and optional arguments
@@ -26,6 +21,7 @@ function ciniki_products_productGet($ciniki) {
 		'files'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Files'),
 		'images'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Images'),
 		'similar'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Similar Products'),
+		'recipes'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Recommended Recipes'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -244,6 +240,32 @@ function ciniki_products_productGet($ciniki) {
 		}
 		if( isset($rc['products']) ) {
 			$product['similar'] = $rc['products'];
+		}
+	}
+
+	if( isset($args['recipes']) && $args['recipes'] == 'yes' 
+		&& isset($modules['ciniki.recipes'])
+		&& ($modules['ciniki.products']['flags']&0x02) > 0 ) {
+		$strsql = "SELECT ciniki_recipes.id, "
+			. "ciniki_product_refs.id AS ref_id, "
+			. "ciniki_recipes.name "
+			. "FROM ciniki_product_refs "
+			. "LEFT JOIN ciniki_recipes ON (ciniki_product_refs.object_id = ciniki_recipes.id "
+				. "AND ciniki_recipes.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+				. ") "
+			. "WHERE ciniki_product_refs.product_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
+			. "AND ciniki_product_refs.object = 'ciniki.recipes.recipe' "
+			. "AND ciniki_product_refs.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. ""; 
+		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
+			array('container'=>'recipes', 'fname'=>'id', 'name'=>'recipe',
+				'fields'=>array('id', 'ref_id', 'name')),
+			));
+		if( $rc['stat'] != 'ok' ) {	
+			return $rc;
+		}
+		if( isset($rc['recipes']) ) {
+			$product['recipes'] = $rc['recipes'];
 		}
 	}
 

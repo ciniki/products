@@ -97,6 +97,17 @@ function ciniki_products_objects($ciniki) {
 			),
 		'history_table'=>'ciniki_product_history',
 		);
+	$objects['ref'] = array(
+		'name'=>'Object Reference',
+		'sync'=>'yes',
+		'table'=>'ciniki_product_refs',
+		'fields'=>array(
+			'product_id'=>array('ref'=>'ciniki.products.product'),
+			'object'=>array(),
+			'object_id'=>array('oref'=>'object'),
+			),
+		'history_table'=>'ciniki_product_history',
+		);
 	
 	return array('stat'=>'ok', 'objects'=>$objects);
 }

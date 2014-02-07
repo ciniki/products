@@ -11,6 +11,7 @@ function ciniki_products_edit() {
 		'5':{'name':'Category Highlight'},
 		};
 	this.oakToggles = {
+		'0':'0',
 		'1':'1',
 		'2':'2',
 		'3':'3',
@@ -86,7 +87,7 @@ function ciniki_products_edit() {
 			'details':{'label':'', 'fields':{
 				'wine_type':{'label':'Wine Type', 'hint':'red, white or other', 'type':'text', 'size':'medium'},
 				'kit_length':{'label':'Kit Length', 'hint':'4, 5, 6, 8', 'type':'text', 'size':'small'},
-				'winekit_oak':{'label':'Oak', 'type':'toggle', 'default':'1', 'toggles':this.oakToggles},
+				'winekit_oak':{'label':'Oak', 'type':'toggle', 'default':'0', 'toggles':this.oakToggles},
 				'winekit_body':{'label':'Body', 'type':'toggle', 'default':'1', 'toggles':this.bodyToggles},
 				'winekit_sweetness':{'label':'Sweetness', 'type':'toggle', 'default':'0', 'toggles':this.sweetnessToggles},
 			}},
@@ -194,8 +195,9 @@ function ciniki_products_edit() {
 
 	this.saveProduct = function() {
 		var name = M.gE(this.edit.panelUID + '_supplier_id_fkidstr').value;
-		if( (this.edit.formValue('supplier_id') == 0 && name != '')
-			|| this.edit.data.supplier_name != name ) {
+		var sid = this.edit.formValue('supplier_id');
+		if( (sid == 0 && name != '')
+			|| (this.edit.data.supplier_name != null && this.edit.data.supplier_name != name && name != '' ) ) {
 			M.api.getJSONCb('ciniki.products.supplierAdd', {'business_id':M.curBusinessID,
 				'name':encodeURIComponent(name)}, function(rsp) {
 					if( rsp.stat != 'ok' ) {

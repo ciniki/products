@@ -17,6 +17,9 @@
 #
 # name:				The name of the product.
 #
+# permalink:		The simplified name of the product for use in the url to the product
+#					on the business website.
+#
 # type:				 0 - unknown
 #					 1 - generic
 #					 2 - package (collection of products) (future)

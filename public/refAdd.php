@@ -49,7 +49,6 @@ function ciniki_products_refAdd(&$ciniki) {
 	// Check the referenced object exists
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectCheckExists');
-	error_log(print_r($args, true));
 	$rc = ciniki_core_objectCheckExists($ciniki, $args['business_id'], $args['object'], $args['object_id']);
 	if( $rc['stat'] == 'noexist' ) {
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1541', 'msg'=>'Object does not exist'));

@@ -7,7 +7,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:			The ID of the business to add the product to.
+// business_id:			The ID of the business to the file is attached to.
 // name:				The name of the file.  
 //
 // Returns
@@ -22,7 +22,7 @@ function ciniki_products_fileUpdate(&$ciniki) {
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
         'file_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'File'), 
-		'name'=>array('required'=>'no', 'trimblanks'=>'yes', 'blank'=>'yes', 'name'=>'First Name'),
+		'name'=>array('required'=>'no', 'trimblanks'=>'yes', 'blank'=>'yes', 'name'=>'Name'),
 		'description'=>array('required'=>'no', 'trimblanks'=>'yes', 'blank'=>'yes', 'name'=>'Description'),
 		'webflags'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Web Flags'),
 		'publish_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'name'=>'Publish Date'),

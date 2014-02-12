@@ -36,7 +36,7 @@ function ciniki_products_productStats($ciniki) {
     // check permission to run this function for this business
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.productCategories', 0); 
+    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.productStats', 0); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   

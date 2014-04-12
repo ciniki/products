@@ -44,7 +44,8 @@ function ciniki_products_productList($ciniki) {
 
 	$strsql = "SELECT ciniki_products.id, "
 		. "ciniki_products.category, "
-		. "ciniki_products.name "
+		. "ciniki_products.name, "
+		. "IF((inventory_flags&0x01)=1,inventory_current_num,'') AS inventory_current_num "
 		. "FROM ciniki_products "
 		. "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "";
@@ -53,7 +54,7 @@ function ciniki_products_productList($ciniki) {
 		$strsql .= "ORDER BY category, name ";
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
 			array('container'=>'products', 'fname'=>'id', 'name'=>'product',
-				'fields'=>array('id', 'category', 'name')),
+				'fields'=>array('id', 'category', 'name', 'inventory_current_num')),
 			));
 		if( $rc['stat'] != 'ok' ) {
 			return $rc;

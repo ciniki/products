@@ -91,6 +91,10 @@ function ciniki_products_productGet($ciniki) {
 		. "supplier_item_number, "
 		. "supplier_minimum_order, "
 		. "supplier_order_multiple, "
+		. "manufacture_min_time, "
+		. "manufacture_max_time, "
+		. "inventory_flags, "
+		. "inventory_current_num, "
 		. "price, "
 		. "cost, "
 		. "msrp, "
@@ -115,6 +119,7 @@ function ciniki_products_productGet($ciniki) {
 				'category', 'status', 'status_text',
 				'supplier_id', 'supplier_name', 'supplier_item_number', 
 				'supplier_minimum_order', 'supplier_order_multiple',
+				'manufacture_min_time', 'manufacture_max_time', 'inventory_flags', 'inventory_current_num',
 				'barcode', 'price', 'cost', 'msrp', 'primary_image_id',
 				'short_description', 'long_description', 'start_date', 'end_date',
 				'webflags', 'webvisible'),
@@ -131,6 +136,12 @@ function ciniki_products_productGet($ciniki) {
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1471', 'msg'=>'Unable to find the specified product'));
 	}
 	$product = $rc['products'][0]['product'];
+
+	$product['manufacture_times'] = '';
+	if( $product['manufacture_min_time'] != '' && $product['manufacture_max_time'] != '' 
+		&& $product['manufacture_max_time'] > 0 ) {
+		$product['manufacture_times'] = $product['manufacture_min_time'] . ' - ' . $product['manufacture_max_time'] . ' minutes';
+	}
 
 	//
 	// Get the product details

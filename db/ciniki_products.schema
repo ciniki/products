@@ -29,6 +29,7 @@
 #					 6 - one of a kind (future)
 #					..
 #					64 - wine kit
+#					65 - Craft
 #
 # category:			The category for the product.
 #
@@ -106,6 +107,10 @@ create table ciniki_products (
 	supplier_item_number varchar(100) not null,
 	supplier_minimum_order int not null,
 	supplier_order_multiple int not null,
+	manufacture_min_time int not null,
+	manufacture_max_time int not null,
+	inventory_flags tinyint unsigned not null,
+	inventory_current_num int not null,
 	primary_image_id int not null,
 	short_description varchar(6000) not null,
 	long_description varchar(20000) not null,
@@ -120,4 +125,4 @@ create table ciniki_products (
 	index (business_id, uuid, last_updated),
 	index supplier (supplier_id, supplier_item_number),
 	unique index permalink (business_id, permalink)
-) ENGINE='InnoDB', COMMENT='v1.07';
+) ENGINE='InnoDB', COMMENT='v1.08';

@@ -1,0 +1,8 @@
+#
+# This file will upgrade the database table products to version 1.08.
+#
+ALTER TABLE ciniki_products ADD COLUMN manufacture_min_time int not null after supplier_order_multiple;
+ALTER TABLE ciniki_products ADD COLUMN manufacture_max_time int not null after manufacture_min_time;
+ALTER TABLE ciniki_products ADD COLUMN inventory_flags tinyint unsigned not null after manufacture_max_time;
+ALTER TABLE ciniki_products ADD COLUMN inventory_current_num int not null after inventory_current_num;
+ALTER TABLE ciniki_products COMMENT='v1.08';

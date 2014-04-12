@@ -29,6 +29,8 @@ function ciniki_products_product() {
 				'winekit_body':{'label':'Body', 'visible':'no'},
 				'winekit_sweetness':{'label':'Sweetness', 'visible':'no'},
 				'webvisible':{'label':'Web', 'visible':'yes'},
+				'manufacture_times':{'label':'Manufacture Time', 'visible':'no'},
+				'inventory_current_num':{'label':'Inventory', 'visible':'no'},
 				}},
 			'supplier':{'label':'Supplier', 'aside':'yes', 'list':{
 				'supplier_name':{'label':'Name',},
@@ -36,6 +38,9 @@ function ciniki_products_product() {
 				'supplier_minimum_order':{'label':'Minimum Order', 'visible':'no'},
 				'supplier_order_multiple':{'label':'Order Multiple', 'visible':'no'},
 				}},
+//			'inventory':{'label':'Inventory', 'aside':'yes', 'visible':'no', 'list':{
+//				'inventory_current_num':{'label':'', 'visible':'no'},
+//				}},
 			'short_description':{'label':'Description', 'type':'htmlcontent'},
 			'long_description':{'label':'Full Description', 'type':'htmlcontent'},
 			'files':{'label':'Files', 'type':'simplegrid', 'num_cols':1,
@@ -169,13 +174,25 @@ function ciniki_products_product() {
 				}
 				var p = M.ciniki_products_product.product;
 				p.data = rsp.product;
-				var fields = ['wine_type', 'kit_length', 'winekit_oak', 'winekit_body', 'winekit_sweetness'];
+				var fields = ['wine_type', 'kit_length', 'winekit_oak', 'winekit_body', 'winekit_sweetness', 'manufacture_times'];
 				for(i in fields) {
 					p.sections.info.list[fields[i]].visible=rsp.product[fields[i]]!=null&&rsp.product[fields[i]]!=''?'yes':'no';
 				}
-				p.sections.supplier.list['supplier_item_number'].visible=rsp.product['supplier_item_number']!=null&&rsp.product['supplier_item_number']!=''?'yes':'no';
-				p.sections.supplier.list['supplier_minimum_order'].visible=rsp.product['supplier_minimum_order']!=null&&rsp.product['supplier_minimum_order']>1?'yes':'no';
-				p.sections.supplier.list['supplier_order_multiple'].visible=rsp.product['supplier_order_multiple']!=null&&rsp.product['supplier_order_multiple']>1?'yes':'no';
+				if( (M.curBusiness.modules['ciniki.products'].flags&0x04) > 0
+					&& (rsp.product.inventory_flags&0x01) > 0 ) {
+					p.sections.info.list.inventory_current_num.visible = 'yes';
+				} else {
+					p.sections.info.list.inventory_current_num.visible = 'no';
+				}
+				if( (M.curBusiness.modules['ciniki.products'].flags&0x08) > 0
+					&& rsp.product['supplier_id'] != '' && rsp.product['supplier_id'] != '0' ) {
+					p.sections.supplier.visible = 'yes';
+					p.sections.supplier.list['supplier_item_number'].visible=rsp.product['supplier_item_number']!=null&&rsp.product['supplier_item_number']!=''?'yes':'no';
+					p.sections.supplier.list['supplier_minimum_order'].visible=rsp.product['supplier_minimum_order']!=null&&rsp.product['supplier_minimum_order']>1?'yes':'no';
+					p.sections.supplier.list['supplier_order_multiple'].visible=rsp.product['supplier_order_multiple']!=null&&rsp.product['supplier_order_multiple']>1?'yes':'no';
+				} else {
+					p.sections.supplier.visible = 'no';
+				}
 				p.refresh();
 				p.show(cb);
 			});

@@ -33,6 +33,9 @@ function ciniki_products_edit() {
 		'4':'4',
 		'5':'5',
 		};
+	this.inventoryFlags = {
+		'1':{'name':'Track'},
+		};
 	this.init = function() {
 		//
 		// The edit panel
@@ -46,6 +49,7 @@ function ciniki_products_edit() {
 		this.edit.formtabs = {'label':'', 'field':'type', 'tabs':{
 			'generic':{'label':'Generic', 'field_id':1, 'form':'generic'},
 			'winekit':{'label':'Wine Kit', 'field_id':64, 'form':'winekit'},
+			'craft':{'label':'Craft', 'field_id':65, 'form':'craft'},
 			}};
 		this.edit.forms = {};
 		this.edit.forms.generic = {
@@ -67,6 +71,10 @@ function ciniki_products_edit() {
 				'supplier_minimum_order':{'label':'Minimum Order', 'type':'text', 'size':'small'},
 				'supplier_order_multiple':{'label':'Multiples', 'type':'text', 'size':'small'},
 				}},
+			'inventory':{'label':'Inventory', 'active':'no', 'fields':{
+				'inventory_flags':{'label':'Options', 'type':'flags', 'flags':this.inventoryFlags},
+				'inventory_current_num':{'label':'Number', 'type':'text', 'size':'small'},
+			}},
 			'details':{'label':'', 'visible':'no', 'fields':{
 				}},
 			'_description':{'label':'Brief Description', 'fields':{
@@ -91,6 +99,19 @@ function ciniki_products_edit() {
 				'winekit_body':{'label':'Body', 'type':'toggle', 'default':'1', 'toggles':this.bodyToggles},
 				'winekit_sweetness':{'label':'Sweetness', 'type':'toggle', 'default':'0', 'toggles':this.sweetnessToggles},
 			}},
+			'inventory':this.edit.forms.generic.inventory,
+			'_description':this.edit.forms.generic._description,
+			'_long_description':this.edit.forms.generic._long_description,
+			'_save':this.edit.forms.generic._save
+			};
+		this.edit.forms.craft = {
+			'_image':this.edit.forms.generic._image,
+			'info':this.edit.forms.generic.info,
+			'details':{'label':'Manufacturing Times', 'fields':{
+				'manufacture_min_time':{'label':'Min', 'hint':'time in minutes', 'type':'text', 'size':'small'},
+				'manufacture_max_time':{'label':'Max', 'hint':'time in minutes', 'type':'text', 'size':'small'},
+			}},
+			'inventory':this.edit.forms.generic.inventory,
 			'_description':this.edit.forms.generic._description,
 			'_long_description':this.edit.forms.generic._long_description,
 			'_save':this.edit.forms.generic._save
@@ -166,6 +187,18 @@ function ciniki_products_edit() {
 	this.showEdit = function(cb, pid, category, supplier_id, supplier_name) {
 		this.edit.reset();
 		if( pid != null ) { this.edit.product_id = pid; }
+		// Check if inventory enabled
+		if( (M.curBusiness.modules['ciniki.products'].flags&0x04) > 0 ) {
+			this.edit.forms.generic.inventory.active = 'yes';
+		} else {
+			this.edit.forms.generic.inventory.active = 'no';
+		}
+		// Check if suppliers enabled
+		if( (M.curBusiness.modules['ciniki.products'].flags&0x08) > 0 ) {
+			this.edit.forms.generic.supplier.active = 'yes';
+		} else {
+			this.edit.forms.generic.supplier.active = 'no';
+		}
 		if( this.edit.product_id > 0 ) {
 			M.api.getJSONCb('ciniki.products.productGet', {'business_id':M.curBusinessID,
 				'product_id':this.edit.product_id}, function(rsp) {
@@ -194,6 +227,9 @@ function ciniki_products_edit() {
 	};
 
 	this.saveProduct = function() {
+		if( this.edit.sections.supplier == null ) {
+			return this.saveProductFinish();
+		}
 		var name = M.gE(this.edit.panelUID + '_supplier_id_fkidstr').value;
 		var sid = this.edit.formValue('supplier_id');
 		if( (sid == 0 && name != '')

@@ -142,6 +142,11 @@ function ciniki_products_productGet($ciniki) {
 	if( ($product['webflags']&0x02) > 0 ) {
 		$product['webflags_text'] .= ($product['webflags_text']!=''?', ':'') . 'Sold Online';
 	}
+	if( ($product['webflags']&0x04) > 0 ) {
+		$product['webflags_text'] .= ($product['webflags_text']!=''?', ':'') . 'Price Hidden';
+	} else {
+		$product['webflags_text'] .= ($product['webflags_text']!=''?', ':'') . 'Price Visible';
+	}
 
 	$product['manufacture_times'] = '';
 	if( $product['manufacture_min_time'] != '' && $product['manufacture_max_time'] != '' 

@@ -70,27 +70,29 @@ function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $p
 	//
 	// Check if the product is sold online
 	//
-	$product['prices']['1'] = array(
-		'object'=>'ciniki.products.product',
-		'object_id'=>$product['id'],
-		'name'=>'Price',
-		'unit_amount'=>$product['price'],
-		'unit_discount_amount'=>$product['unit_discount_amount'],
-		'unit_discount_percentage'=>$product['unit_discount_percentage'],
-		'taxtype_id'=>$product['taxtype_id'],
-		'cart'=>'no',
-		'limited_units'=>'yes',
-		'units_available'=>0,
-		);
+	if( ($product['webflags']&0x04) == 0 || ($product['webflags']&0x02) > 0 ) {
+		$product['prices']['1'] = array(
+			'object'=>'ciniki.products.product',
+			'object_id'=>$product['id'],
+			'name'=>'Price',
+			'unit_amount'=>$product['price'],
+			'unit_discount_amount'=>$product['unit_discount_amount'],
+			'unit_discount_percentage'=>$product['unit_discount_percentage'],
+			'taxtype_id'=>$product['taxtype_id'],
+			'cart'=>'no',
+			'limited_units'=>'no',
+			'units_available'=>0,
+			);
 
-	// Check if product is to be sold online
-	if( ($product['webflags']&0x02) > 0 ) {
-		$product['prices']['1']['cart'] = 'yes';
-	}
-	// Check if product has inventory or unlimited
-	if( ($product['inventory_flags']&0x01) > 0 ) {
-		$product['prices']['1']['limited_units'] = 'yes';
-		$product['prices']['1']['units_available'] = $product['inventory_current_num'];
+		// Check if product is to be sold online
+		if( ($product['webflags']&0x02) > 0 ) {
+			$product['prices']['1']['cart'] = 'yes';
+		}
+		// Check if product has inventory or unlimited
+		if( ($product['inventory_flags']&0x01) > 0 ) {
+			$product['prices']['1']['limited_units'] = 'yes';
+			$product['prices']['1']['units_available'] = $product['inventory_current_num'];
+		}
 	}
 
 	//

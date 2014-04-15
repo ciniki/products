@@ -9,6 +9,7 @@ function ciniki_products_edit() {
 	this.webFlags = {
 		'1':{'name':'Hidden'},
 		'2':{'name':'Sell Online', 'active':'no'},
+		'3':{'name':'Hide Price', 'active':'yes'},
 		'5':{'name':'Category Highlight'},
 		};
 	this.oakToggles = {
@@ -64,7 +65,7 @@ function ciniki_products_edit() {
 				'price':{'label':'Price', 'hint':'', 'type':'text'},
 				'cost':{'label':'Cost', 'hint':'', 'type':'text'},
 				'status':{'label':'Status', 'type':'select', 'options':this.statusOptions},
-				'webflags':{'label':'Website', 'type':'flags', 'join':'yes', 'flags':this.webFlags},
+				'webflags':{'label':'Website', 'type':'flags', 'join':'no', 'flags':this.webFlags},
 				}},
 			'supplier':{'label':'Supplier', 'fields':{
 				'supplier_id':{'label':'Name', 'type':'fkid', 'livesearch':'yes', 'livesearchempty':'yes'},

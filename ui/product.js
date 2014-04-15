@@ -28,7 +28,7 @@ function ciniki_products_product() {
 				'winekit_oak':{'label':'Oak', 'visible':'no'},
 				'winekit_body':{'label':'Body', 'visible':'no'},
 				'winekit_sweetness':{'label':'Sweetness', 'visible':'no'},
-				'webvisible':{'label':'Web', 'visible':'yes'},
+				'webflags_text':{'label':'Web', 'visible':'yes'},
 				'manufacture_times':{'label':'Manufacture Time', 'visible':'no'},
 				'inventory_current_num':{'label':'Inventory', 'visible':'no'},
 				}},

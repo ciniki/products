@@ -8,6 +8,7 @@ function ciniki_products_edit() {
 		};
 	this.webFlags = {
 		'1':{'name':'Hidden'},
+		'2':{'name':'Sell Online', 'active':'no'},
 		'5':{'name':'Category Highlight'},
 		};
 	this.oakToggles = {
@@ -198,6 +199,13 @@ function ciniki_products_edit() {
 			this.edit.forms.generic.supplier.active = 'yes';
 		} else {
 			this.edit.forms.generic.supplier.active = 'no';
+		}
+		// Check if shopping cart is enabled for business
+		if( M.curBusiness.modules['ciniki.sapos'] != null 
+			&& (M.curBusiness.modules['ciniki.sapos'].flags&0x08) > 0 ) {
+			this.edit.forms.generic.info.fields.webflags.flags['2'].active = 'yes';
+		} else {
+			this.edit.forms.generic.info.fields.webflags.flags['2'].active = 'no';
 		}
 		if( this.edit.product_id > 0 ) {
 			M.api.getJSONCb('ciniki.products.productGet', {'business_id':M.curBusinessID,

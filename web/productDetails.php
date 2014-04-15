@@ -21,6 +21,13 @@ function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $p
 		. "ciniki_products.permalink, "
 		. "ciniki_products.short_description, "
 		. "ciniki_products.long_description, "
+		. "ciniki_products.webflags, "
+		. "ciniki_products.price, "
+		. "ciniki_products.unit_discount_amount, "
+		. "ciniki_products.unit_discount_percentage, "
+		. "ciniki_products.taxtype_id, "
+		. "ciniki_products.inventory_flags, "
+		. "ciniki_products.inventory_current_num, "
 		. "ciniki_products.primary_image_id, "
 		. "ciniki_product_images.image_id, "
 		. "ciniki_product_images.name AS image_name, "
@@ -39,7 +46,9 @@ function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $p
 	$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.artclub', array(
 		array('container'=>'products', 'fname'=>'id', 
 			'fields'=>array('id', 'name', 'permalink', 'image_id'=>'primary_image_id', 
-			'short_description', 'long_description')),
+			'short_description', 'long_description', 'webflags',
+			'price', 'unit_discount_amount', 'unit_discount_percentage', 'taxtype_id',
+			'inventory_flags', 'inventory_current_num')),
 		array('container'=>'images', 'fname'=>'image_id', 
 			'fields'=>array('image_id', 'title'=>'image_name', 'permalink'=>'image_permalink',
 				'description'=>'image_description', 
@@ -52,6 +61,42 @@ function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $p
 		return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'1506', 'msg'=>"I'm sorry, but we can't find the product you requested."));
 	}
 	$product = array_pop($rc['products']);
+
+	//
+	// Setup the shopping cart prices for the product
+	//
+	$product['prices'] = array();
+
+	//
+	// Check if the product is sold online
+	//
+	$product['prices']['1'] = array(
+		'object'=>'ciniki.products.product',
+		'object_id'=>$product['id'],
+		'name'=>'Price',
+		'unit_amount'=>$product['price'],
+		'unit_discount_amount'=>$product['unit_discount_amount'],
+		'unit_discount_percentage'=>$product['unit_discount_percentage'],
+		'taxtype_id'=>$product['taxtype_id'],
+		'cart'=>'no',
+		'limited_units'=>'yes',
+		'units_available'=>0,
+		);
+
+	// Check if product is to be sold online
+	if( ($product['webflags']&0x02) > 0 ) {
+		$product['prices']['1']['cart'] = 'yes';
+	}
+	// Check if product has inventory or unlimited
+	if( ($product['inventory_flags']&0x01) > 0 ) {
+		$product['prices']['1']['limited_units'] = 'yes';
+		$product['prices']['1']['units_available'] = $product['inventory_current_num'];
+	}
+
+	//
+	// **FUTURE** add sub table for price options
+	//
+
 
 	//
 	// Check if any files are attached to the product

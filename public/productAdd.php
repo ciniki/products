@@ -79,7 +79,8 @@ function ciniki_products_productAdd(&$ciniki) {
 	}
 
 	if( !isset($args['permalink']) || $args['permalink'] == '' ) {
-		$args['permalink'] = preg_replace('/ /', '-', preg_replace('/[^a-z0-9 \-]/', '', strtolower($args['name'])));
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'makePermalink');
+		$args['permalink'] = ciniki_core_makePermalink($ciniki, $args['name']);
 	}
 
 	//

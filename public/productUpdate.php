@@ -69,8 +69,8 @@ function ciniki_products_productUpdate(&$ciniki) {
     }   
 
 	if( isset($args['name']) ) {
-		$args['permalink'] = preg_replace('/[ \/]/', '-', preg_replace('/[^a-z0-9 \-\/]/', '', 
-			strtolower($args['name'])));
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'makePermalink');
+		$args['permalink'] = ciniki_core_makePermalink($ciniki, $args['name']);
 
 		//
 		// Check the permalink does not already exist

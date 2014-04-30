@@ -40,7 +40,8 @@ function ciniki_products_fileAdd(&$ciniki) {
     $args = $rc['args'];
 
 	$name = $args['name'];
-	$args['permalink'] = preg_replace('/ /', '-', preg_replace('/[^a-z0-9 ]/', '', strtolower($name)));
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'makePermalink');
+	$args['permalink'] = ciniki_core_makePermalink($ciniki, $name);
 
     //  
     // Make sure this module is activated, and

@@ -61,9 +61,11 @@ function ciniki_products_imageUpdate(&$ciniki) {
 
 	if( isset($args['name']) ) {
 		if( $args['name'] != '' ) {
-			$args['permalink'] = preg_replace('/ /', '-', preg_replace('/[^a-z0-9 ]/', '', strtolower($args['name'])));
+			ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'makePermalink');
+			$args['permalink'] = ciniki_core_makePermalink($ciniki, $args['name']);
 		} else {
-			$args['permalink'] = preg_replace('/ /', '-', preg_replace('/[^a-z0-9 ]/', '', strtolower($item['uuid'])));
+			ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'makePermalink');
+			$args['permalink'] = ciniki_core_makePermalink($ciniki, $item['uuid']);
 		}
 		//
 		// Make sure the permalink is unique

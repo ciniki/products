@@ -236,7 +236,7 @@ function ciniki_products_edit() {
 	};
 
 	this.saveProduct = function() {
-		if( this.edit.sections.supplier == null ) {
+		if( this.edit.sections.supplier == null || this.edit.forms.generic.supplier.active == 'no' ) {
 			return this.saveProductFinish();
 		}
 		var name = M.gE(this.edit.panelUID + '_supplier_id_fkidstr').value;

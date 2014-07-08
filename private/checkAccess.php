@@ -20,7 +20,7 @@
 // Returns
 // -------
 //
-function ciniki_products_checkAccess($ciniki, $business_id, $method, $product_id) {
+function ciniki_products_checkAccess(&$ciniki, $business_id, $method, $product_id=0) {
 	//
 	// Check if the business is active and the module is enabled
 	//

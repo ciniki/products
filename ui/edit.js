@@ -12,32 +12,32 @@ function ciniki_products_edit() {
 		'3':{'name':'Hide Price', 'active':'yes'},
 		'5':{'name':'Category Highlight'},
 		};
-	this.oakToggles = {
-		'0':'0',
-		'1':'1',
-		'2':'2',
-		'3':'3',
-		'4':'4',
-		'5':'5',
-		};
-	this.bodyToggles = {
-		'1':'1',
-		'2':'2',
-		'3':'3',
-		'4':'4',
-		'5':'5',
-		};
-	this.sweetnessToggles = {
-		'0':'0',
-		'1':'1',
-		'2':'2',
-		'3':'3',
-		'4':'4',
-		'5':'5',
-		};
-	this.inventoryFlags = {
-		'1':{'name':'Track'},
-		};
+//	this.oakToggles = {
+//		'0':'0',
+//		'1':'1',
+//		'2':'2',
+//		'3':'3',
+//		'4':'4',
+//		'5':'5',
+//		};
+//	this.bodyToggles = {
+//		'1':'1',
+//		'2':'2',
+//		'3':'3',
+//		'4':'4',
+//		'5':'5',
+//		};
+//	this.sweetnessToggles = {
+//		'0':'0',
+//		'1':'1',
+//		'2':'2',
+//		'3':'3',
+//		'4':'4',
+//		'5':'5',
+//		};
+//	this.inventoryFlags = {
+//		'1':{'name':'Track'},
+//		};
 	this.init = function() {
 		//
 		// The edit panel
@@ -47,77 +47,10 @@ function ciniki_products_edit() {
 			'mc', 'medium mediumaside', 'sectioned', 'ciniki.products.edit.edit');
 		this.edit.data = {};
 		this.edit.product_id = 0;
-		this.edit.formtab = 'generic';
-		this.edit.formtabs = {'label':'', 'field':'type', 'tabs':{
-			'generic':{'label':'Generic', 'field_id':1, 'form':'generic'},
-			'winekit':{'label':'Wine Kit', 'field_id':64, 'form':'winekit'},
-			'craft':{'label':'Craft', 'field_id':65, 'form':'craft'},
-			}};
+		this.edit.formtab = 0;
+		this.edit.default_formtab = 0;
 		this.edit.forms = {};
-		this.edit.forms.generic = {
-			'_image':{'label':'', 'aside':'yes', 'fields':{
-				'primary_image_id':{'label':'', 'type':'image_id', 'hidelabel':'yes', 
-					'controls':'all', 'history':'no'},
-				}},
-			'info':{'label':'', 'fields':{
-				'name':{'label':'Name', 'hint':'Product Name', 'type':'text'},
-				'category':{'label':'Category', 'hint':'', 'type':'text', 'livesearch':'yes', 'livesearchempty':'yes'},
-				'price':{'label':'Price', 'hint':'', 'type':'text'},
-				'cost':{'label':'Cost', 'hint':'', 'type':'text'},
-				'status':{'label':'Status', 'type':'select', 'options':this.statusOptions},
-				'webflags':{'label':'Website', 'type':'flags', 'join':'no', 'flags':this.webFlags},
-				}},
-			'supplier':{'label':'Supplier', 'fields':{
-				'supplier_id':{'label':'Name', 'type':'fkid', 'livesearch':'yes', 'livesearchempty':'yes'},
-				'supplier_item_number':{'label':'Item Number', 'type':'text'},
-				'supplier_minimum_order':{'label':'Minimum Order', 'type':'text', 'size':'small'},
-				'supplier_order_multiple':{'label':'Multiples', 'type':'text', 'size':'small'},
-				}},
-			'inventory':{'label':'Inventory', 'active':'no', 'fields':{
-				'inventory_flags':{'label':'Options', 'type':'flags', 'flags':this.inventoryFlags},
-				'inventory_current_num':{'label':'Number', 'type':'text', 'size':'small'},
-			}},
-			'details':{'label':'', 'visible':'no', 'fields':{
-				}},
-			'_description':{'label':'Brief Description', 'fields':{
-				'short_description':{'label':'', 'hidelabel':'yes', 'hint':'', 'type':'textarea'},
-				}},
-			'_long_description':{'label':'Full Description', 'fields':{
-				'long_description':{'label':'', 'hidelabel':'yes', 'hint':'', 'type':'textarea'},
-				}},
-			'_save':{'label':'', 'buttons':{
-				'save':{'label':'Save', 'fn':'M.ciniki_products_edit.saveProduct();'},
-				'delete':{'label':'Delete', 'fn':'M.ciniki_products_edit.deleteProduct();'},
-				}},
-			};
-		this.edit.forms.winekit = {
-			'_image':this.edit.forms.generic._image,
-			'info':this.edit.forms.generic.info,
-			'supplier':this.edit.forms.generic.supplier,
-			'details':{'label':'', 'fields':{
-				'wine_type':{'label':'Wine Type', 'hint':'red, white or other', 'type':'text', 'size':'medium'},
-				'kit_length':{'label':'Kit Length', 'hint':'4, 5, 6, 8', 'type':'text', 'size':'small'},
-				'winekit_oak':{'label':'Oak', 'type':'toggle', 'default':'0', 'toggles':this.oakToggles},
-				'winekit_body':{'label':'Body', 'type':'toggle', 'default':'1', 'toggles':this.bodyToggles},
-				'winekit_sweetness':{'label':'Sweetness', 'type':'toggle', 'default':'0', 'toggles':this.sweetnessToggles},
-			}},
-			'inventory':this.edit.forms.generic.inventory,
-			'_description':this.edit.forms.generic._description,
-			'_long_description':this.edit.forms.generic._long_description,
-			'_save':this.edit.forms.generic._save
-			};
-		this.edit.forms.craft = {
-			'_image':this.edit.forms.generic._image,
-			'info':this.edit.forms.generic.info,
-			'details':{'label':'Manufacturing Times', 'fields':{
-				'manufacture_min_time':{'label':'Min', 'hint':'time in minutes', 'type':'text', 'size':'small'},
-				'manufacture_max_time':{'label':'Max', 'hint':'time in minutes', 'type':'text', 'size':'small'},
-			}},
-			'inventory':this.edit.forms.generic.inventory,
-			'_description':this.edit.forms.generic._description,
-			'_long_description':this.edit.forms.generic._long_description,
-			'_save':this.edit.forms.generic._save
-			};
+		this.edit.sections = {};
 		this.edit.liveSearchCb = function(s, i, value) {
 			if( s == 'info' ) { 
 				M.api.getJSONBgCb('ciniki.products.productCategorySearch', {'business_id':M.curBusinessID, 
@@ -183,31 +116,129 @@ function ciniki_products_edit() {
 			return false;
 		}
 
+		// Use the business product types to setup the edit form
+		if( M.curBusiness.products != null && M.curBusiness.products.settings.types != null ) {
+			this.edit.formtabs = {'label':'', 'field':'type_id', 'tabs':{}};
+			this.edit.forms = {};
+			this.edit.formtab = 0;
+			this.edit.default_formtab = 0;
+			for(i in M.curBusiness.products.settings.types) {
+				var type = M.curBusiness.products.settings.types[i].type;
+				if( this.edit.formtab == 0 ) {
+					this.edit.formtab = type.id;
+					this.edit.default_formtab = type.id;
+				}
+				this.edit.formtabs.tabs[type.id] = {'label':type.name.single, 'field_id':type.id, 'form':type.id};
+				this.edit.forms[type.id] = this.setupForm(type);
+			}
+		}
+
 		this.showEdit(cb, args.product_id, args.category, args.supplier_id, args.supplier_name);
+	}
+
+	this.setupForm = function(type) {
+		var fields = type.parent.products;
+		var form = {};
+		if( fields.primary_image_id != null ) {
+			form['image_id'] = {'label':'', 'aside':'yes', 'fields':{
+				'primary_image_id':{'label':'', 'type':'image_id', 'hidelabel':'yes',
+					'controls':'all', 'history':'no'},
+				}};
+		}
+		form['info'] = {'label':'', 'fields':{
+			'name':{'label':'Name', 'hint':'Product Name', 'type':'text', 
+				'active':(fields.name!=null?'yes':'no')},
+			'code':{'label':'Code', 'hint':'Product Code', 'type':'text', 
+				'active':(fields.code!=null?'yes':'no')},
+			'category':{'label':'Category', 'type':'text', 'livesearch':'yes', 'livesearchempty':'yes',
+				'active':(fields.category!=null?'yes':'no')},
+			'price':{'label':'Price', 'type':'text', 'active':(fields.price!=null?'yes':'no')},
+			'cost':{'label':'Cost', 'type':'text', 'active':(fields.cost!=null?'yes':'no')},
+			'msrp':{'label':'MSRP', 'type':'text', 'active':(fields.msrp!=null?'yes':'no')},
+			'status':{'label':'Status', 'type':'select', 'options':this.statusOptions, 
+				'active':(fields.status!=null?'yes':'no')},
+			'webflags':{'label':'Name', 'hint':'Product Name', 'type':'flags', 'flags':this.webFlags,
+				'active':(fields.webflags!=null?'yes':'no')},
+		}};
+		if( M.curBusiness.modules['ciniki.sapos'] != null 
+			&& (M.curBusiness.modules['ciniki.sapos'].flags&0x08) > 0 ) {
+			form.info.fields.webflags.flags['2'].active = 'yes';
+		} else {
+			form.info.fields.webflags.flags['2'].active = 'no';
+		}
+		for(i=0;i<10;i++) {
+			if( fields['detail0' + i] != null ) {
+				var field = fields['detail0' + i];
+				if( form.details == null ) { form['details'] = {'label':'', 'fields':{}}; }
+				form.details.fields['detail0' + i] = {'label':(field.name!=null?field.name:''), 'type':'text'};
+			}
+		}
+		if( fields.supplier_id != null ) {
+			form['supplier'] = {'label':'Supplier', 'fields':{
+				'supplier_id':{'label':'Name', 'type':'fkid', 'livesearch':'yes', 'livesearchempty':'yes'},
+				'supplier_item_number':{'label':'Item Number', 'type':'text', 
+					'active':(fields.supplier_item_number!=null?'yes':'no')},
+				'supplier_minimum_order':{'label':'Minimum Order', 'type':'text', 'size':'small', 
+					'active':(fields.supplier_minimum_order!=null?'yes':'no')},
+				'supplier_order_multiple':{'label':'Multiples', 'type':'text', 'size':'small', 
+					'active':(fields.supplier_order_multiple!=null?'yes':'no')},
+				}};
+		}
+		if( fields.inventory_flags != null || fields.inventory_current_num != null ) {
+			form['inventory'] = {'label':'Inventory', 'fields':{}};
+//			if( fields.inventory_flags != null ) { form.inventory.fields['inventory_flags'] = 
+//				{'label':'Options', 'type':'flags', 'flags':this.inventoryFlags}; }
+			if( fields.inventory_current_num != null ) { form.inventory.fields['inventory_current_num'] = 
+				{'label':'Number', 'type':'text', 'size':'small'}; }
+		}
+		if( fields.manufacture_min_time != null || fields.manufacture_max_time != null ) {
+			form['manufacturing'] = {'label':'Manufacturing', 'fields':{}};
+			if( fields.manufacture_min_time != null ) { form.inventory.fields['manufacture_min_time'] = 
+				{'label':'Min Time', 'type':'text', 'size':'small'}};
+			if( fields.manufacture_max_time != null ) { form.inventory.fields['manufacture_max_time'] = 
+				{'label':'Max Time', 'type':'text', 'size':'small'}};
+		}
+		if( fields.short_description != null ) {
+			form['_description'] = {'label':'Brief Description', 'fields':{
+				'short_description':{'label':'', 'hidelabel':'yes', 'hint':'', 'type':'textarea'},
+				}};
+		}
+		if( fields.long_description != null ) {
+			form['_long_description'] = {'label':'Full Description', 'fields':{
+				'long_description':{'label':'', 'hidelabel':'yes', 'hint':'', 'type':'textarea'},
+				}};
+		}
+		form['save'] = {'label':'', 'buttons':{
+			'save':{'label':'Save', 'fn':'M.ciniki_products_edit.saveProduct();'},
+			'delete':{'label':'Delete', 'fn':'M.ciniki_products_edit.deleteProduct();'},
+			}};
+form;
+
+		return form;
 	}
 
 	this.showEdit = function(cb, pid, category, supplier_id, supplier_name) {
 		this.edit.reset();
 		if( pid != null ) { this.edit.product_id = pid; }
 		// Check if inventory enabled
-		if( (M.curBusiness.modules['ciniki.products'].flags&0x04) > 0 ) {
-			this.edit.forms.generic.inventory.active = 'yes';
-		} else {
-			this.edit.forms.generic.inventory.active = 'no';
-		}
-		// Check if suppliers enabled
-		if( (M.curBusiness.modules['ciniki.products'].flags&0x08) > 0 ) {
-			this.edit.forms.generic.supplier.active = 'yes';
-		} else {
-			this.edit.forms.generic.supplier.active = 'no';
-		}
+//		if( (M.curBusiness.modules['ciniki.products'].flags&0x04) > 0 ) {
+//			this.edit.forms.generic.inventory.active = 'yes';
+//		} else {
+//			this.edit.forms.generic.inventory.active = 'no';
+//		}
+//		// Check if suppliers enabled
+//		if( (M.curBusiness.modules['ciniki.products'].flags&0x08) > 0 ) {
+//			this.edit.forms.generic.supplier.active = 'yes';
+//		} else {
+//			this.edit.forms.generic.supplier.active = 'no';
+//		}
 		// Check if shopping cart is enabled for business
-		if( M.curBusiness.modules['ciniki.sapos'] != null 
-			&& (M.curBusiness.modules['ciniki.sapos'].flags&0x08) > 0 ) {
-			this.edit.forms.generic.info.fields.webflags.flags['2'].active = 'yes';
-		} else {
-			this.edit.forms.generic.info.fields.webflags.flags['2'].active = 'no';
-		}
+//		if( M.curBusiness.modules['ciniki.sapos'] != null 
+//			&& (M.curBusiness.modules['ciniki.sapos'].flags&0x08) > 0 ) {
+//			this.edit.forms.generic.info.fields.webflags.flags['2'].active = 'yes';
+//		} else {
+//			this.edit.forms.generic.info.fields.webflags.flags['2'].active = 'no';
+//		}
 		if( this.edit.product_id > 0 ) {
 			M.api.getJSONCb('ciniki.products.productGet', {'business_id':M.curBusinessID,
 				'product_id':this.edit.product_id}, function(rsp) {
@@ -222,7 +253,7 @@ function ciniki_products_edit() {
 				});
 		} else {
 			this.edit.product_id = 0;
-			this.edit.data = {'type':1};
+			this.edit.data = {'type_id':this.edit.default_formtab};
 			if( category != '' ) {
 				this.edit.data.category = category;
 			}
@@ -236,7 +267,7 @@ function ciniki_products_edit() {
 	};
 
 	this.saveProduct = function() {
-		if( this.edit.sections.supplier == null || this.edit.forms.generic.supplier.active == 'no' ) {
+		if( this.edit.sections.supplier == null ) {
 			return this.saveProductFinish();
 		}
 		var name = M.gE(this.edit.panelUID + '_supplier_id_fkidstr').value;

@@ -16,24 +16,28 @@ function ciniki_products_product() {
 				'primary_image_id':{'label':'', 'type':'image_id', 'hidelabel':'yes', 'history':'no'},
 				}},
 			'info':{'label':'', 'aside':'yes', 'list':{
-				'type_text':{'label':'Type'},
-				'name':{'label':'Name'},
-				'category':{'label':'Category'},
-				'status_text':{'label':'Status'},
+				'type_text':{'label':'Type', 'visible':'no'},
+				'name':{'label':'Name', 'visible':'no'},
+				'category':{'label':'Category', 'visible':'no'},
+				'status_text':{'label':'Status', 'visible':'no'},
 //				'barcode':{'label':'Barcode', 'visible':'no'},
-				'price':{'label':'Price'},
-				'cost':{'label':'Cost'},
-				'wine_type':{'label':'Wine Type', 'visible':'no'},
-				'kit_length':{'label':'Kit Length', 'visible':'no'},
-				'winekit_oak':{'label':'Oak', 'visible':'no'},
-				'winekit_body':{'label':'Body', 'visible':'no'},
-				'winekit_sweetness':{'label':'Sweetness', 'visible':'no'},
+				'price':{'label':'Price', 'visible':'no'},
+				'cost':{'label':'Cost', 'visible':'no'},
 				'webflags_text':{'label':'Web', 'visible':'yes'},
 				'manufacture_times':{'label':'Manufacture Time', 'visible':'no'},
 				'inventory_current_num':{'label':'Inventory', 'visible':'no'},
+				'detail01':{'label':'', 'visible':'no'},
+				'detail02':{'label':'', 'visible':'no'},
+				'detail03':{'label':'', 'visible':'no'},
+				'detail04':{'label':'', 'visible':'no'},
+				'detail05':{'label':'', 'visible':'no'},
+				'detail06':{'label':'', 'visible':'no'},
+				'detail07':{'label':'', 'visible':'no'},
+				'detail08':{'label':'', 'visible':'no'},
+				'detail09':{'label':'', 'visible':'no'},
 				}},
 			'supplier':{'label':'Supplier', 'aside':'yes', 'list':{
-				'supplier_name':{'label':'Name',},
+				'supplier_name':{'label':'Name', 'visible':'no'},
 				'supplier_item_number':{'label':'Item #', 'visible':'no'},
 				'supplier_minimum_order':{'label':'Minimum Order', 'visible':'no'},
 				'supplier_order_multiple':{'label':'Order Multiple', 'visible':'no'},
@@ -41,17 +45,17 @@ function ciniki_products_product() {
 //			'inventory':{'label':'Inventory', 'aside':'yes', 'visible':'no', 'list':{
 //				'inventory_current_num':{'label':'', 'visible':'no'},
 //				}},
-			'short_description':{'label':'Description', 'type':'htmlcontent'},
-			'long_description':{'label':'Full Description', 'type':'htmlcontent'},
-			'files':{'label':'Files', 'type':'simplegrid', 'num_cols':1,
+			'short_description':{'label':'Description', 'visible':'yes', 'type':'htmlcontent'},
+			'long_description':{'label':'Full Description', 'visible':'yes', 'type':'htmlcontent'},
+			'files':{'label':'Files', 'visible':'no', 'type':'simplegrid', 'num_cols':1,
 				'headerValues':null,
 				'cellClasses':['multiline'],
 				'noData':'No product files',
 				'addTxt':'Add File',
 				'addFn':'M.startApp(\'ciniki.products.files\',null,\'M.ciniki_products_product.showProduct();\',\'mc\',{\'product_id\':M.ciniki_products_product.product.product_id,\'add\':\'yes\'});',
 				},
-			'images':{'label':'Gallery', 'type':'simplethumbs'},
-			'_images':{'label':'', 'type':'simplegrid', 'num_cols':1,
+			'images':{'label':'Gallery', 'visible':'no', 'type':'simplethumbs'},
+			'_images':{'label':'', 'visible':'no', 'type':'simplegrid', 'num_cols':1,
 				'addTxt':'Add Additional Image',
 				'addFn':'M.startApp(\'ciniki.products.images\',null,\'M.ciniki_products_product.showProduct();\',\'mc\',{\'product_id\':M.ciniki_products_product.product.product_id,\'add\':\'yes\'});',
 				},
@@ -174,25 +178,56 @@ function ciniki_products_product() {
 				}
 				var p = M.ciniki_products_product.product;
 				p.data = rsp.product;
-				var fields = ['wine_type', 'kit_length', 'winekit_oak', 'winekit_body', 'winekit_sweetness', 'manufacture_times'];
-				for(i in fields) {
-					p.sections.info.list[fields[i]].visible=rsp.product[fields[i]]!=null&&rsp.product[fields[i]]!=''?'yes':'no';
+				var object_def = eval('(' + rsp.product.object_def + ')');
+				// Setup the visible fields
+				for(i in p.sections.info.list) {
+					if( object_def.parent.products[i] != null ) {
+						p.sections.info.list[i].visible='yes';
+						if( object_def.parent.products[i].name != null ) {
+							p.sections.info.list[i].label = object_def.parent.products[i].name;
+						}
+					} else {
+						p.sections.info.list[i].visible='no';
+					}
 				}
-				if( (M.curBusiness.modules['ciniki.products'].flags&0x04) > 0
-					&& (rsp.product.inventory_flags&0x01) > 0 ) {
-					p.sections.info.list.inventory_current_num.visible = 'yes';
-				} else {
-					p.sections.info.list.inventory_current_num.visible = 'no';
+				for(i in p.sections.info.list) {
+					p.sections.info.list[i].visible=(object_def.parent.products[i] != null?'yes':'no');
 				}
-				if( (M.curBusiness.modules['ciniki.products'].flags&0x08) > 0
-					&& rsp.product['supplier_id'] != '' && rsp.product['supplier_id'] != '0' ) {
-					p.sections.supplier.visible = 'yes';
-					p.sections.supplier.list['supplier_item_number'].visible=rsp.product['supplier_item_number']!=null&&rsp.product['supplier_item_number']!=''?'yes':'no';
-					p.sections.supplier.list['supplier_minimum_order'].visible=rsp.product['supplier_minimum_order']!=null&&rsp.product['supplier_minimum_order']>1?'yes':'no';
-					p.sections.supplier.list['supplier_order_multiple'].visible=rsp.product['supplier_order_multiple']!=null&&rsp.product['supplier_order_multiple']>1?'yes':'no';
-				} else {
-					p.sections.supplier.visible = 'no';
+				var nvis = 0;
+				for(i in p.sections.supplier.list) {
+					p.sections.supplier.list[i].visible=(object_def.parent.products[i] != null?'yes':'no');
+					nvis++;
 				}
+				p.sections.supplier.visible = (nvis==0?'no':'yes');
+				p.sections.supplier.list.supplier_name.visible = (nvis==0?'no':'yes');
+				p.sections.short_description.visible = (object_def.parent.products.short_description!=null?'yes':'no');
+				p.sections.long_description.visible = (object_def.parent.products.long_description!=null?'yes':'no');
+				p.sections._image.visible = (object_def.parent.products.primary_image_id!=null?'yes':'no');
+				p.sections.info.visible = (object_def.parent.products.primary_image_id!=null?'yes':'no');
+				p.sections.images.visible = (object_def.parent.images!=null?'yes':'no');
+				p.sections._images.visible = (object_def.parent.images!=null?'yes':'no');
+				p.sections.files.visible = (object_def.parent.files!=null?'yes':'no');
+				p.sections.similar.visible = (object_def.parent.similar!=null?'yes':'no');
+				p.sections.recipes.visible = (object_def.parent.recipes!=null?'yes':'no');
+//				var fields = ['wine_type', 'kit_length', 'winekit_oak', 'winekit_body', 'winekit_sweetness', 'manufacture_times'];
+//				for(i in fields) {
+//					p.sections.info.list[fields[i]].visible=rsp.product[fields[i]]!=null&&rsp.product[fields[i]]!=''?'yes':'no';
+//				}
+//				if( (M.curBusiness.modules['ciniki.products'].flags&0x04) > 0
+//					&& (rsp.product.inventory_flags&0x01) > 0 ) {
+//					p.sections.info.list.inventory_current_num.visible = 'yes';
+//				} else {
+//					p.sections.info.list.inventory_current_num.visible = 'no';
+//				}
+//				if( (M.curBusiness.modules['ciniki.products'].flags&0x08) > 0
+//					&& rsp.product['supplier_id'] != '' && rsp.product['supplier_id'] != '0' ) {
+//					p.sections.supplier.visible = 'yes';
+//					p.sections.supplier.list['supplier_item_number'].visible=rsp.product['supplier_item_number']!=null&&rsp.product['supplier_item_number']!=''?'yes':'no';
+//					p.sections.supplier.list['supplier_minimum_order'].visible=rsp.product['supplier_minimum_order']!=null&&rsp.product['supplier_minimum_order']>1?'yes':'no';
+////					p.sections.supplier.list['supplier_order_multiple'].visible=rsp.product['supplier_order_multiple']!=null&&rsp.product['supplier_order_multiple']>1?'yes':'no';
+//				} else {
+//					p.sections.supplier.visible = 'no';
+//				}
 				p.refresh();
 				p.show(cb);
 			});

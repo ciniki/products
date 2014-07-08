@@ -15,12 +15,23 @@
 # business_id:		The business the product is attached to.  Products
 #					can only be assigned to one business at a time.
 #
+# parent_id:		The ID of the parent or master product.  Sub products will not be
+#					listed in the product lists on the website, but as a list below the 
+#					master product.  This can be used to maintain separate pricing
+#					for each variation and separate invetory.
+#
+#
 # name:				The name of the product.
+# code:				The unique code for each product for a business.
 #
 # permalink:		The simplified name of the product for use in the url to the product
 #					on the business website.
 #
-# type:				 0 - unknown
+# type_id:			The ID of the product type, which is defined in ciniki_product_types.
+#
+# type:				 Depricated, do not use anymore.
+#
+#					0 - unknown
 #					 1 - generic
 #					 2 - package (collection of products) (future)
 #					 3 - time (time based billing) (future)
@@ -103,7 +114,10 @@ create table ciniki_products (
 	id int not null auto_increment,
 	uuid char(36) not null,
 	business_id int not null,
+	parent_id int not null,
 	name varchar(100) not null,
+	product_code varchar(150) not null,
+	type_id int not null,
 	type tinyint unsigned not null,	
 	category varchar(150) not null,
 	permalink varchar(150) not null,
@@ -131,6 +145,15 @@ create table ciniki_products (
 	start_date datetime not null,
 	end_date datetime not null,
 	webflags tinyint unsigned not null,
+	detail01 varchar(100) not null,
+	detail02 varchar(100) not null,
+	detail03 varchar(100) not null,
+	detail04 varchar(100) not null,
+	detail05 varchar(100) not null,
+	detail06 varchar(100) not null,
+	detail07 varchar(100) not null,
+	detail08 varchar(100) not null,
+	detail09 varchar(100) not null,
 	date_added datetime not null,
 	last_updated datetime not null,
 	primary key (id),
@@ -139,4 +162,4 @@ create table ciniki_products (
 	index (business_id, uuid, last_updated),
 	index supplier (supplier_id, supplier_item_number),
 	unique index permalink (business_id, permalink)
-) ENGINE='InnoDB', COMMENT='v1.09';
+) ENGINE='InnoDB', COMMENT='v1.10';

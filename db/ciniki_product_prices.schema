@@ -1,0 +1,63 @@
+#
+# Description
+# -----------
+#
+#
+# For sale pricing, the system will pick the price that has the closest start/end date
+# to the current date, overriding other prices.
+#
+# Fields
+# ------
+# id: 				The unique id number for each product in the database.
+# uuid:				The Universal Unique ID.
+#
+# business_id:		The business the product is attached to.  Products
+#					can only be assigned to one business at a time.
+# 
+# product_id:		The ID of the product the price is for.
+#
+# available_to:		The flags that control who has access to this pricing
+#
+#					0x01 - Public/Customers
+#					0x02 - Private (internal use only)
+#					0x04
+#					0x08
+#					0x10 - Members
+#					0x20 - Dealers
+#					0x40 - Distributors
+#					0x80 -
+#
+# min_quantity:		The minimum quantity required for this price.  Typically this 
+#					will be 1, but can be used to offer bulk discounts.
+#
+# amount:				The amount to charge for a single unit.
+# discount_amount:		The dollar amount to discount a single unit.
+# discount_percentage:	The percentage to discount a single unit.
+#
+# taxtype_id:		The ID of the tax type in the ciniki.taxes module.
+#
+# start_date:		The UTC date and time the pricing becomes active.
+# end_date:			The UTC date and time the pricing becomes inactive.
+#
+# date_added:		The UTC date and time the product was added to the database.
+#
+# last_updated:		The UTC date and time of the last update.
+#
+create table ciniki_product_prices (
+	id int not null auto_increment,
+	uuid char(36) not null,
+	business_id int not null,
+	product_id int not null,
+	available_to tinyint unsigned not null,
+	min_quantity int not null,
+	amount decimal(19,4) not null,
+	discount_amount decimal(19,4) not null,
+	discount_percentage decimal(19,4) not null,
+	taxtype_id int not null,
+	start_date datetime not null,
+	end_date datetime not null,
+	date_added datetime not null,
+	last_updated datetime not null,
+	primary key (id),
+	index sync (business_id, uuid, last_updated)
+) ENGINE='InnoDB', COMMENT='v1.01', CHARACTER SET latin1, COLLATE latin1_swedish_ci;

@@ -1,0 +1,132 @@
+The product type management will be done in the database and custom for each business.
+This allows maximum flexibility and customizable for each business.
+
+
+business_product_type=>array(
+	name=>array('single'=>'', 'plural'=>''),
+	parent=>array(
+		products=>array(
+			field=>array('name'=>''),
+		),
+		prices=>array(
+			// The fields from the pricing table to use
+			field=>array('name'=>''),
+			// Determine if the complex pricing is enabled
+		),
+		images=>array(),
+		files=>array(),
+		** future ** ui override
+		ui=>array(
+			options=>array(),
+			'sections'=>array(
+			),
+		),
+	),
+	child=>array(
+		products=>array(
+			field=>array(),
+		),
+		prices=>array(
+		),
+		** future ** ui override
+		ui=>array(
+			'options'=>array(),
+			'sections'=>array(
+				'_image_id'=>array(
+				),
+				'details'=>array(
+					'label'=>
+				),
+			),
+		),
+	),
+);
+
+cymbal=>array(
+	name=>array('single'=>'Cymbal', plural=>'Cymbals'),
+	parent=>array(
+		prices=>array(),
+		images=>array(),
+		files=>array(),
+		fields=>array(
+			'name'=>array(),
+			'category'=>array(),
+			),
+		ui=>array(
+			'options'=>array(),
+			'sections'=>array(
+				'_image_id'=>array(
+					'label'=>'',
+					'fields'=>array(
+						'image_id'=>array(),
+					),
+				),
+				'details'=>array(
+					'label'=>'Product Details',
+					'fields'=>array(
+						'code'=>array(),
+						'name'=>array(),
+						'category'=>array(),
+					),
+				),
+			),
+		),
+	),
+	child=>array(
+		prices=>'yes',
+		images=>'yes',
+		files=>'yes',
+		fields=>array(
+			'name'=>array(),
+			'code'=>array(),
+			'inventory'=>array(),
+			'primary_image_id'=>array(),
+		),
+		prices=>array(
+			'fields'=>array(
+				'min_quantity'=>array(),
+				'amount'=>array(),
+				'discount_amount'=>array(),
+				'start_date'=>array(),
+				'end_date'=>array(),
+			),
+		),
+		ui=>array(
+			'options'=>array(),
+			'sections'=>array(
+				'_image_id'=>array(
+					'label'=>'',
+					'fields'=>array(
+						'image_id'=>array(),
+					),
+				),
+				'details'=>array(
+					'label'=>'Product Details',
+					'fields'=>array(
+						'code'=>array(),
+						'name'=>array(),
+						'category'=>array(),
+					),
+				),
+			),
+		),
+	),
+);
+
+clothing=>array(
+	name=>array('single'=>'Clothing', plural=>'Clothing'),
+	parent=>array(
+		prices=>'yes',
+		files=>'yes',
+		fields=>array(
+			'name'=>array(),
+			'category'=>array(),
+			'detail1'=>array('name'=>'Size'),
+			'detail2'=>array('name'=>'Colour'),
+			),
+		),
+	child=>array(
+		prices=>'yes',
+		files=>'yes',
+		fields=>array(),
+		),

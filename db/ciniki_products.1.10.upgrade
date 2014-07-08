@@ -1,0 +1,16 @@
+#
+# This file will upgrade the database table products to version 1.10.
+#
+ALTER TABLE ciniki_products ADD COLUMN parent_id int not null AFTER business_id;
+ALTER TABLE ciniki_products ADD COLUMN code varchar(150) not null AFTER name;
+ALTER TABLE ciniki_products ADD COLUMN type_id int not null AFTER product_code;
+ALTER TABLE ciniki_products ADD COLUMN detail01 varchar(100) not null AFTER webflags;
+ALTER TABLE ciniki_products ADD COLUMN detail02 varchar(100) not null AFTER detail01;
+ALTER TABLE ciniki_products ADD COLUMN detail03 varchar(100) not null AFTER detail02;
+ALTER TABLE ciniki_products ADD COLUMN detail04 varchar(100) not null AFTER detail03;
+ALTER TABLE ciniki_products ADD COLUMN detail05 varchar(100) not null AFTER detail04;
+ALTER TABLE ciniki_products ADD COLUMN detail06 varchar(100) not null AFTER detail05;
+ALTER TABLE ciniki_products ADD COLUMN detail07 varchar(100) not null AFTER detail06;
+ALTER TABLE ciniki_products ADD COLUMN detail08 varchar(100) not null AFTER detail07;
+ALTER TABLE ciniki_products ADD COLUMN detail09 varchar(100) not null AFTER detail08;
+ALTER TABLE ciniki_products COMMENT='v1.10';

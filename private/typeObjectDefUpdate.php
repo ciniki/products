@@ -85,7 +85,8 @@ function ciniki_products_typeObjectDefUpdate($ciniki, $object_def, $args) {
 				unset($object_def['parent']['products'][$field]);
 			}
 		}
-		if( isset($args['parent_product_' . $field . '-name']) ) {
+		if( (!isset($args['parent_product_' . $field . '-name']) || $args['parent_product_' . $field . '-name'])
+			&& isset($args['parent_product_' . $field . '-name']) ) {
 			if( isset($object_def['parent']['products']) ) {
 				$object_def['parent']['products'][$field]['name'] = $args['parent_product_' . $field . '-name'];
 			}
@@ -101,7 +102,8 @@ function ciniki_products_typeObjectDefUpdate($ciniki, $object_def, $args) {
 				unset($object_def['child']['products'][$field]);
 			}
 		}
-		if( isset($args['child_product_' . $field . '-name']) ) {
+		if( (!isset($args['child_product_' . $field . '-name']) || $args['child_product_' . $field . '-name'])
+			&& isset($args['child_product_' . $field . '-name']) ) {
 			if( isset($object_def['child']['products']) ) {
 				$object_def['child']['products'][$field]['name'] = $args['child_product_' . $field . '-name'];
 			}

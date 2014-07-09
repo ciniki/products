@@ -91,12 +91,10 @@ function ciniki_products_productTypeGet($ciniki) {
 			$type['parent_price_' . $field] = 'on';
 		}
 	}
-	if( isset($object_def['parent']['images']) ) {
-		$type['parent_images'] = 'on';
-	}
-	if( isset($object_def['parent']['files']) ) {
-		$type['parent_files'] = 'on';
-	}
+	if( isset($object_def['parent']['images']) ) { $type['parent_images'] = 'on'; }
+	if( isset($object_def['parent']['files']) ) { $type['parent_files'] = 'on'; }
+	if( isset($object_def['parent']['similar']) ) { $type['parent_similar'] = 'on'; }
+	if( isset($object_def['parent']['recipes']) ) { $type['parent_recipes'] = 'on'; }
 	if( isset($object_def['child']['products']) ) {
 		foreach($object_def['child']['products'] as $field => $fdetails) {
 			$type['child_product_' . $field] = 'on';
@@ -110,12 +108,10 @@ function ciniki_products_productTypeGet($ciniki) {
 			$type['child_price_' . $field] = 'on';
 		}
 	}
-	if( isset($object_def['child']['images']) ) {
-		$type['child_images'] = 'on';
-	}
-	if( isset($object_def['child']['files']) ) {
-		$type['child_files'] = 'on';
-	}
+	if( isset($object_def['child']['images']) ) { $type['child_images'] = 'on'; }
+	if( isset($object_def['child']['files']) ) { $type['child_files'] = 'on'; }
+	if( isset($object_def['child']['similar']) ) { $type['child_similar'] = 'on'; }
+	if( isset($object_def['child']['recipes']) ) { $type['child_recipes'] = 'on'; }
 
 	return array('stat'=>'ok', 'type'=>$type);
 }

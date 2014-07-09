@@ -193,9 +193,9 @@ function ciniki_products_edit() {
 		}
 		if( fields.manufacture_min_time != null || fields.manufacture_max_time != null ) {
 			form['manufacturing'] = {'label':'Manufacturing', 'fields':{}};
-			if( fields.manufacture_min_time != null ) { form.inventory.fields['manufacture_min_time'] = 
+			if( fields.manufacture_min_time != null ) { form.manufacturing.fields['manufacture_min_time'] = 
 				{'label':'Min Time', 'type':'text', 'size':'small'}};
-			if( fields.manufacture_max_time != null ) { form.inventory.fields['manufacture_max_time'] = 
+			if( fields.manufacture_max_time != null ) { form.manufacturing.fields['manufacture_max_time'] = 
 				{'label':'Max Time', 'type':'text', 'size':'small'}};
 		}
 		if( fields.short_description != null ) {

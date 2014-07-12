@@ -12,6 +12,18 @@ function ciniki_products_edit() {
 		'3':{'name':'Hide Price', 'active':'yes'},
 		'5':{'name':'Category Highlight'},
 		};
+	this.shippingWeightUnits = {
+		'10':'lbs',
+		'20':'kgs',
+		};
+	this.shippingSizeUnits = {
+		'10':'in',
+		'20':'cm',
+		};
+	this.shippingFlags = {
+		'1':{'name':'Shipping'},
+		'2':{'name':'Pickup'},
+		};
 //	this.oakToggles = {
 //		'0':'0',
 //		'1':'1',
@@ -145,7 +157,7 @@ function ciniki_products_edit() {
 					'controls':'all', 'history':'no'},
 				}};
 		}
-		form['info'] = {'label':'', 'fields':{
+		form['info'] = {'label':'', 'aside':'yes', 'fields':{
 			'name':{'label':'Name', 'hint':'Product Name', 'type':'text', 
 				'active':(fields.name!=null?'yes':'no')},
 			'code':{'label':'Code', 'hint':'Product Code', 'type':'text', 
@@ -160,6 +172,13 @@ function ciniki_products_edit() {
 			'webflags':{'label':'Name', 'hint':'Product Name', 'type':'flags', 'flags':this.webFlags,
 				'active':(fields.webflags!=null?'yes':'no')},
 		}};
+		if( fields.inventory_flags != null || fields.inventory_current_num != null ) {
+			form['inventory'] = {'label':'', 'fields':{}};
+//			if( fields.inventory_flags != null ) { form.inventory.fields['inventory_flags'] = 
+//				{'label':'Options', 'type':'flags', 'flags':this.inventoryFlags}; }
+			if( fields.inventory_current_num != null ) { form.inventory.fields['inventory_current_num'] = 
+				{'label':'Number', 'type':'text', 'size':'small'}; }
+		}
 		if( M.curBusiness.modules['ciniki.sapos'] != null 
 			&& (M.curBusiness.modules['ciniki.sapos'].flags&0x08) > 0 ) {
 			form.info.fields.webflags.flags['2'].active = 'yes';
@@ -184,13 +203,6 @@ function ciniki_products_edit() {
 					'active':(fields.supplier_order_multiple!=null?'yes':'no')},
 				}};
 		}
-		if( fields.inventory_flags != null || fields.inventory_current_num != null ) {
-			form['inventory'] = {'label':'Inventory', 'fields':{}};
-//			if( fields.inventory_flags != null ) { form.inventory.fields['inventory_flags'] = 
-//				{'label':'Options', 'type':'flags', 'flags':this.inventoryFlags}; }
-			if( fields.inventory_current_num != null ) { form.inventory.fields['inventory_current_num'] = 
-				{'label':'Number', 'type':'text', 'size':'small'}; }
-		}
 		if( fields.manufacture_min_time != null || fields.manufacture_max_time != null ) {
 			form['manufacturing'] = {'label':'Manufacturing', 'fields':{}};
 			if( fields.manufacture_min_time != null ) { form.manufacturing.fields['manufacture_min_time'] = 
@@ -198,14 +210,35 @@ function ciniki_products_edit() {
 			if( fields.manufacture_max_time != null ) { form.manufacturing.fields['manufacture_max_time'] = 
 				{'label':'Max Time', 'type':'text', 'size':'small'}};
 		}
+		if( fields.shipping_flags != null 
+			|| fields.shipping_weight != null || fields.shipping_length != null 
+			) {
+			form['shipping'] = {'label':'Shipping', 'fields':{}};
+			if( fields.shipping_flags != null ) {
+				form.shipping.fields['shipping_flags'] = {'label':'Options', 'type':'flags', 'flags':this.shippingFlags};
+			};
+			if( fields.shipping_weight != null ) { 
+				form.shipping.fields['shipping_weight'] = {'label':'Weight', 'type':'text', 'size':'small'};
+				form.shipping.fields['shipping_weight_units'] = 
+					{'label':'Units', 'type':'toggle', 'default':'10', 'toggles':this.shippingWeightUnits};
+				};
+			if( fields.shipping_length != null ) { form.shipping.fields['shipping_length'] = 
+				{'label':'Length', 'type':'text', 'size':'small'}};
+			if( fields.shipping_width != null ) { form.shipping.fields['shipping_width'] = 
+				{'label':'Width', 'type':'text', 'size':'small'}};
+			if( fields.shipping_height != null ) { form.shipping.fields['shipping_height'] = 
+				{'label':'Height', 'type':'text', 'size':'small'}};
+			if( fields.shipping_size_units != null ) { form.shipping.fields['shipping_size_units'] = 
+				{'label':'Units', 'type':'toggle', 'default':'10', 'toggles':this.shippingSizeUnits}};
+		}
 		if( fields.short_description != null ) {
 			form['_description'] = {'label':'Brief Description', 'fields':{
-				'short_description':{'label':'', 'hidelabel':'yes', 'hint':'', 'type':'textarea'},
+				'short_description':{'label':'', 'hidelabel':'yes', 'hint':'', 'size':'small', 'type':'textarea'},
 				}};
 		}
 		if( fields.long_description != null ) {
 			form['_long_description'] = {'label':'Full Description', 'fields':{
-				'long_description':{'label':'', 'hidelabel':'yes', 'hint':'', 'type':'textarea'},
+				'long_description':{'label':'', 'hidelabel':'yes', 'hint':'', 'size':'large', 'type':'textarea'},
 				}};
 		}
 		form['save'] = {'label':'', 'buttons':{
@@ -253,7 +286,8 @@ form;
 				});
 		} else {
 			this.edit.product_id = 0;
-			this.edit.data = {'type_id':this.edit.default_formtab};
+			this.edit.data = {'type_id':this.edit.default_formtab, 
+				'shipping_weight_units':10, 'shipping_size_units':10};
 			if( category != '' ) {
 				this.edit.data.category = category;
 			}

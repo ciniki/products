@@ -16,6 +16,8 @@
 # 
 # product_id:		The ID of the product the price is for.
 #
+# name:				The name/description of the price and who it is for.
+#
 # available_to:		The flags that control who has access to this pricing
 #
 #					0x01 - Public/Customers

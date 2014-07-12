@@ -1,0 +1,11 @@
+#
+# This file will upgrade the database table products to version 1.11.
+#
+ALTER TABLE ciniki_products ADD COLUMN shipping_flags tinyint unsigned not null AFTER inventory_current_num;
+ALTER TABLE ciniki_products ADD COLUMN shipping_weight decimal(10,4) not null AFTER shipping_flags;
+ALTER TABLE ciniki_products ADD COLUMN shipping_weight_units tinyint unsigned not null AFTER shipping_weight;
+ALTER TABLE ciniki_products ADD COLUMN shipping_length decimal(10,4) not null AFTER shipping_weight_units;
+ALTER TABLE ciniki_products ADD COLUMN shipping_width decimal(10,4) not null AFTER shipping_length;
+ALTER TABLE ciniki_products ADD COLUMN shipping_height decimal(10,4) not null AFTER shipping_width;
+ALTER TABLE ciniki_products ADD COLUMN shipping_size_units tinyint unsigned not null AFTER shipping_height;
+ALTER TABLE ciniki_products COMMENT='v1.11';

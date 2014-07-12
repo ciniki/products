@@ -30,7 +30,7 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 	$datetime_format = ciniki_users_datetimeFormat($ciniki, 'php');
 
 	//
-	// Load the status maps for the text description of each status
+	// Load the status maps for the text description of each type
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'productStatusMaps');
 	$rc = ciniki_products_productStatusMaps($ciniki);
@@ -38,16 +38,6 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 		return $rc;
 	}
 	$status_maps = $rc['maps'];
-
-	//
-	// Load the status maps for the text description of each type
-	//
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'productTypeMaps');
-	$rc = ciniki_products_productTypeMaps($ciniki);
-	if( $rc['stat'] != 'ok' ) {
-		return $rc;
-	}
-	$type_maps = $rc['maps'];
 
 	//
 	// Get the basic product information
@@ -73,6 +63,13 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 		. "ciniki_products.price, "
 		. "ciniki_products.cost, "
 		. "ciniki_products.msrp, "
+		. "ciniki_products.shipping_flags, "
+		. "ciniki_products.shipping_weight, "
+		. "ciniki_products.shipping_weight_units, "
+		. "ciniki_products.shipping_length, "
+		. "ciniki_products.shipping_width, "
+		. "ciniki_products.shipping_height, "
+		. "ciniki_products.shipping_size_units, "
 		. "ciniki_products.primary_image_id, "
 		. "ciniki_products.short_description, "
 		. "ciniki_products.long_description, "
@@ -107,7 +104,10 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 				'supplier_id', 'supplier_item_number', 
 				'supplier_minimum_order', 'supplier_order_multiple',
 				'manufacture_min_time', 'manufacture_max_time', 'inventory_flags', 'inventory_current_num',
-				'barcode', 'price', 'cost', 'msrp', 'primary_image_id',
+				'barcode', 'price', 'cost', 'msrp', 
+				'shipping_flags', 'shipping_weight', 'shipping_weight_units',
+				'shipping_length', 'shipping_width', 'shipping_height', 'shipping_size_units',
+				'primary_image_id',
 				'short_description', 'long_description', 'start_date', 'end_date',
 				'webflags', 'webvisible',
 				'detail01', 'detail02', 'detail03', 'detail04', 'detail05',
@@ -115,7 +115,7 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 			'utctotz'=>array('start_date'=>array('timezone'=>$intl_timezone, 'format'=>$date_format),
 				'end_date'=>array('timezone'=>$intl_timezone, 'format'=>$date_format),
 				),
-			'maps'=>array('status_text'=>$status_maps, 'type_text'=>$type_maps),
+			'maps'=>array('status_text'=>$status_maps),
 			),
 		));
 	if( $rc['stat'] != 'ok' ) {
@@ -128,6 +128,45 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 
 	$object_def = unserialize($product['object_def']);
 	$product['object_def'] = json_encode($object_def);
+
+	//
+	// Format shipping values
+	//
+	$product['shipping_flags_text'] = '';
+	if( ($product['shipping_flags']&0x01) > 0 ) { 
+		$product['shipping_flags_text'] .= ($product['shipping_flags_text']!=null?', ':'') . 'Shipping';
+	}
+	if( ($product['shipping_flags']&0x02) > 0 ) { 
+		$product['shipping_flags_text'] .= ($product['shipping_flags_text']!=null?', ':'') . 'Pickup';
+	}
+	$product['shipping_weight'] = (float)$product['shipping_weight'];
+	$product['shipping_length'] = (float)$product['shipping_length'];
+	$product['shipping_width'] = (float)$product['shipping_width'];
+	$product['shipping_height'] = (float)$product['shipping_height'];
+
+	if( isset($object_def['parent']['products']['shipping_weight']) ) {
+		$product['shipping_package'] = '';
+		$product['shipping_package'] .= (float)$product['shipping_weight'];
+		if( $product['shipping_weight'] > 1 ) {
+			switch($product['shipping_weight_units']) {
+				case 10: $product['shipping_package'] .= ' lbs'; break;
+				case 20: $product['shipping_package'] .= ' kgs'; break;
+			}
+		} else {
+			switch($product['shipping_weight_units']) {
+				case 10: $product['shipping_package'] .= ' lb'; break;
+				case 20: $product['shipping_package'] .= ' kg'; break;
+			}
+		}
+		$product['shipping_package'] .= ' ' . (float)$product['shipping_length'] . 'x' . (float)$product['shipping_width'] . 'x' . (float)$product['shipping_height'] . ' ';
+		switch($product['shipping_size_units']) {
+			case 10: $product['shipping_package'] .= ' in'; break;
+			case 20: $product['shipping_package'] .= ' cm'; break;
+		}
+		if( $product['shipping_weight'] == 0 && $product['shipping_length'] == 0 && $product['shipping_width'] == 0 && $product['shipping_height'] == 0 ) {
+			$product['shipping_package'] = 'Not Setup';
+		}
+	}
 
 	//
 	// Format the webflags_text string

@@ -26,6 +26,8 @@ function ciniki_products_product() {
 				'webflags_text':{'label':'Web', 'visible':'yes'},
 				'manufacture_times':{'label':'Manufacture Time', 'visible':'no'},
 				'inventory_current_num':{'label':'Inventory', 'visible':'no'},
+				'shipping_flags_text':{'label':'Shipping', 'visible':'no'},
+				'shipping_package':{'label':'Shipping', 'visible':'no'},
 				'detail01':{'label':'', 'visible':'no'},
 				'detail02':{'label':'', 'visible':'no'},
 				'detail03':{'label':'', 'visible':'no'},
@@ -190,8 +192,11 @@ function ciniki_products_product() {
 						p.sections.info.list[i].visible='no';
 					}
 				}
-				for(i in p.sections.info.list) {
-					p.sections.info.list[i].visible=(object_def.parent.products[i] != null?'yes':'no');
+//				for(i in p.sections.info.list) {
+//					p.sections.info.list[i].visible=(object_def.parent.products[i] != null?'yes':'no');
+//				}
+				if( object_def.parent.products['shipping_weight'] != null ) {
+					p.sections.info.list['shipping_package'].visible = 'yes';
 				}
 				var nvis = 0;
 				for(i in p.sections.supplier.list) {
@@ -202,7 +207,7 @@ function ciniki_products_product() {
 						p.sections.supplier.list[i].visible='no';
 					}
 				}
-				console.log(nvis);
+
 				p.sections.supplier.visible = (nvis==0?'no':'yes');
 				p.sections.supplier.list.supplier_name.visible = (nvis==0?'no':'yes');
 				p.sections.short_description.visible = (object_def.parent.products.short_description!=null?'yes':'no');

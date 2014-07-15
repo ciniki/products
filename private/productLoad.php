@@ -261,7 +261,10 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 	//
 	// Get the categories and tags for the product
 	//
-	if( isset($object_def[$pc]['categories']) || isset($object_def[$pc]['tags']) ) {
+	if( isset($object_def[$pc]['categories']) 
+		|| isset($object_def[$pc]['subcategories']) 
+		|| isset($object_def[$pc]['tags']) 
+		) {
 		$strsql = "SELECT tag_type, tag_name AS lists "
 			. "FROM ciniki_product_tags "
 			. "WHERE product_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
@@ -279,7 +282,7 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 			foreach($rc['tags'] as $tags) {
 				if( isset($object_def[$pc]['categories']) && $tags['tags']['tag_type'] == 10 ) {
 					$product['categories'] = $tags['tags']['lists'];
-				} elseif( isset($object_def[$pc]['tags']) && $tags['tags']['tag_type'] == 11 ) {
+				} elseif( isset($object_def[$pc]['subcategories']) && $tags['tags']['tag_type'] == 11 ) {
 					$product['subcategories'] = $tags['tags']['lists'];
 				} elseif( isset($object_def[$pc]['tags']) && $tags['tags']['tag_type'] == 20 ) {
 					$product['tags'] = $tags['tags']['lists'];

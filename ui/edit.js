@@ -63,6 +63,7 @@ function ciniki_products_edit() {
 		this.edit.default_formtab = 0;
 		this.edit.forms = {};
 		this.edit.sections = {};
+		this.edit.tags = {'categories':[], 'subcategories':[], 'tags':[]};
 		this.edit.liveSearchCb = function(s, i, value) {
 			if( s == 'info' ) { 
 				M.api.getJSONBgCb('ciniki.products.productCategorySearch', {'business_id':M.curBusinessID, 
@@ -103,6 +104,9 @@ function ciniki_products_edit() {
 			if( this.data[i] != null ) { return this.data[i]; }
 			return '';
 		};
+//		this.edit.fieldTags = function(s, i, d) {
+//			return this.tags[i];
+//		};
 		this.edit.fieldHistoryArgs = function(s, i) {
 			return {'method':'ciniki.products.productHistory', 'args':{'business_id':M.curBusinessID,
 				'product_id':this.product_id, 'field':i}};
@@ -128,6 +132,7 @@ function ciniki_products_edit() {
 			return false;
 		}
 
+		var pc = (args.parent_id==null||args.parent_id==0)?'parent':'child';
 		// Use the business product types to setup the edit form
 		if( M.curBusiness.products != null && M.curBusiness.products.settings.types != null ) {
 			this.edit.formtabs = {'label':'', 'field':'type_id', 'tabs':{}};
@@ -140,16 +145,16 @@ function ciniki_products_edit() {
 					this.edit.formtab = type.id;
 					this.edit.default_formtab = type.id;
 				}
-				this.edit.formtabs.tabs[type.id] = {'label':type.name.single, 'field_id':type.id, 'form':type.id};
-				this.edit.forms[type.id] = this.setupForm(type);
+				this.edit.formtabs.tabs[type.id] = {'label':type.name.single, 'field_id':type.id, 'form':type.id, 'type_num':i};
+				this.edit.forms[type.id] = this.setupForm(type, pc);
 			}
 		}
 
 		this.showEdit(cb, args.product_id, args.category, args.supplier_id, args.supplier_name);
 	}
 
-	this.setupForm = function(type) {
-		var fields = type.parent.products;
+	this.setupForm = function(type, pc) {
+		var fields = type[pc].products;
 		var form = {};
 		if( fields.primary_image_id != null ) {
 			form['image_id'] = {'label':'', 'aside':'yes', 'fields':{
@@ -169,15 +174,30 @@ function ciniki_products_edit() {
 			'msrp':{'label':'MSRP', 'type':'text', 'active':(fields.msrp!=null?'yes':'no')},
 			'status':{'label':'Status', 'type':'select', 'options':this.statusOptions, 
 				'active':(fields.status!=null?'yes':'no')},
-			'webflags':{'label':'Name', 'hint':'Product Name', 'type':'flags', 'flags':this.webFlags,
+			'webflags':{'label':'Options', 'hint':'Product Name', 'type':'flags', 'flags':this.webFlags,
 				'active':(fields.webflags!=null?'yes':'no')},
 		}};
+		if( type[pc].categories != null ) {
+			form['_categories'] = {'label':'Categories', 'aside':'yes', 'fields':{
+				'categories':{'label':'', 'hidelabel':'yes', 'type':'tags', 'tags':this.edit.tags.categories, 'hint':'Enter a new category:'},
+				}};
+		}
+		if( type[pc].subcategories != null ) {
+			form['_subcategories'] = {'label':'Sub-Categories', 'aside':'yes', 'fields':{
+				'subcategories':{'label':'', 'hidelabel':'yes', 'type':'tags', 'tags':this.edit.tags.subcategories, 'hint':'Enter a new sub-category:'},
+				}};
+		}
+		if( type[pc].tags != null ) {
+			form['_tags'] = {'label':'Tag', 'aside':'yes', 'fields':{
+				'tags':{'label':'', 'hidelabel':'yes', 'type':'tags', 'tags':this.edit.tags.tags, 'hint':'Enter a new tag:'},
+				}};
+		}
 		if( fields.inventory_flags != null || fields.inventory_current_num != null ) {
 			form['inventory'] = {'label':'', 'fields':{}};
-//			if( fields.inventory_flags != null ) { form.inventory.fields['inventory_flags'] = 
-//				{'label':'Options', 'type':'flags', 'flags':this.inventoryFlags}; }
+			if( fields.inventory_flags != null ) { form.inventory.fields['inventory_flags'] = 
+				{'label':'Options', 'type':'flags', 'flags':this.inventoryFlags}; }
 			if( fields.inventory_current_num != null ) { form.inventory.fields['inventory_current_num'] = 
-				{'label':'Number', 'type':'text', 'size':'small'}; }
+				{'label':'Inventory', 'type':'text', 'size':'small'}; }
 		}
 		if( M.curBusiness.modules['ciniki.sapos'] != null 
 			&& (M.curBusiness.modules['ciniki.sapos'].flags&0x08) > 0 ) {
@@ -274,13 +294,31 @@ form;
 //		}
 		if( this.edit.product_id > 0 ) {
 			M.api.getJSONCb('ciniki.products.productGet', {'business_id':M.curBusinessID,
-				'product_id':this.edit.product_id}, function(rsp) {
+				'product_id':this.edit.product_id, 'categories':'yes', 'subcategories':'yes', 'tags':'yes'}, function(rsp) {
 					if( rsp.stat != 'ok' ) {
 						M.api.err(rsp);
 						return false;
 					}
 					var p = M.ciniki_products_edit.edit;
 					p.data = rsp.product;
+					p.tags = {'categories':[], 'subcategories':[], 'tags':[]};
+					for(i in p.tags) {
+						if( rsp[i] != null ) {
+							for(j in rsp[i]) {
+								p.tags[i].push(rsp[i][j].tag.name);
+							}
+						}
+					}
+//					if( rsp.categories != null ) {
+//						for(i in rsp.categories) {
+//							p.tags.categories.push(rsp.categories[i].tag.name);
+//						}
+//					}
+//					if( rsp.tags != null ) {
+//						for(i in rsp.tags) {
+//							p.tags.push(rsp.categories[i].tag.name);
+//						}
+//					}
 					p.refresh();
 					p.show(cb);
 				});
@@ -290,13 +328,40 @@ form;
 				'shipping_weight_units':10, 'shipping_size_units':10};
 			if( category != '' ) {
 				this.edit.data.category = category;
+				this.edit.data.categories = category;
 			}
 			if( supplier_id != null ) {
 				this.edit.data.supplier_id = supplier_id;
 				this.edit.data.supplier_name = unescape(supplier_name);
 			}
-			this.edit.refresh();
-			this.edit.show(cb);
+			M.api.getJSONCb('ciniki.products.productTags', {'business_id':M.curBusinessID}, function(rsp) {
+				if( rsp.stat != 'ok' ) {
+					M.api.err(rsp);
+					return false;
+				}
+				var p = M.ciniki_products_edit.edit;
+				p.tags = {'categories':[], 'subcategories':[], 'tags':[]};
+				for(i in p.tags) {
+					if( rsp[i] != null ) {
+						for(j in rsp[i]) {
+							p.tags[i].push(rsp[i][j].tag.name);
+						}
+					}
+				}
+//				p.tags = {'categories':[], 'tags':[]};
+//				if( rsp.categories != null ) {
+//					for(i in rsp.categories) {
+//						p.tags.categories.push(rsp.categories[i].tag.name);
+//					}
+//				}
+//				if( rsp.tags != null ) {
+//					for(i in rsp.tags) {
+//						p.tags.push(rsp.categories[i].tag.name);
+//					}
+//				}
+				p.refresh();
+				p.show(cb);
+				});
 		}
 	};
 

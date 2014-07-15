@@ -42,16 +42,16 @@ function ciniki_products_types() {
 		//
 		this.edit = new M.panel('Product Type',
 			'ciniki_products_types', 'edit',
-			'mc', 'medium', 'sectioned', 'ciniki.products.types.edit');
+			'mc', 'medium mediumaside', 'sectioned', 'ciniki.products.types.edit');
 		this.edit.type_id = 0;
 		this.edit.data = {};
 		this.edit.sections = {
-			'info':{'label':'', 'fields':{
+			'info':{'label':'', 'aside':'yes', 'fields':{
 				'name_s':{'label':'Name', 'type':'text'},
 				'name_p':{'label':'Plural', 'type':'text'},
 				'status':{'label':'Status', 'type':'toggle', 'default':'10', 'toggles':this.statusOptions},
 			}},
-			'parent_products':{'label':'Parent', 'fields':{
+			'parent_products':{'label':'Parent', 'aside':'yes', 'fields':{
 				'parent_product_name':{'label':'Name', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'parent_product_code':{'label':'Code', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'parent_product_category':{'label':'Category', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
@@ -88,7 +88,7 @@ function ciniki_products_types() {
 				'parent_product_end_date':{'label':'End Date', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'parent_product_webflags':{'label':'Webflags', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				}},
-			'parent_product_details':{'label':'Parent Details', 'fields':{
+			'parent_product_details':{'label':'Parent Details', 'aside':'yes', 'fields':{
 				'parent_product_detail01':{'label':'Details 1', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'parent_product_detail01-name':{'label':'Name 1', 'type':'text'},
 				'parent_product_detail02':{'label':'Details 2', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
@@ -108,25 +108,30 @@ function ciniki_products_types() {
 				'parent_product_detail09':{'label':'Details 9', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'parent_product_detail09-name':{'label':'Name 9', 'type':'text'},
 				}},
-			'parent_other':{'label':'Parent Images', 'fields':{
+			'parent_other':{'label':'Parent Images', 'aside':'yes', 'fields':{
+				'parent_categories':{'label':'Categories', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
+				'parent_subcategories':{'label':'Sub-Categories', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
+				'parent_tags':{'label':'Tags', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'parent_images':{'label':'Images', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'parent_files':{'label':'Files', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'parent_similar':{'label':'Similar', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'parent_recipes':{'label':'Recipes', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				}},
-			'parent_pricing':{'label':'Parent Pricing', 'fields':{
+			'parent_pricing':{'label':'Parent Pricing', 'aside':'yes', 'fields':{
+				'parent_price_name':{'label':'Name', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'parent_price_available_to':{'label':'Available To', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'parent_price_min_quantity':{'label':'Min Quantity', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
-				'parent_price_amount':{'label':'Amount', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
-				'parent_price_discount_amount':{'label':'Discount Amount', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
-				'parent_price_discount_percentage':{'label':'Discount Amount Percentage', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
+				'parent_price_unit_amount':{'label':'Amount', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
+				'parent_price_unit_discount_amount':{'label':'Discount Amount', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
+				'parent_price_unit_discount_percentage':{'label':'Discount Amount Percentage', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'parent_price_taxtype_id':{'label':'Taxtype', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'parent_price_start_date':{'label':'Start Date', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'parent_price_end_date':{'label':'End Date', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
+				'parent_price_webflags':{'label':'Web Flags', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				}},
 			'child_products':{'label':'Child', 'fields':{
 				'child_product_name':{'label':'Name', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
-				'child_product_category':{'label':'Category', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
+//				'child_product_category':{'label':'Category', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'child_product_source':{'label':'Source', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'child_product_flags':{'label':'Flags', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'child_product_barcode':{'label':'Barcode', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
@@ -187,14 +192,16 @@ function ciniki_products_types() {
 				'child_recipes':{'label':'Recipes', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				}},
 			'child_pricing':{'label':'Child Pricing', 'fields':{
+				'child_price_name':{'label':'Name', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'child_price_available_to':{'label':'Available To', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'child_price_min_quantity':{'label':'Min Quantity', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
-				'child_price_amount':{'label':'Amount', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
-				'child_price_discount_amount':{'label':'Discount Amount', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
-				'child_price_discount_percentage':{'label':'Discount Amount Percentage', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
+				'child_price_unit_amount':{'label':'Amount', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
+				'child_price_unit_discount_amount':{'label':'Discount Amount', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
+				'child_price_unit_discount_percentage':{'label':'Discount Amount Percentage', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'child_price_taxtype_id':{'label':'Taxtype', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'child_price_start_date':{'label':'Start Date', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'child_price_end_date':{'label':'End Date', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
+				'child_price_webflags':{'label':'Web Flags', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				}},
 			'_buttons':{'label':'', 'buttons':{
 				'save':{'label':'Save', 'fn':'M.ciniki_products_types.saveType();'},
@@ -234,7 +241,7 @@ function ciniki_products_types() {
 	// Grab the stats for the business from the database and present the list of products.
 	//
 	this.showMenu = function(cb) {
-		M.api.getJSONCb('ciniki.products.productTypeList', 
+		M.api.getJSONCb('ciniki.products.typeList', 
 			{'business_id':M.curBusinessID}, function(rsp) {
 				if( rsp.stat != 'ok' ) {
 					M.api.err(rsp);
@@ -250,7 +257,7 @@ function ciniki_products_types() {
 	this.editType = function(cb, tid) {
 		if( tid != null ) { this.edit.type_id = tid; }
 		if( this.edit.type_id > 0 ) {
-			M.api.getJSONCb('ciniki.products.productTypeGet', {'business_id':M.curBusinessID,
+			M.api.getJSONCb('ciniki.products.typeGet', {'business_id':M.curBusinessID,
 				'type_id':this.edit.type_id}, function(rsp) {
 					if( rsp.stat != 'ok' ) {
 						M.api.err(rsp);
@@ -273,7 +280,7 @@ function ciniki_products_types() {
 	this.saveType = function() {
 		if( this.edit.type_id > 0 ) {
 			var c = this.edit.serializeForm('no');
-			M.api.postJSONCb('ciniki.products.productTypeUpdate', {'business_id':M.curBusinessID,
+			M.api.postJSONCb('ciniki.products.typeUpdate', {'business_id':M.curBusinessID,
 				'type_id':this.edit.type_id}, c, function(rsp) {
 					if( rsp.stat != 'ok' ) {
 						M.api.err(rsp);
@@ -283,7 +290,7 @@ function ciniki_products_types() {
 				});
 		} else {
 			var c = this.edit.serializeForm('yes');
-			M.api.postJSONCb('ciniki.products.productTypeAdd', {'business_id':M.curBusinessID,
+			M.api.postJSONCb('ciniki.products.typeAdd', {'business_id':M.curBusinessID,
 				'type_id':this.edit.type_id}, c, function(rsp) {
 					if( rsp.stat != 'ok' ) {
 						M.api.err(rsp);
@@ -296,7 +303,7 @@ function ciniki_products_types() {
 
 	this.deleteType = function() {
 		if( confirm("Are you sure you want to remove this type?") ) {
-			var rsp = M.api.getJSONCb('ciniki.products.productTypeDelete', 
+			var rsp = M.api.getJSONCb('ciniki.products.typeDelete', 
 				{'business_id':M.curBusinessID, 'type_id':this.edit.type_id}, function(rsp) {
 					if( rsp.stat != 'ok' ) {
 						M.api.err(rsp);

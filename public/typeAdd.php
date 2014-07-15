@@ -14,7 +14,7 @@
 // -------
 // <rsp stat="ok" id="42">
 //
-function ciniki_products_productTypeAdd(&$ciniki) {
+function ciniki_products_typeAdd(&$ciniki) {
 	//
 	// Find all the required and optional arguments
 	//
@@ -34,7 +34,7 @@ function ciniki_products_productTypeAdd(&$ciniki) {
 	// Check access to business_id as owner
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-	$ac = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.productTypeAdd');
+	$ac = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.typeAdd');
 	if( $ac['stat'] != 'ok' ) {
 		return $ac;
 	}

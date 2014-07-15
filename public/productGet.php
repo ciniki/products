@@ -18,10 +18,14 @@ function ciniki_products_productGet($ciniki) {
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
 		'product_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Product'),
+		'prices'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Prices'),
 		'files'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Files'),
 		'images'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Images'),
 		'similar'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Similar Products'),
 		'recipes'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Recommended Recipes'),
+		'categories'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'All Categories'),
+		'subcategories'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Sub Categories'),
+		'tags'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'All Tags'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -47,8 +51,62 @@ function ciniki_products_productGet($ciniki) {
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
-	$product = $rc['product'];
+	$rsp = array('stat'=>'ok', 'product'=>$rc['product']);
 
-	return array('stat'=>'ok', 'product'=>$product);
+	//
+	// Check if all categories should be returned
+	//
+	if( isset($args['categories']) && $args['categories'] == 'yes' ) {
+		//
+		// Get the available tags
+		//
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsList');
+		$rc = ciniki_core_tagsList($ciniki, 'ciniki.products', $args['business_id'], 
+			'ciniki_product_tags', 10);
+		if( $rc['stat'] != 'ok' ) {
+			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1818', 'msg'=>'Unable to get list of categories', 'err'=>$rc['err']));
+		}
+		if( isset($rc['tags']) ) {
+			$rsp['categories'] = $rc['tags'];
+		}
+	}
+
+	//
+	// Check if all subcategories should be returned
+	//
+	if( isset($args['subcategories']) && $args['subcategories'] == 'yes' ) {
+		//
+		// Get the available tags
+		//
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsList');
+		$rc = ciniki_core_tagsList($ciniki, 'ciniki.products', $args['business_id'], 
+			'ciniki_product_tags', 11);
+		if( $rc['stat'] != 'ok' ) {
+			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1818', 'msg'=>'Unable to get list of sub-categories', 'err'=>$rc['err']));
+		}
+		if( isset($rc['tags']) ) {
+			$rsp['subcategories'] = $rc['tags'];
+		}
+	}
+
+	//
+	// Check if all tags should be returned
+	//
+	if( isset($args['tags']) && $args['tags'] == 'yes' ) {
+		//
+		// Get the available tags
+		//
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsList');
+		$rc = ciniki_core_tagsList($ciniki, 'ciniki.products', $args['business_id'], 
+			'ciniki_product_tags', 20);
+		if( $rc['stat'] != 'ok' ) {
+			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1819', 'msg'=>'Unable to get list of tags', 'err'=>$rc['err']));
+		}
+		if( isset($rc['tags']) ) {
+			$rsp['tags'] = $rc['tags'];
+		}
+	}
+
+	return $rsp;
 }
 ?>

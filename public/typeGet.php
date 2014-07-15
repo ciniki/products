@@ -10,7 +10,7 @@
 // Returns
 // -------
 //
-function ciniki_products_productTypeGet($ciniki) {
+function ciniki_products_typeGet($ciniki) {
     //  
     // Find all the required and optional arguments
     //  
@@ -29,7 +29,7 @@ function ciniki_products_productTypeGet($ciniki) {
     // check permission to run this function for this business
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.productTypeGet'); 
+    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.typeGet'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -91,6 +91,9 @@ function ciniki_products_productTypeGet($ciniki) {
 			$type['parent_price_' . $field] = 'on';
 		}
 	}
+	if( isset($object_def['parent']['categories']) ) { $type['parent_categories'] = 'on'; }
+	if( isset($object_def['parent']['subcategories']) ) { $type['parent_subcategories'] = 'on'; }
+	if( isset($object_def['parent']['tags']) ) { $type['parent_tags'] = 'on'; }
 	if( isset($object_def['parent']['images']) ) { $type['parent_images'] = 'on'; }
 	if( isset($object_def['parent']['files']) ) { $type['parent_files'] = 'on'; }
 	if( isset($object_def['parent']['similar']) ) { $type['parent_similar'] = 'on'; }
@@ -108,6 +111,9 @@ function ciniki_products_productTypeGet($ciniki) {
 			$type['child_price_' . $field] = 'on';
 		}
 	}
+	if( isset($object_def['child']['categories']) ) { $type['child_categories'] = 'on'; }
+	if( isset($object_def['child']['subcategories']) ) { $type['child_subcategories'] = 'on'; }
+	if( isset($object_def['child']['tags']) ) { $type['child_tags'] = 'on'; }
 	if( isset($object_def['child']['images']) ) { $type['child_images'] = 'on'; }
 	if( isset($object_def['child']['files']) ) { $type['child_files'] = 'on'; }
 	if( isset($object_def['child']['similar']) ) { $type['child_similar'] = 'on'; }

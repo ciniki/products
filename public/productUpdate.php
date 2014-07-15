@@ -66,6 +66,9 @@ function ciniki_products_productUpdate(&$ciniki) {
 		'detail07'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Detail 07'),
 		'detail08'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Detail 08'),
 		'detail09'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Detail 09'),
+        'categories'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'list', 'delimiter'=>'::', 'name'=>'Categories'), 
+        'subcategories'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'list', 'delimiter'=>'::', 'name'=>'Sub-Categories'), 
+        'tags'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'list', 'delimiter'=>'::', 'name'=>'Tags'), 
 //        'wine_type'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Wine Type'), 
 //        'kit_length'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Rack Length'), 
 //        'winekit_oak'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Oak'), 
@@ -166,6 +169,48 @@ function ciniki_products_productUpdate(&$ciniki) {
 //				2, 'ciniki_product_details', $args['product_id'], $detail_field, $args[$field]);
 //		}
 //	}
+
+	//
+	// Update the categories
+	//
+	if( isset($args['categories']) ) {
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsUpdate');
+		$rc = ciniki_core_tagsUpdate($ciniki, 'ciniki.products', 'tag', $args['business_id'],
+			'ciniki_product_tags', 'ciniki_product_history',
+			'product_id', $args['product_id'], 10, $args['categories']);
+		if( $rc['stat'] != 'ok' ) {
+			ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
+			return $rc;
+		}
+	}
+
+	//
+	// Update the subcategories
+	//
+	if( isset($args['subcategories']) ) {
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsUpdate');
+		$rc = ciniki_core_tagsUpdate($ciniki, 'ciniki.products', 'tag', $args['business_id'],
+			'ciniki_product_tags', 'ciniki_product_history',
+			'product_id', $args['product_id'], 11, $args['subcategories']);
+		if( $rc['stat'] != 'ok' ) {
+			ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
+			return $rc;
+		}
+	}
+
+	//
+	// Update the tags
+	//
+	if( isset($args['tags']) ) {
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsUpdate');
+		$rc = ciniki_core_tagsUpdate($ciniki, 'ciniki.products', 'tag', $args['business_id'],
+			'ciniki_product_tags', 'ciniki_product_history',
+			'product_id', $args['product_id'], 20, $args['tags']);
+		if( $rc['stat'] != 'ok' ) {
+			ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
+			return $rc;
+		}
+	}
 
 	//
 	// Commit the database changes

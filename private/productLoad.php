@@ -32,17 +32,18 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 	//
 	// Load the status maps for the text description of each type
 	//
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'productStatusMaps');
-	$rc = ciniki_products_productStatusMaps($ciniki);
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'maps');
+	$rc = ciniki_products_maps($ciniki);
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}
-	$status_maps = $rc['maps'];
+	$maps = $rc['maps'];
 
 	//
 	// Get the basic product information
 	//
 	$strsql = "SELECT ciniki_products.id, "
+		. "ciniki_products.parent_id, "
 		. "ciniki_products.name, "
 		. "ciniki_products.type_id, "
 		. "ciniki_product_types.name_s AS type_text, "
@@ -99,7 +100,7 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
 	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
 		array('container'=>'products', 'fname'=>'id', 'name'=>'product',
-			'fields'=>array('id', 'name', 'type_id', 'type_text', 'object_def',
+			'fields'=>array('id', 'parent_id', 'name', 'type_id', 'type_text', 'object_def',
 				'category', 'status', 'status_text',
 				'supplier_id', 'supplier_item_number', 
 				'supplier_minimum_order', 'supplier_order_multiple',
@@ -115,7 +116,7 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 			'utctotz'=>array('start_date'=>array('timezone'=>$intl_timezone, 'format'=>$date_format),
 				'end_date'=>array('timezone'=>$intl_timezone, 'format'=>$date_format),
 				),
-			'maps'=>array('status_text'=>$status_maps),
+			'maps'=>array('status_text'=>$maps['product']['status']),
 			),
 		));
 	if( $rc['stat'] != 'ok' ) {
@@ -128,6 +129,7 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 
 	$object_def = unserialize($product['object_def']);
 	$product['object_def'] = json_encode($object_def);
+	$pc = $product['parent_id']==0?'parent':'child';
 
 	//
 	// Format shipping values
@@ -144,7 +146,7 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 	$product['shipping_width'] = (float)$product['shipping_width'];
 	$product['shipping_height'] = (float)$product['shipping_height'];
 
-	if( isset($object_def['parent']['products']['shipping_weight']) ) {
+	if( isset($object_def[$pc]['products']['shipping_weight']) ) {
 		$product['shipping_package'] = '';
 		$product['shipping_package'] .= (float)$product['shipping_weight'];
 		if( $product['shipping_weight'] > 1 ) {
@@ -224,6 +226,67 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 //		$product[$result['row']['detail_key']] = $result['row']['detail_value'];
 //		$result = ciniki_core_dbFetchHashRow($ciniki, $result_handle);
 //	}
+
+	//
+	// Get the prices for the product
+	//
+	if( isset($args['prices']) && $args['prices'] == 'yes' ) {
+		//
+		// Get the price list for the product
+		//
+		$strsql = "SELECT id, name, available_to, available_to AS available_to_text, unit_amount "
+			. "FROM ciniki_product_prices "
+			. "WHERE ciniki_product_prices.product_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
+			. "ORDER BY ciniki_product_prices.name "
+			. "";
+		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
+			array('container'=>'prices', 'fname'=>'id', 'name'=>'price',
+				'fields'=>array('id', 'name', 'available_to', 'available_to_text', 'unit_amount'),
+				'flags'=>array('available_to_text'=>$maps['price']['available_to'])),
+			));
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		if( isset($rc['prices']) ) {
+			$product['prices'] = $rc['prices'];
+			foreach($product['prices'] as $pid => $price) {
+				$product['prices'][$pid]['price']['unit_amount_display'] = numfmt_format_currency(
+					$intl_currency_fmt, $price['price']['unit_amount'], $intl_currency);
+			}
+		} else {
+			$product['prices'] = array();
+		}
+	}
+
+	//
+	// Get the categories and tags for the product
+	//
+	if( isset($object_def[$pc]['categories']) || isset($object_def[$pc]['tags']) ) {
+		$strsql = "SELECT tag_type, tag_name AS lists "
+			. "FROM ciniki_product_tags "
+			. "WHERE product_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
+			. "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. "ORDER BY tag_type, tag_name "
+			. "";
+		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
+			array('container'=>'tags', 'fname'=>'tag_type', 'name'=>'tags',
+				'fields'=>array('tag_type', 'lists'), 'dlists'=>array('lists'=>'::')),
+			));
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		if( isset($rc['tags']) ) {
+			foreach($rc['tags'] as $tags) {
+				if( isset($object_def[$pc]['categories']) && $tags['tags']['tag_type'] == 10 ) {
+					$product['categories'] = $tags['tags']['lists'];
+				} elseif( isset($object_def[$pc]['tags']) && $tags['tags']['tag_type'] == 11 ) {
+					$product['subcategories'] = $tags['tags']['lists'];
+				} elseif( isset($object_def[$pc]['tags']) && $tags['tags']['tag_type'] == 20 ) {
+					$product['tags'] = $tags['tags']['lists'];
+				}
+			}
+		}
+	}
 
 	//
 	// Get the images for the product

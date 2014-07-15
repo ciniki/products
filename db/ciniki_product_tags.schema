@@ -1,0 +1,40 @@
+#
+# Description
+# -----------
+# This table stores categories and tags for products.
+#
+# Fields
+# -------
+# id:				The database ID of the tag.
+# uuid:				The Universal Unique ID for the tag.
+# business_id:		The ID of the business the artcatalog item is attached to.
+#
+# product_id:		The ID of the product.
+#
+# tag_type:			The type of tag, which is how it will be used.  This allows
+#					these tags to be used for multiple purposes.
+#	
+#					0 - unknown
+#					10 - Category
+#					11 - Sub-Category
+#					20 - Tag
+#
+# tag_name:			The name of the tag, list or category.
+#
+# date_added:       The UTC date and time the tag was added.
+# last_updated:     The UTC date and time the tag was last updated.
+#
+create table ciniki_product_tags (
+	id bigint not null auto_increment,
+	uuid char(36) not null,
+	business_id int not null,
+	product_id int not null,
+	tag_type int not null,
+	tag_name varchar(150) not null,
+	permalink varchar(150) not null,
+	date_added datetime not null,
+	last_updated datetime not null,
+	primary key (id),
+	unique index (product_id, tag_type, tag_name),
+	index sync (business_id, uuid, last_updated)
+) ENGINE='InnoDB', COMMENT='v1.01', CHARACTER SET latin1, COLLATE latin1_swedish_ci;

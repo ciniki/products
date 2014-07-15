@@ -28,7 +28,7 @@
 //		...
 //	</users>
 //
-function ciniki_products_productTypeHistory($ciniki) {
+function ciniki_products_typeHistory($ciniki) {
 	//
 	// Find all the required and optional arguments
 	//
@@ -47,7 +47,7 @@ function ciniki_products_productTypeHistory($ciniki) {
 	// Check access to business_id as owner, or sys admin
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-	$rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.productTypeHistory');
+	$rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.typeHistory');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}

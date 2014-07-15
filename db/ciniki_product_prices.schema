@@ -36,28 +36,36 @@
 # discount_amount:		The dollar amount to discount a single unit.
 # discount_percentage:	The percentage to discount a single unit.
 #
-# taxtype_id:		The ID of the tax type in the ciniki.taxes module.
+# taxtype_id:			The ID of the tax type in the ciniki.taxes module.
 #
-# start_date:		The UTC date and time the pricing becomes active.
-# end_date:			The UTC date and time the pricing becomes inactive.
+# start_date:			The UTC date and time the pricing becomes active.
+# end_date:				The UTC date and time the pricing becomes inactive.
 #
-# date_added:		The UTC date and time the product was added to the database.
+# webflags:				The website flags for the price.
 #
-# last_updated:		The UTC date and time of the last update.
+#						0x01 - Hidden, do not show price on the website.
+#						0x10 - Show Members price to public
+#						0x20 - Show Dealers price to public
+#						0x40 - Show Distributors price to public
+#
+# date_added:			The UTC date and time the price was added to the database.
+# last_updated:			The UTC date and time of the last update.
 #
 create table ciniki_product_prices (
 	id int not null auto_increment,
 	uuid char(36) not null,
 	business_id int not null,
 	product_id int not null,
+	name varchar(150) not null,
 	available_to tinyint unsigned not null,
 	min_quantity int not null,
-	amount decimal(19,4) not null,
-	discount_amount decimal(19,4) not null,
-	discount_percentage decimal(19,4) not null,
+	unit_amount decimal(19,4) not null,
+	unit_discount_amount decimal(19,4) not null,
+	unit_discount_percentage decimal(19,4) not null,
 	taxtype_id int not null,
 	start_date datetime not null,
 	end_date datetime not null,
+	webflags tinyint unsigned not null,
 	date_added datetime not null,
 	last_updated datetime not null,
 	primary key (id),

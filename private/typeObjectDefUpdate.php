@@ -73,14 +73,16 @@ function ciniki_products_typeObjectDefUpdate($ciniki, $object_def, $args) {
 		'detail09',
 		);
 	$price_fields = array(
+		'name',
 		'available_to',
 		'min_quantity',
-		'amount',
-		'discount_amount',
-		'discount_percentage',
+		'unit_amount',
+		'unit_discount_amount',
+		'unit_discount_percentage',
 		'taxtype_id',
 		'start_date',
 		'end_date',
+		'webflags',
 		);
 
 	foreach($product_fields as $field) {
@@ -139,64 +141,23 @@ function ciniki_products_typeObjectDefUpdate($ciniki, $object_def, $args) {
 	}
 
 	$args['object_def'] = serialize($object_def);
-	if( isset($args['parent_images']) ) {
-		if( $args['parent_images'] == 'on' ) {
-			$object_def['parent']['images'] = array();
-		} elseif( $args['parent_images'] == 'off' && isset($object_def['parent']['images']) ) {
-			unset($object_def['parent']['images']);
+	$extras = array('categories', 'subcategories', 'tags', 'images', 'files', 'similar', 'recipes');
+	foreach($extras as $extra) {
+		$field = 'parent_' . $extra;
+		if( isset($args[$field]) ) {
+			if( $args[$field] == 'on' ) {
+				$object_def['parent'][$extra] = array();
+			} elseif( $args[$field] == 'off' && isset($object_def['parent'][$extra]) ) {
+				unset($object_def['parent'][$extra]);
+			}
 		}
-	}
-	if( isset($args['child_images']) ) {
-		if( $args['child_images'] == 'on' ) {
-			if( !isset($object_def['child']) ) { $object_def['child'] = array('products'=>array()); }
-			$object_def['child']['images'] = array();
-		} elseif( $args['child_images'] == 'off' && isset($object_def['child']['images']) ) {
-			unset($object_def['child']['images']);
-		}
-	}
-	if( isset($args['parent_files']) ) {
-		if( $args['parent_files'] == 'on' ) {
-			$object_def['parent']['files'] = array();
-		} elseif( $args['parent_files'] == 'off' && isset($object_def['parent']['files']) ) {
-			unset($object_def['parent']['files']);
-		}
-	}
-	if( isset($args['child_files']) ) {
-		if( $args['child_files'] == 'on' ) {
-			if( !isset($object_def['child']) ) { $object_def['child'] = array('products'=>array()); }
-			$object_def['child']['files'] = array();
-		} elseif( $args['child_files'] == 'off' && isset($object_def['child']['files']) ) {
-			unset($object_def['child']['files']);
-		}
-	}
-	if( isset($args['parent_similar']) ) {
-		if( $args['parent_similar'] == 'on' ) {
-			$object_def['parent']['similar'] = array();
-		} elseif( $args['parent_similar'] == 'off' && isset($object_def['parent']['similar']) ) {
-			unset($object_def['parent']['similar']);
-		}
-	}
-	if( isset($args['child_similar']) ) {
-		if( $args['child_similar'] == 'on' ) {
-			if( !isset($object_def['child']) ) { $object_def['child'] = array('products'=>array()); }
-			$object_def['child']['similar'] = array();
-		} elseif( $args['child_similar'] == 'off' && isset($object_def['child']['similar']) ) {
-			unset($object_def['child']['similar']);
-		}
-	}
-	if( isset($args['parent_recipes']) ) {
-		if( $args['parent_recipes'] == 'on' ) {
-			$object_def['parent']['recipes'] = array();
-		} elseif( $args['parent_recipes'] == 'off' && isset($object_def['parent']['recipes']) ) {
-			unset($object_def['parent']['recipes']);
-		}
-	}
-	if( isset($args['child_recipes']) ) {
-		if( $args['child_recipes'] == 'on' ) {
-			if( !isset($object_def['child']) ) { $object_def['child'] = array('products'=>array()); }
-			$object_def['child']['recipes'] = array();
-		} elseif( $args['child_recipes'] == 'off' && isset($object_def['child']['recipes']) ) {
-			unset($object_def['child']['recipes']);
+		$field = 'child_' . $extra;
+		if( isset($args[$field]) ) {
+			if( $args[$field] == 'on' ) {
+				$object_def['child'][$extra] = array();
+			} elseif( $args[$field] == 'off' && isset($object_def['child'][$extra]) ) {
+				unset($object_def['child'][$extra]);
+			}
 		}
 	}
 

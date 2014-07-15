@@ -11,6 +11,7 @@ function ciniki_products_product() {
 			'mc', 'medium mediumaside', 'sectioned', 'ciniki.products.product.product');
 		this.product.data = {};
 		this.product.product_id = 0;
+		this.product.type_id = 0;
 		this.product.sections = {
 			'_image':{'label':'', 'aside':'yes', 'fields':{
 				'primary_image_id':{'label':'', 'type':'image_id', 'hidelabel':'yes', 'history':'no'},
@@ -19,6 +20,9 @@ function ciniki_products_product() {
 				'type_text':{'label':'Type', 'visible':'no'},
 				'name':{'label':'Name', 'visible':'no'},
 				'category':{'label':'Category', 'visible':'no'},
+				'categories':{'label':'Categories', 'visible':'no'},
+				'subcategories':{'label':'Sub-Categories', 'visible':'no'},
+				'tags':{'label':'Tags', 'visible':'no'},
 				'status_text':{'label':'Status', 'visible':'no'},
 //				'barcode':{'label':'Barcode', 'visible':'no'},
 				'price':{'label':'Price', 'visible':'no'},
@@ -38,6 +42,12 @@ function ciniki_products_product() {
 				'detail08':{'label':'', 'visible':'no'},
 				'detail09':{'label':'', 'visible':'no'},
 				}},
+			'prices':{'label':'Pricing', 'visible':'no', 'type':'simplegrid', 'num_cols':2,
+				'headerValues':null,
+				'cellClasses':['','alignright'],
+				'addTxt':'Add Pricing',
+				'addFn':'M.startApp(\'ciniki.products.prices\',null,\'M.ciniki_products_product.showProduct();\',\'mc\',{\'product_id\':M.ciniki_products_product.product.product_id,\'price_id\':\'0\',\'type_id\':M.ciniki_products_product.product.data.type_id});',
+				},
 			'supplier':{'label':'Supplier', 'aside':'yes', 'visible':'no', 'list':{
 				'supplier_name':{'label':'Name', 'visible':'no'},
 				'supplier_item_number':{'label':'Item #', 'visible':'no'},
@@ -52,7 +62,6 @@ function ciniki_products_product() {
 			'files':{'label':'Files', 'visible':'no', 'type':'simplegrid', 'num_cols':1,
 				'headerValues':null,
 				'cellClasses':['multiline'],
-				'noData':'No product files',
 				'addTxt':'Add File',
 				'addFn':'M.startApp(\'ciniki.products.files\',null,\'M.ciniki_products_product.showProduct();\',\'mc\',{\'product_id\':M.ciniki_products_product.product.product_id,\'add\':\'yes\'});',
 				},
@@ -109,6 +118,17 @@ function ciniki_products_product() {
 			return this.data[i];
 		};
 		this.product.cellValue = function(s, i, j, d) {
+			if( s == 'prices' ) {
+				if( j == 0 ) {
+					if( d.price.name != '' ) {
+						return d.price.name + ' <span class="subdue">' + d.price.available_to_text + '</span>';
+					} else {
+						return d.price.available_to_text;
+					}
+				} else if( j == 1 ) {
+					return d.price.unit_amount_display;
+				}
+			}
 			if( s == 'files' && j == 0 ) {
 				return '<span class="maintext">' + d.file.name + '</span>';
 			}
@@ -120,6 +140,9 @@ function ciniki_products_product() {
 			}
 		};
 		this.product.rowFn = function(s, i, d) {	
+			if( s == 'prices' ) {
+				return 'M.startApp(\'ciniki.products.prices\',null,\'M.ciniki_products_product.showProduct();\',\'mc\',{\'price_id\':\'' + d.price.id + '\',\'type_id\':M.ciniki_products_product.product.data.type_id});';
+			}
 			if( s == 'files' ) {
 				return 'M.startApp(\'ciniki.products.files\',null,\'M.ciniki_products_product.showProduct();\',\'mc\',{\'file_id\':\'' + d.file.id + '\'});';
 			}
@@ -168,11 +191,11 @@ function ciniki_products_product() {
 
 	this.showProduct = function(cb, pid) {
 		this.product.reset();
-		this.product.sections.similar.visible=(M.curBusiness.modules['ciniki.products'].flags&0x01)==1?'yes':'no';
-		this.product.sections.recipes.visible=(M.curBusiness.modules['ciniki.products'].flags&0x02)==2?'yes':'no';
+//		this.product.sections.similar.visible=(M.curBusiness.modules['ciniki.products'].flags&0x01)==1?'yes':'no';
+//		this.product.sections.recipes.visible=(M.curBusiness.modules['ciniki.products'].flags&0x02)==2?'yes':'no';
 		if( pid != null ) { this.product.product_id = pid; }
 		M.api.getJSONCb('ciniki.products.productGet', {'business_id':M.curBusinessID,
-			'product_id':this.product.product_id, 
+			'product_id':this.product.product_id, 'prices':'yes',
 			'files':'yes', 'images':'yes', 'similar':'yes', 'recipes':'yes'}, function(rsp) {
 				if( rsp.stat != 'ok' ) {
 					M.api.err(rsp);
@@ -181,44 +204,54 @@ function ciniki_products_product() {
 				var p = M.ciniki_products_product.product;
 				p.data = rsp.product;
 				var object_def = eval('(' + rsp.product.object_def + ')');
+				var pc_object_def = (rsp.product.parent_id==0?object_def.parent:object_def.child);
+				if( rsp.product.categories != null && rsp.product.categories != '' ) {
+					p.data.categories = rsp.product.categories.replace(/::/g, ', ');
+				}
+				if( rsp.product.subcategories != null && rsp.product.subcategories != '' ) {
+					p.data.subcategories = rsp.product.subcategories.replace(/::/g, ', ');
+				}
+				if( rsp.product.tags != null && rsp.product.tags != '' ) {
+					p.data.tags = rsp.product.tags.replace(/::/g, ', ');
+				}
 				// Setup the visible fields
 				for(i in p.sections.info.list) {
-					if( object_def.parent.products[i] != null ) {
+					if( pc_object_def.products[i] != null ) {
 						p.sections.info.list[i].visible='yes';
-						if( object_def.parent.products[i].name != null ) {
-							p.sections.info.list[i].label = object_def.parent.products[i].name;
+						if( pc_object_def.products[i].name != null ) {
+							p.sections.info.list[i].label = pc_object_def.products[i].name;
 						}
 					} else {
 						p.sections.info.list[i].visible='no';
 					}
 				}
-//				for(i in p.sections.info.list) {
-//					p.sections.info.list[i].visible=(object_def.parent.products[i] != null?'yes':'no');
-//				}
-				if( object_def.parent.products['shipping_weight'] != null ) {
+				p.sections.info.list.categories.visible = (pc_object_def.categories!=null?'yes':'no');
+				p.sections.info.list.subcategories.visible = (pc_object_def.subcategories!=null?'yes':'no');
+				p.sections.info.list.tags.visible = (pc_object_def.tags!=null?'yes':'no');
+				if( pc_object_def.products['shipping_weight'] != null ) {
 					p.sections.info.list['shipping_package'].visible = 'yes';
 				}
 				var nvis = 0;
 				for(i in p.sections.supplier.list) {
-					if( object_def.parent.products[i] != null ) {
+					if( pc_object_def.products[i] != null ) {
 						p.sections.supplier.list[i].visible='yes';
 						nvis++;
 					} else {
 						p.sections.supplier.list[i].visible='no';
 					}
 				}
-
 				p.sections.supplier.visible = (nvis==0?'no':'yes');
 				p.sections.supplier.list.supplier_name.visible = (nvis==0?'no':'yes');
-				p.sections.short_description.visible = (object_def.parent.products.short_description!=null?'yes':'no');
-				p.sections.long_description.visible = (object_def.parent.products.long_description!=null?'yes':'no');
-				p.sections._image.visible = (object_def.parent.products.primary_image_id!=null?'yes':'no');
-				p.sections.info.visible = (object_def.parent.products.primary_image_id!=null?'yes':'no');
-				p.sections.images.visible = (object_def.parent.images!=null?'yes':'no');
-				p.sections._images.visible = (object_def.parent.images!=null?'yes':'no');
-				p.sections.files.visible = (object_def.parent.files!=null?'yes':'no');
-				p.sections.similar.visible = (object_def.parent.similar!=null?'yes':'no');
-				p.sections.recipes.visible = (object_def.parent.recipes!=null?'yes':'no');
+				p.sections.short_description.visible = (pc_object_def.products.short_description!=null?'yes':'no');
+				p.sections.long_description.visible = (pc_object_def.products.long_description!=null?'yes':'no');
+				p.sections._image.visible = (pc_object_def.products.primary_image_id!=null?'yes':'no');
+				p.sections.info.visible = (pc_object_def.products.primary_image_id!=null?'yes':'no');
+				p.sections.prices.visible = (pc_object_def.prices!=null?'yes':'no');
+				p.sections.images.visible = (pc_object_def.images!=null?'yes':'no');
+				p.sections._images.visible = (pc_object_def.images!=null?'yes':'no');
+				p.sections.files.visible = (pc_object_def.files!=null?'yes':'no');
+				p.sections.similar.visible = (pc_object_def.similar!=null?'yes':'no');
+				p.sections.recipes.visible = (pc_object_def.recipes!=null?'yes':'no');
 				p.refresh();
 				p.show(cb);
 			});

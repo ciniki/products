@@ -20,18 +20,22 @@
 //
 function ciniki_products_web_categories($ciniki, $settings, $business_id) {
 
-	$strsql = "SELECT DISTINCT category AS name  "
-		. "FROM ciniki_products "
-		. "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
-		. "AND (ciniki_products.webflags&0x01) = 0 "
-		. "AND category <> '' "
-		. "ORDER BY category "
+	$strsql = "SELECT ciniki_product_tags.tag_name AS name, "
+		. "ciniki_product_tags.permalink, "
+		. "COUNT(ciniki_products.id) AS num_products "
+		. "FROM ciniki_product_tags, ciniki_products "
+		. "WHERE ciniki_product_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+		. "AND ciniki_product_tags.product_id = ciniki_products.id "
+		. "AND ciniki_product_tags.tag_type = 10 "
+		. "AND (ciniki_products.webflags&0x01) > 0 "
+		. "AND ciniki_product_tags.tag_name <> '' "
+		. "GROUP BY ciniki_product_tags.tag_name "
+		. "ORDER BY ciniki_product_tags.tag_name "
 		. "";
-	
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
-	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
-		array('container'=>'categories', 'fname'=>'name', 'name'=>'category',
-			'fields'=>array('name')),
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
+	$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
+		array('container'=>'categories', 'fname'=>'name', 
+			'fields'=>array('name', 'permalink', 'num_products')),
 		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
@@ -49,11 +53,13 @@ function ciniki_products_web_categories($ciniki, $settings, $business_id) {
 		// Look for the highlight image, or the most recently added image
 		//
 		$strsql = "SELECT ciniki_products.primary_image_id, ciniki_images.image "
-			. "FROM ciniki_products, ciniki_images "
-			. "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
-			. "AND category = '" . ciniki_core_dbQuote($ciniki, $cat['category']['name']) . "' "
+			. "FROM ciniki_product_tags, ciniki_products, ciniki_images "
+			. "WHERE ciniki_product_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+			. "AND ciniki_product_tags.permalink = '" . ciniki_core_dbQuote($ciniki, $cat['permalink']) . "' "
+			. "AND ciniki_product_tags.product_id = ciniki_products.id "
+			. "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 			. "AND ciniki_products.primary_image_id = ciniki_images.id "
-			. "AND (ciniki_products.webflags&0x01) = 0 "
+			. "AND (ciniki_products.webflags&0x01) > 0 "
 			. "ORDER BY (ciniki_products.webflags&0x10) DESC, "
 			. "ciniki_products.date_added DESC "
 			. "LIMIT 1";
@@ -62,9 +68,9 @@ function ciniki_products_web_categories($ciniki, $settings, $business_id) {
 			return $rc;
 		}
 		if( isset($rc['image']) ) {
-			$categories[$cnum]['category']['image_id'] = $rc['image']['primary_image_id'];
+			$categories[$cnum]['image_id'] = $rc['image']['primary_image_id'];
 		} else {
-			$categories[$cnum]['category']['image_id'] = 0;
+			$categories[$cnum]['image_id'] = 0;
 		}
 	}
 

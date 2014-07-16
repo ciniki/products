@@ -9,7 +9,7 @@
 // Returns
 // -------
 //
-function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $permalink) {
+function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $args) {
 	//
 	// Load currency and timezone settings
 	//
@@ -30,6 +30,11 @@ function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $p
 		$modules = $ciniki['business']['modules'];
 	}
 
+
+
+	//
+	// Get the product details
+	//
 	$strsql = "SELECT ciniki_products.id, "
 		. "ciniki_products.name, "
 		. "ciniki_products.permalink, "
@@ -59,7 +64,7 @@ function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $p
 //			. "AND (ciniki_product_images.webflags&0x01) = 0 "
 //			. ") "
 		. "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
-		. "AND ciniki_products.permalink = '" . ciniki_core_dbQuote($ciniki, $permalink) . "' "
+		. "AND ciniki_products.permalink = '" . ciniki_core_dbQuote($ciniki, $args['product_permalink']) . "' "
 		. "";
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
 	$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.artclub', array(
@@ -167,7 +172,7 @@ function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $p
 	//
 	// Get any images 
 	//
-	$strsql = "SELECT id, image_id, name, sequence, webflags, description, "
+	$strsql = "SELECT id, image_id, name, permalink, sequence, webflags, description, "
 		. "UNIX_TIMESTAMP(last_updated) AS last_updated "
 		. "FROM ciniki_product_images "
 		. "WHERE product_id = '" . ciniki_core_dbQuote($ciniki, $product['id']) . "' "
@@ -176,7 +181,7 @@ function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $p
 		. "";
 	$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
 		array('container'=>'images', 'fname'=>'id', 'name'=>'image',
-			'fields'=>array('id', 'image_id', 'name', 'sequence', 'webflags', 
+			'fields'=>array('id', 'image_id', 'title'=>'name', 'permalink', 'sequence', 'webflags', 
 				'description', 'last_updated')),
 		));
 	if( $rc['stat'] != 'ok' ) {	
@@ -277,6 +282,44 @@ function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $p
 			$product['recipes'] = $rc['recipes'];
 		}
 	}
+
+	//
+	// If specified, get the category title
+	//
+	if( isset($args['category_permalink']) && $args['category_permalink'] != '' ) {
+		$strsql = "SELECT tag_name "
+			. "FROM ciniki_product_tags "
+			. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+			. "AND permalink = '" . ciniki_core_dbQuote($ciniki, $args['category_permalink']) . "' "
+			. "AND tag_type = 10 "
+			. "LIMIT 1 "
+			. "";
+		$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'tag');
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		if( isset($rc['tag']) ) {
+			$product['category_title'] = $rc['tag']['tag_name'];
+		}
+	}
+
+	if( isset($args['subcategory_permalink']) && $args['subcategory_permalink'] != '' ) {
+		$strsql = "SELECT tag_name "
+			. "FROM ciniki_product_tags "
+			. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+			. "AND permalink = '" . ciniki_core_dbQuote($ciniki, $args['subcategory_permalink']) . "' "
+			. "AND tag_type = 11 "
+			. "LIMIT 1 "
+			. "";
+		$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'tag');
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		if( isset($rc['tag']) ) {
+			$product['subcategory_title'] = $rc['tag']['tag_name'];
+		}
+	}
+
 
 	return array('stat'=>'ok', 'product'=>$product);
 }

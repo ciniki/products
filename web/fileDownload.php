@@ -23,7 +23,7 @@ function ciniki_products_web_fileDownload($ciniki, $business_id, $product_permal
 		. "AND ciniki_products.id = ciniki_product_files.product_id "
 		. "AND ciniki_product_files.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 		. "AND CONCAT_WS('.', ciniki_product_files.permalink, ciniki_product_files.extension) = '" . ciniki_core_dbQuote($ciniki, $file_permalink) . "' "
-		. "AND (ciniki_product_files.webflags&0x01) = 0 "		// Make sure file is to be visible
+		. "AND (ciniki_product_files.webflags&0x01) > 0 "		// Make sure file is to be visible
 		. "";
 	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'file');
 	if( $rc['stat'] != 'ok' ) {

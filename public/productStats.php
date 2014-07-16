@@ -41,46 +41,74 @@ function ciniki_products_productStats($ciniki) {
         return $rc;
     }   
 
-	//
-	// FIXME: Add timezone information from business settings
-	//
-	date_default_timezone_set('America/Toronto');
-	$todays_date = strftime("%Y-%m-%d");
-
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'dateFormat');
-	$date_format = ciniki_users_dateFormat($ciniki);
+//	ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'dateFormat');
+//	$date_format = ciniki_users_dateFormat($ciniki);
 
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuoteIDs');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
 
 	//
 	// Get the list of categories and counts
 	//
-	$strsql = "SELECT category AS name, "
+	$strsql = "SELECT tag_name AS name, ciniki_product_tags.permalink, "
+		. "COUNT(ciniki_products.id) AS num_products "
+		. "FROM ciniki_product_tags "
+		. "LEFT JOIN ciniki_products ON ("
+			. "ciniki_product_tags.product_id = ciniki_products.id "
+			. "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. ") "
+		. "WHERE ciniki_product_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+		. "AND ciniki_product_tags.tag_type = 10 "
+		. "GROUP BY ciniki_product_tags.tag_name "
+		. "";
+//	$strsql = "SELECT category AS name, "
 //		. "IF(category='','Uncategorized',category) AS name, "
-		. "COUNT(id) AS num_products "
-		. "FROM ciniki_products "
-		. "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-		. "";
-	if( isset($args['status']) && $args['status'] != '' ) {
-		$strsql .= "AND ciniki_products.status = '" . ciniki_core_dbQuote($ciniki, $args['status']) . "' ";
-	}
-	$strsql .= "GROUP BY category ";
-	$strsql .= "ORDER BY ciniki_products.category "
-		. "";
-
+//		. "COUNT(id) AS num_products "
+//		. "FROM ciniki_products "
+//		. "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+//		. "";
+//	if( isset($args['status']) && $args['status'] != '' ) {
+//		$strsql .= "AND ciniki_products.status = '" . ciniki_core_dbQuote($ciniki, $args['status']) . "' ";
+//	}
+//	$strsql .= "GROUP BY tag_name ";
+//	$strsql .= "ORDER BY tag_name "
+//		. "";
+//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
 	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
 		array('container'=>'categories', 'fname'=>'name', 'name'=>'category',
-			'fields'=>array('name', 'product_count'=>'num_products')),
+			'fields'=>array('name', 'permalink', 'product_count'=>'num_products')),
 		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}
 	if( !isset($rc['categories']) ) {
-		return array('stat'=>'ok', 'categories'=>array(), 'suppliers'=>array());
+		$categories = array();
+	} else {
+		$categories = $rc['categories'];
 	}
-	$categories = $rc['categories'];
+
+	//
+	// Check for any un-categorized products
+	//
+	$strsql = "SELECT COUNT(ciniki_products.id) AS num_products, ciniki_product_tags.tag_name "
+		. "FROM ciniki_products "
+		. "LEFT JOIN ciniki_product_tags ON ("
+			. "ciniki_products.id = ciniki_product_tags.product_id "
+			. "AND ciniki_product_tags.tag_type = 10 "
+			. ") "
+		. "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+		. "AND ISNULL(tag_name) "
+		. "GROUP BY tag_name "
+		. "";
+	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'uncategorized');
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+	if( isset($rc['uncategorized']) ) {
+		$categories[] = array('category'=>array('name'=>'Uncategorized', 'permalink'=>'', 'product_count'=>$rc['uncategorized']['num_products']));
+	}
 
 	//
 	// Get the list of suppliers and counts

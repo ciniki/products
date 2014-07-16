@@ -38,17 +38,14 @@ function ciniki_products_productCategories($ciniki) {
         return $rc;
     }   
 
-	//
-	// FIXME: Add timezone information from business settings
-	//
-	date_default_timezone_set('America/Toronto');
-	$todays_date = strftime("%Y-%m-%d");
-
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'dateFormat');
-	$date_format = ciniki_users_dateFormat($ciniki);
+//	ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'dateFormat');
+//	$date_format = ciniki_users_dateFormat($ciniki);
 
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuoteIDs');
+
+	//
+	// Get the list of
 
 	$strsql = "SELECT category AS name, "
 //		. "IF(category='','Uncategorized',category) AS name, "

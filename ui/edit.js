@@ -7,10 +7,11 @@ function ciniki_products_edit() {
 		'60':'Discontinued',
 		};
 	this.webFlags = {
-		'1':{'name':'Hidden'},
+		'1':{'name':'Visible'},
 		'2':{'name':'Sell Online', 'active':'no'},
 		'3':{'name':'Hide Price', 'active':'yes'},
 		'5':{'name':'Category Highlight'},
+		'6':{'name':'Sub-Category Highlight'},
 		};
 	this.shippingWeightUnits = {
 		'10':'lbs',
@@ -47,9 +48,9 @@ function ciniki_products_edit() {
 //		'4':'4',
 //		'5':'5',
 //		};
-//	this.inventoryFlags = {
-//		'1':{'name':'Track'},
-//		};
+	this.inventoryFlags = {
+		'1':{'name':'Track'},
+		};
 	this.init = function() {
 		//
 		// The edit panel
@@ -324,7 +325,7 @@ form;
 				});
 		} else {
 			this.edit.product_id = 0;
-			this.edit.data = {'type_id':this.edit.default_formtab, 
+			this.edit.data = {'type_id':this.edit.default_formtab, 'webflags':1,
 				'shipping_weight_units':10, 'shipping_size_units':10};
 			if( category != '' ) {
 				this.edit.data.category = category;

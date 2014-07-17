@@ -45,6 +45,7 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 	$strsql = "SELECT ciniki_products.id, "
 		. "ciniki_products.parent_id, "
 		. "ciniki_products.name, "
+		. "ciniki_products.code, "
 		. "ciniki_products.type_id, "
 		. "ciniki_product_types.name_s AS type_text, "
 		. "ciniki_product_types.object_def, "
@@ -100,7 +101,7 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
 	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
 		array('container'=>'products', 'fname'=>'id', 'name'=>'product',
-			'fields'=>array('id', 'parent_id', 'name', 'type_id', 'type_text', 'object_def',
+			'fields'=>array('id', 'parent_id', 'name', 'code', 'type_id', 'type_text', 'object_def',
 				'category', 'status', 'status_text',
 				'supplier_id', 'supplier_item_number', 
 				'supplier_minimum_order', 'supplier_order_multiple',

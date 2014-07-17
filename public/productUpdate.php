@@ -25,7 +25,7 @@ function ciniki_products_productUpdate(&$ciniki) {
         'product_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Product'), 
         'parent_id'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Parent'), 
 		'name'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Name'),
-		'code'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Name'),
+		'code'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Code'),
 		'type_id'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Type'),
 		'type'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Type'),
 		'category'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Category'),

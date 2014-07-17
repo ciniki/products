@@ -30,8 +30,6 @@ function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $a
 		$modules = $ciniki['business']['modules'];
 	}
 
-
-
 	//
 	// Get the product details
 	//

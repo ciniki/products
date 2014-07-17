@@ -20,6 +20,7 @@ function ciniki_products_product() {
 			'info':{'label':'', 'aside':'yes', 'list':{
 				'type_text':{'label':'Type', 'visible':'no'},
 				'name':{'label':'Name', 'visible':'no'},
+				'code':{'label':'Code', 'visible':'no'},
 				'category':{'label':'Category', 'visible':'no'},
 				'categories':{'label':'Categories', 'visible':'no'},
 				'subcategories':{'label':'Sub-Categories', 'visible':'no'},

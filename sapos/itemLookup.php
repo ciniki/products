@@ -20,7 +20,8 @@ function ciniki_products_sapos_itemLookup($ciniki, $business_id, $args) {
 	//
 	// Lookup the specified item based on the product id
 	//
-	if( $args['object'] == 'ciniki.products.product' ) {
+	// Currently Broken, must use prices sub table
+/*	if( $args['object'] == 'ciniki.products.product' ) {
 		$strsql = "SELECT ciniki_products.id, "
 			. "ciniki_products.parent_id, "
 			. "ciniki_products.name, "
@@ -65,11 +66,12 @@ function ciniki_products_sapos_itemLookup($ciniki, $business_id, $args) {
 
 		return array('stat'=>'ok', 'item'=>$product);
 	} 
+*/
 
 	//
 	// Lookup the requested item based on the price ID
 	//
-	elseif( $args['object'] == 'ciniki.products.price' ) {
+	if( $args['object'] == 'ciniki.products.price' ) {
 		$strsql = "SELECT ciniki_products.id, "
 			. "ciniki_products.parent_id, "
 			. "ciniki_products.name, "
@@ -78,7 +80,7 @@ function ciniki_products_sapos_itemLookup($ciniki, $business_id, $args) {
 			. "ciniki_product_prices.unit_discount_amount, "
 			. "ciniki_product_prices.unit_discount_percentage, "
 			. "inventory_flags, inventory_current_num, "
-			. "ciniki_products.taxtype_id, "
+			. "ciniki_product_prices.taxtype_id, "
 			. "ciniki_product_types.object_def "
 			. "FROM ciniki_product_prices "
 			. "LEFT JOIN ciniki_products ON ("

@@ -105,7 +105,7 @@ function ciniki_products_main() {
 			}
 		};
 		this.list.rowFn = function(s, i, d) {
-			return 'M.startApp(\'ciniki.products.product\',null,\'M.ciniki_products_main.showList();\',\'mc\',{\'product_id\':\'' + d.product.id + '\'});';
+			return 'M.startApp(\'ciniki.products.product\',null,\'M.ciniki_products_main.showList();\',\'mc\',{\'product_id\':\'' + d.product.id + '\',\'list\':M.ciniki_products_main.list.data.products});';
 		};
 		this.list.addButton('add', 'Add', 'M.startApp(\'ciniki.products.edit\',null,\'M.ciniki_products_main.showList();\',\'mc\',{\'product_id\':\'0\',\'category\':M.ciniki_products_main.list._type});');
 		this.list.addClose('Back');

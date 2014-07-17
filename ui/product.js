@@ -12,6 +12,7 @@ function ciniki_products_product() {
 		this.product.data = {};
 		this.product.product_id = 0;
 		this.product.type_id = 0;
+		this.product.prevnext = {'prev_id':0, 'next_id':0, 'list':[]};
 		this.product.sections = {
 			'_image':{'label':'', 'aside':'yes', 'fields':{
 				'primary_image_id':{'label':'', 'type':'image_id', 'hidelabel':'yes', 'history':'no'},
@@ -171,8 +172,22 @@ function ciniki_products_product() {
 		this.product.thumbFn = function(s, i, d) {
 			return 'M.startApp(\'ciniki.products.images\',null,\'M.ciniki_products_product.showProduct();\',\'mc\',{\'product_image_id\':\'' + d.image.id + '\'});';
 		};
+		this.product.prevButtonFn = function() {
+			if( this.prevnext.prev_id > 0 ) {
+				return 'M.ciniki_products_product.showProduct(null,\'' + this.prevnext.prev_id + '\');';
+			}
+			return null;
+		};
+		this.product.nextButtonFn = function() {
+			if( this.prevnext.next_id > 0 ) {
+				return 'M.ciniki_products_product.showProduct(null,\'' + this.prevnext.next_id + '\');';
+			}
+			return null;
+		};
 		this.product.addButton('edit', 'Edit', 'M.startApp(\'ciniki.products.edit\',null,\'M.ciniki_products_product.showProduct();\',\'mc\',{\'product_id\':M.ciniki_products_product.product.product_id});');
+		this.product.addButton('next', 'Next');
 		this.product.addClose('Back');
+		this.product.addLeftButton('prev', 'Prev');
 	};
 
 	this.start = function(cb, aP, aG) {
@@ -185,15 +200,16 @@ function ciniki_products_product() {
 		}
 
 		if( args.product_id != null && args.product_id > 0 ) {
-			this.showProduct(cb, args.product_id);
+			this.showProduct(cb, args.product_id, args.list);
 		}
 	}
 
-	this.showProduct = function(cb, pid) {
+	this.showProduct = function(cb, pid, list) {
 		this.product.reset();
 //		this.product.sections.similar.visible=(M.curBusiness.modules['ciniki.products'].flags&0x01)==1?'yes':'no';
 //		this.product.sections.recipes.visible=(M.curBusiness.modules['ciniki.products'].flags&0x02)==2?'yes':'no';
 		if( pid != null ) { this.product.product_id = pid; }
+		if( list != null ) { this.product.prevnext.list = list; }
 		M.api.getJSONCb('ciniki.products.productGet', {'business_id':M.curBusinessID,
 			'product_id':this.product.product_id, 'prices':'yes',
 			'files':'yes', 'images':'yes', 'similar':'yes', 'recipes':'yes'}, function(rsp) {
@@ -252,6 +268,21 @@ function ciniki_products_product() {
 				p.sections.files.visible = (pc_object_def.files!=null?'yes':'no');
 				p.sections.similar.visible = (pc_object_def.similar!=null?'yes':'no');
 				p.sections.recipes.visible = (pc_object_def.recipes!=null?'yes':'no');
+				// Setup prev/next buttons
+				p.prevnext.prev_id = 0;
+				p.prevnext.next_id = 0;
+				if( p.prevnext.list != null ) {
+					for(i in p.prevnext.list) {
+						if( p.prevnext.next_id == -1 ) {
+							p.prevnext.next_id = p.prevnext.list[i].product.id;
+							break;
+						} else if( p.prevnext.list[i].product.id == p.product_id ) {
+							p.prevnext.next_id = -1;
+						} else {
+							p.prevnext.prev_id = p.prevnext.list[i].product.id;
+						}
+					}
+				}
 				p.refresh();
 				p.show(cb);
 			});

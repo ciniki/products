@@ -282,6 +282,27 @@ function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $a
 	}
 
 	//
+	// Get all the categories, sub-categories and tags associated with this product 
+	// for use in the share-buttons
+	//
+	$strsql = "SELECT tag_name "
+		. "FROM ciniki_product_tags "
+		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+		. "AND product_id = '" . ciniki_core_dbQuote($ciniki, $product['id']) . "' "
+		. "ORDER BY tag_type "
+		. "";
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQueryList');
+	$rc = ciniki_core_dbQueryList($ciniki, $strsql, 'ciniki.products', 'tags', 'tag_name');
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+	if( isset($rc['tags']) ) {
+		$product['social-tags'] = $rc['tags'];
+	} else {
+		$product['social-tags'] = array();
+	}
+
+	//
 	// If specified, get the category title
 	//
 	if( isset($args['category_permalink']) && $args['category_permalink'] != '' ) {

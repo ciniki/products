@@ -45,7 +45,8 @@ function ciniki_products_web_subcategoryDetails($ciniki, $settings, $business_id
 		. "FROM ciniki_product_tags "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 		. "AND permalink = '" . ciniki_core_dbQuote($ciniki, $args['subcategory_permalink']) . "' "
-		. "AND tag_type = 11 "
+		. "AND tag_type > 10 "
+		. "AND tag_type < 30 "
 		. "LIMIT 1 "
 		. "";
 	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'tag');
@@ -74,7 +75,8 @@ function ciniki_products_web_subcategoryDetails($ciniki, $settings, $business_id
 			. "t1.product_id = t2.product_id "
 			. "AND t2.permalink = '" . ciniki_core_dbQuote($ciniki, $args['subcategory_permalink']) . "' "
 			. "AND t2.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
-			. "AND t2.tag_type = 11 "
+			. "AND t2.tag_type > 10 "
+			. "AND t2.tag_type < 30 "
 			. ") "
 		. "LEFT JOIN ciniki_products ON ("
 			. "t2.product_id = ciniki_products.id "

@@ -140,8 +140,36 @@ function ciniki_products_typeObjectDefUpdate($ciniki, $object_def, $args) {
 		}
 	}
 
-	$args['object_def'] = serialize($object_def);
-	$extras = array('categories', 'subcategories', 'tags', 'images', 'files', 'similar', 'recipes');
+	//
+	// Remove old ones
+	//
+	if( isset($object_def['parent']['subcategories']) ) { unset($object_def['parent']['subcategories']); }
+
+//	$args['object_def'] = serialize($object_def);
+
+	//
+	// Check for subcategories
+	//
+	for($i=11;$i<30;$i++) {
+		$field = 'parent_subcategories-' . $i;
+		if( isset($args[$field]) ) {
+			if( $args[$field] == 'on' ) {
+				$object_def['parent']['subcategories-' . $i] = array();
+				if( isset($args[$field . '-sname']) ) {
+					$object_def['parent']['subcategories-' . $i]['sname'] = $args[$field . '-sname'];
+				}
+				if( isset($args[$field . '-pname']) ) {
+					$object_def['parent']['subcategories-' . $i]['pname'] = $args[$field . '-pname'];
+				}
+			} elseif( $args[$field] == 'off' && isset($object_def['parent']['subcategories-' . $i]) ) {
+				unset($object_def['parent']['subcategories-' . $i]);
+			}
+		}
+	}
+
+	$extras = array('categories', 
+//		'subcategories-11', 'subcategories-12', 'subcategories-13', 'subcategories-14', 'subcategories-15', 
+		'tags', 'images', 'files', 'similar', 'recipes');
 	foreach($extras as $extra) {
 		$field = 'parent_' . $extra;
 		if( isset($args[$field]) ) {

@@ -78,15 +78,33 @@ function ciniki_products_productGet($ciniki) {
 		//
 		// Get the available tags
 		//
-		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsList');
-		$rc = ciniki_core_tagsList($ciniki, 'ciniki.products', $args['business_id'], 
-			'ciniki_product_tags', 11);
-		if( $rc['stat'] != 'ok' ) {
-			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1818', 'msg'=>'Unable to get list of sub-categories', 'err'=>$rc['err']));
+		$strsql = "SELECT DISTINCT tag_type, tag_name "
+			. "FROM ciniki_product_tags "
+			. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. "AND tag_type > 10 AND tag_type < 30 "
+			. "ORDER BY tag_type, tag_name "
+			. "";
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
+		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
+			array('container'=>'types', 'fname'=>'tag_type', 'name'=>'type',
+				'fields'=>array('tag_type')),
+			array('container'=>'tags', 'fname'=>'tag_name', 'name'=>'tag', 
+				'fields'=>array('type'=>'tag_type', 'name'=>'tag_name')),
+			));
+		if( isset($rc['types']) ) {
+			foreach($rc['types'] as $type) {
+				$rsp['subcategories-' . $type['type']['tag_type']] = $type['type']['tags'];
+			}
 		}
-		if( isset($rc['tags']) ) {
-			$rsp['subcategories'] = $rc['tags'];
-		}
+//		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsList');
+//		$rc = ciniki_core_tagsList($ciniki, 'ciniki.products', $args['business_id'], 
+//			'ciniki_product_tags', 11);
+//		if( $rc['stat'] != 'ok' ) {
+//			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1818', 'msg'=>'Unable to get list of sub-categories', 'err'=>$rc['err']));
+//		}
+//		if( isset($rc['tags']) ) {
+//			$rsp['subcategories'] = $rc['tags'];
+//		}
 	}
 
 	//
@@ -98,7 +116,7 @@ function ciniki_products_productGet($ciniki) {
 		//
 		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsList');
 		$rc = ciniki_core_tagsList($ciniki, 'ciniki.products', $args['business_id'], 
-			'ciniki_product_tags', 20);
+			'ciniki_product_tags', 40);
 		if( $rc['stat'] != 'ok' ) {
 			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1819', 'msg'=>'Unable to get list of tags', 'err'=>$rc['err']));
 		}

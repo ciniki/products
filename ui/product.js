@@ -23,7 +23,11 @@ function ciniki_products_product() {
 				'code':{'label':'Code', 'visible':'no'},
 				'category':{'label':'Category', 'visible':'no'},
 				'categories':{'label':'Categories', 'visible':'no'},
-				'subcategories':{'label':'Sub-Categories', 'visible':'no'},
+				'subcategories-11':{'label':'Sub-Categories', 'visible':'no'},
+				'subcategories-12':{'label':'Sub-Categories', 'visible':'no'},
+				'subcategories-13':{'label':'Sub-Categories', 'visible':'no'},
+				'subcategories-14':{'label':'Sub-Categories', 'visible':'no'},
+				'subcategories-15':{'label':'Sub-Categories', 'visible':'no'},
 				'tags':{'label':'Tags', 'visible':'no'},
 				'status_text':{'label':'Status', 'visible':'no'},
 //				'barcode':{'label':'Barcode', 'visible':'no'},
@@ -222,15 +226,6 @@ function ciniki_products_product() {
 				p.data = rsp.product;
 				var object_def = eval('(' + rsp.product.object_def + ')');
 				var pc_object_def = (rsp.product.parent_id==0?object_def.parent:object_def.child);
-				if( rsp.product.categories != null && rsp.product.categories != '' ) {
-					p.data.categories = rsp.product.categories.replace(/::/g, ', ');
-				}
-				if( rsp.product.subcategories != null && rsp.product.subcategories != '' ) {
-					p.data.subcategories = rsp.product.subcategories.replace(/::/g, ', ');
-				}
-				if( rsp.product.tags != null && rsp.product.tags != '' ) {
-					p.data.tags = rsp.product.tags.replace(/::/g, ', ');
-				}
 				// Setup the visible fields
 				for(i in p.sections.info.list) {
 					if( pc_object_def.products[i] != null ) {
@@ -242,8 +237,21 @@ function ciniki_products_product() {
 						p.sections.info.list[i].visible='no';
 					}
 				}
+				if( rsp.product.categories != null && rsp.product.categories != '' ) {
+					p.data.categories = rsp.product.categories.replace(/::/g, ', ');
+				}
+				for(var i=11;i<16;i++) {
+					if( rsp.product['subcategories-'+i] != null && rsp.product['subcategories-'+i] != '' ) {
+
+						p.data['subcategories-'+i] = rsp.product['subcategories-'+i].replace(/::/g, ', ');
+						p.sections.info.list['subcategories-'+i].visible = (pc_object_def['subcategories-'+i]!=null?'yes':'no');
+						p.sections.info.list['subcategories-'+i].label = (pc_object_def['subcategories-'+i]['pname']?pc_object_def['subcategories-'+i]['pname']:'Sub-Categories');
+					}
+				}
+				if( rsp.product.tags != null && rsp.product.tags != '' ) {
+					p.data.tags = rsp.product.tags.replace(/::/g, ', ');
+				}
 				p.sections.info.list.categories.visible = (pc_object_def.categories!=null?'yes':'no');
-				p.sections.info.list.subcategories.visible = (pc_object_def.subcategories!=null?'yes':'no');
 				p.sections.info.list.tags.visible = (pc_object_def.tags!=null?'yes':'no');
 				if( pc_object_def.products['shipping_weight'] != null ) {
 					p.sections.info.list['shipping_package'].visible = 'yes';

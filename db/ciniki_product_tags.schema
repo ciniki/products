@@ -12,12 +12,22 @@
 # product_id:		The ID of the product.
 #
 # tag_type:			The type of tag, which is how it will be used.  This allows
-#					these tags to be used for multiple purposes.
+#					these tags to be used for multiple purposes.  The sub-categories
+#					can be used to sort products for the website.  Each subcategory
+#					can be listed separately with titles supplied in web settings.
 #	
 #					0 - unknown
 #					10 - Category
 #					11 - Sub-Category
-#					20 - Tag
+#					12 - Sub-Category
+#					13 - Sub-Category
+#					14 - Sub-Category
+#					15 - Sub-Category
+#					16 - Sub-Category
+#					17 - Sub-Category
+#					18 - Sub-Category
+#					19 - Sub-Category
+#					40 - Tag
 #
 # tag_name:			The name of the tag, list or category.
 #

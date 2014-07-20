@@ -92,7 +92,15 @@ function ciniki_products_typeGet($ciniki) {
 		}
 	}
 	if( isset($object_def['parent']['categories']) ) { $type['parent_categories'] = 'on'; }
-	if( isset($object_def['parent']['subcategories']) ) { $type['parent_subcategories'] = 'on'; }
+	for($i=11;$i<30;$i++) {
+		if( isset($object_def['parent']['subcategories-'.$i]) ) { $type['parent_subcategories-'.$i] = 'on'; }
+		if( isset($object_def['parent']['subcategories-'.$i]['sname']) ) { 
+			$type['parent_subcategories-'.$i.'-sname'] = $object_def['parent']['subcategories-'.$i]['sname'];
+		}
+		if( isset($object_def['parent']['subcategories-'.$i]['pname']) ) { 
+			$type['parent_subcategories-'.$i.'-pname'] = $object_def['parent']['subcategories-'.$i]['pname'];
+		}
+	}
 	if( isset($object_def['parent']['tags']) ) { $type['parent_tags'] = 'on'; }
 	if( isset($object_def['parent']['images']) ) { $type['parent_images'] = 'on'; }
 	if( isset($object_def['parent']['files']) ) { $type['parent_files'] = 'on'; }
@@ -112,7 +120,10 @@ function ciniki_products_typeGet($ciniki) {
 		}
 	}
 	if( isset($object_def['child']['categories']) ) { $type['child_categories'] = 'on'; }
-	if( isset($object_def['child']['subcategories']) ) { $type['child_subcategories'] = 'on'; }
+	for($i=11;$i<30;$i++) {
+		if( isset($object_def['child']['subcategories-'.$i]) ) { $type['child_subcategories-'.$i] = 'on'; }
+	}
+//	if( isset($object_def['child']['subcategories']) ) { $type['child_subcategories'] = 'on'; }
 	if( isset($object_def['child']['tags']) ) { $type['child_tags'] = 'on'; }
 	if( isset($object_def['child']['images']) ) { $type['child_images'] = 'on'; }
 	if( isset($object_def['child']['files']) ) { $type['child_files'] = 'on'; }

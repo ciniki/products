@@ -263,7 +263,11 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 	// Get the categories and tags for the product
 	//
 	if( isset($object_def[$pc]['categories']) 
-		|| isset($object_def[$pc]['subcategories']) 
+		|| isset($object_def[$pc]['subcategories-11']) 
+		|| isset($object_def[$pc]['subcategories-12']) 
+		|| isset($object_def[$pc]['subcategories-13']) 
+		|| isset($object_def[$pc]['subcategories-14']) 
+		|| isset($object_def[$pc]['subcategories-15']) 
 		|| isset($object_def[$pc]['tags']) 
 		) {
 		$strsql = "SELECT tag_type, tag_name AS lists "
@@ -283,8 +287,16 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 			foreach($rc['tags'] as $tags) {
 				if( isset($object_def[$pc]['categories']) && $tags['tags']['tag_type'] == 10 ) {
 					$product['categories'] = $tags['tags']['lists'];
-				} elseif( isset($object_def[$pc]['subcategories']) && $tags['tags']['tag_type'] == 11 ) {
-					$product['subcategories'] = $tags['tags']['lists'];
+				} elseif( isset($object_def[$pc]['subcategories-11']) && $tags['tags']['tag_type'] == 11 ) {
+					$product['subcategories-11'] = $tags['tags']['lists'];
+				} elseif( isset($object_def[$pc]['subcategories-12']) && $tags['tags']['tag_type'] == 12 ) {
+					$product['subcategories-12'] = $tags['tags']['lists'];
+				} elseif( isset($object_def[$pc]['subcategories-13']) && $tags['tags']['tag_type'] == 13 ) {
+					$product['subcategories-13'] = $tags['tags']['lists'];
+				} elseif( isset($object_def[$pc]['subcategories-14']) && $tags['tags']['tag_type'] == 14 ) {
+					$product['subcategories-14'] = $tags['tags']['lists'];
+				} elseif( isset($object_def[$pc]['subcategories-15']) && $tags['tags']['tag_type'] == 15 ) {
+					$product['subcategories-15'] = $tags['tags']['lists'];
 				} elseif( isset($object_def[$pc]['tags']) && $tags['tags']['tag_type'] == 20 ) {
 					$product['tags'] = $tags['tags']['lists'];
 				}

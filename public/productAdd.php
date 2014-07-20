@@ -74,7 +74,11 @@ function ciniki_products_productAdd(&$ciniki) {
         'detail08'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'', 'name'=>'Detail 08'), 
         'detail09'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'', 'name'=>'Detail 09'), 
         'categories'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'list', 'delimiter'=>'::', 'name'=>'Categories'), 
-        'subcategories'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'list', 'delimiter'=>'::', 'name'=>'Sub-Categories'), 
+        'subcategories-11'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'list', 'delimiter'=>'::', 'name'=>'Sub-Categories'), 
+        'subcategories-12'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'list', 'delimiter'=>'::', 'name'=>'Sub-Categories'), 
+        'subcategories-13'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'list', 'delimiter'=>'::', 'name'=>'Sub-Categories'), 
+        'subcategories-14'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'list', 'delimiter'=>'::', 'name'=>'Sub-Categories'), 
+        'subcategories-15'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'list', 'delimiter'=>'::', 'name'=>'Sub-Categories'), 
         'tags'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'list', 'delimiter'=>'::', 'name'=>'Tags'), 
 
 //        'wine_type'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Wine Type'), 
@@ -224,14 +228,16 @@ function ciniki_products_productAdd(&$ciniki) {
 	//
 	// Update the subcategories
 	//
-	if( isset($args['subcategories']) ) {
-		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsUpdate');
-		$rc = ciniki_core_tagsUpdate($ciniki, 'ciniki.products', 'tag', $args['business_id'],
-			'ciniki_product_tags', 'ciniki_product_history',
-			'product_id', $product_id, 11, $args['subcategories']);
-		if( $rc['stat'] != 'ok' ) {
-			ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
-			return $rc;
+	for($i=11;$i<30;$i++) {
+		if( isset($args['subcategories-'.$i]) ) {
+			ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsUpdate');
+			$rc = ciniki_core_tagsUpdate($ciniki, 'ciniki.products', 'tag', $args['business_id'],
+				'ciniki_product_tags', 'ciniki_product_history',
+				'product_id', $product_id, $i, $args['subcategories-'.$i]);
+			if( $rc['stat'] != 'ok' ) {
+				ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
+				return $rc;
+			}
 		}
 	}
 
@@ -242,7 +248,7 @@ function ciniki_products_productAdd(&$ciniki) {
 		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsUpdate');
 		$rc = ciniki_core_tagsUpdate($ciniki, 'ciniki.products', 'tag', $args['business_id'],
 			'ciniki_product_tags', 'ciniki_product_history',
-			'product_id', $product_id, 20, $args['tags']);
+			'product_id', $product_id, 40, $args['tags']);
 		if( $rc['stat'] != 'ok' ) {
 			ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
 			return $rc;

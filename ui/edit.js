@@ -64,7 +64,13 @@ function ciniki_products_edit() {
 		this.edit.default_formtab = 0;
 		this.edit.forms = {};
 		this.edit.sections = {};
-		this.edit.tags = {'categories':[], 'subcategories':[], 'tags':[]};
+		this.edit.tags = {'categories':[], 
+			'subcategories-11':[], 
+			'subcategories-12':[], 
+			'subcategories-13':[], 
+			'subcategories-14':[], 
+			'subcategories-15':[], 
+			'tags':[]};
 		this.edit.liveSearchCb = function(s, i, value) {
 			if( s == 'info' ) { 
 				M.api.getJSONBgCb('ciniki.products.productCategorySearch', {'business_id':M.curBusinessID, 
@@ -183,10 +189,12 @@ function ciniki_products_edit() {
 				'categories':{'label':'', 'hidelabel':'yes', 'type':'tags', 'tags':this.edit.tags.categories, 'hint':'Enter a new category:'},
 				}};
 		}
-		if( type[pc].subcategories != null ) {
-			form['_subcategories'] = {'label':'Sub-Categories', 'aside':'yes', 'fields':{
-				'subcategories':{'label':'', 'hidelabel':'yes', 'type':'tags', 'tags':this.edit.tags.subcategories, 'hint':'Enter a new sub-category:'},
-				}};
+		for(var i=11;i<16;i++) {
+			if( type[pc]['subcategories-'+i] != null ) {
+				form['_subcategories-'+i] = {'label':(type[pc]['subcategories-'+i]['pname']!=null?type[pc]['subcategories-'+i]['pname']:'Sub-Categories'), 'aside':'yes', 'fields':{}};
+				form['_subcategories-'+i].fields['subcategories-'+i] = {'label':'', 'hidelabel':'yes', 
+					'type':'tags', 'tags':this.edit.tags['subcategories-'+i], 'hint':'Enter a new sub-category:'};
+			}
 		}
 		if( type[pc].tags != null ) {
 			form['_tags'] = {'label':'Tag', 'aside':'yes', 'fields':{
@@ -302,7 +310,13 @@ form;
 					}
 					var p = M.ciniki_products_edit.edit;
 					p.data = rsp.product;
-					p.tags = {'categories':[], 'subcategories':[], 'tags':[]};
+					p.tags = {'categories':[], 
+						'subcategories-11':[], 
+						'subcategories-12':[], 
+						'subcategories-13':[],
+						'subcategories-14':[],
+						'subcategories-15':[],
+						'tags':[]};
 					for(i in p.tags) {
 						if( rsp[i] != null ) {
 							for(j in rsp[i]) {
@@ -341,7 +355,13 @@ form;
 					return false;
 				}
 				var p = M.ciniki_products_edit.edit;
-				p.tags = {'categories':[], 'subcategories':[], 'tags':[]};
+				p.tags = {'categories':[], 
+					'subcategories-11':[], 
+					'subcategories-12':[], 
+					'subcategories-13':[], 
+					'subcategories-14':[], 
+					'subcategories-15':[], 
+					'tags':[]};
 				for(i in p.tags) {
 					if( rsp[i] != null ) {
 						for(j in rsp[i]) {

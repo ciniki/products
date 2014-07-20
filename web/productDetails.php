@@ -297,7 +297,10 @@ function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $a
 		return $rc;
 	}
 	if( isset($rc['tags']) ) {
-		$product['social-tags'] = $rc['tags'];
+		$product['social-tags'] = array();
+		foreach($rc['tags'] as $tid => $tag) {
+			$product['social-tags'][] = preg_replace("/[^a-zA-Z0-9]/", '', $tag);
+		}
 	} else {
 		$product['social-tags'] = array();
 	}
@@ -327,7 +330,8 @@ function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $a
 			. "FROM ciniki_product_tags "
 			. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 			. "AND permalink = '" . ciniki_core_dbQuote($ciniki, $args['subcategory_permalink']) . "' "
-			. "AND tag_type = 11 "
+			. "AND tag_type > 10 "
+			. "AND tag_type < 30 "
 			. "LIMIT 1 "
 			. "";
 		$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'tag');

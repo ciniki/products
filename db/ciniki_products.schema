@@ -91,6 +91,7 @@
 # inventory_flags:			The flags for inventory tracking.
 #
 #							0x01 - Inventory tracked
+#							0x02 - Backorder available
 #
 # inventory_current_num:	The current number in the inventory.
 #

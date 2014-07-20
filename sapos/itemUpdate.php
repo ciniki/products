@@ -33,7 +33,7 @@ function ciniki_products_sapos_itemUpdate($ciniki, $business_id, $invoice_id, $i
 		//
 		// If the quantity is different, update the registration
 		//
-		if( isset($item['quantity']) && isset($item['old_quantity'])
+/*		if( isset($item['quantity']) && isset($item['old_quantity'])
 			&& $item['quantity'] != $item['old_quantity'] ) {
 			$quantity_diff = $item['old_quantity'] - $item['quantity'];
 			//
@@ -73,7 +73,8 @@ function ciniki_products_sapos_itemUpdate($ciniki, $business_id, $invoice_id, $i
 			ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbAddModuleHistory');
 			ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.products', 'ciniki_product_history', $business_id,
 				2, 'ciniki_products', $product['id'], 'inventory_current_num', $product['inventory_current_num']);
-		}
+		} 
+*/
 
 		return array('stat'=>'ok');
 	}

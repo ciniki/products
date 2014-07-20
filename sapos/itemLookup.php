@@ -71,10 +71,11 @@ function ciniki_products_sapos_itemLookup($ciniki, $business_id, $args) {
 	//
 	// Lookup the requested item based on the price ID
 	//
-	if( $args['object'] == 'ciniki.products.price' ) {
+	if( $args['object'] == 'ciniki.products.product' && isset($args['price_id']) && $args['price_id'] > 0 ) {
 		$strsql = "SELECT ciniki_products.id, "
 			. "ciniki_products.parent_id, "
 			. "ciniki_products.name, "
+			. "ciniki_product_prices.id AS price_id, "
 			. "ciniki_product_prices.name AS price_name, "
 			. "ciniki_product_prices.unit_amount, "
 			. "ciniki_product_prices.unit_discount_amount, "
@@ -86,18 +87,19 @@ function ciniki_products_sapos_itemLookup($ciniki, $business_id, $args) {
 			. "LEFT JOIN ciniki_products ON ("
 				. "ciniki_product_prices.product_id = ciniki_products.id "
 				. "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+				. "AND ciniki_products.id = '" . ciniki_core_dbQuote($ciniki, $args['object_id']) . "' "
 				. ") "
 			. "LEFT JOIN ciniki_product_types ON ("
 				. "ciniki_products.type_id = ciniki_product_types.id "
 				. "AND ciniki_product_types.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 				. ") "
 			. "WHERE ciniki_product_prices.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
-			. "AND ciniki_product_prices.id = '" . ciniki_core_dbQuote($ciniki, $args['object_id']) . "' "
+			. "AND ciniki_product_prices.id = '" . ciniki_core_dbQuote($ciniki, $args['price_id']) . "' "
 			. "";
 		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
 		$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
 			array('container'=>'products', 'fname'=>'id',
-				'fields'=>array('id', 'parent_id', 'description'=>'name',
+				'fields'=>array('id', 'price_id', 'parent_id', 'description'=>'name',
 					'unit_amount', 'unit_discount_amount', 'unit_discount_percentage',
 					'inventory_flags', 'inventory_current_num', 
 					'taxtype_id')),
@@ -111,7 +113,11 @@ function ciniki_products_sapos_itemLookup($ciniki, $business_id, $args) {
 		$product = array_pop($rc['products']);
 		// Check if product has inventory or unlimited
 		if( ($product['inventory_flags']&0x01) > 0 ) {
-			$product['limited_units'] = 'yes';
+			if( ($product['inventory_flags']&0x02) > 0 ) {
+				$product['limited_units'] = 'no';
+			} else {
+				$product['limited_units'] = 'yes';
+			}
 			$product['units_available'] = $product['inventory_current_num'];
 		} else {
 			$product['limited_units'] = 'no';

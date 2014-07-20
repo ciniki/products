@@ -85,6 +85,25 @@ function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $a
 	$product = array_pop($rc['products']);
 	$product['object_def'] = unserialize($product['object_def']);
 
+	//
+	// Get the number of unit unshipped in purchase orders
+	//
+	$reserved_quantity = 0;
+	if( isset($ciniki['business']['modules']['ciniki.sapos']) ) {
+		$cur_invoice_id = 0;
+		if( isset($ciniki['session']['cart']['sapos_id']) && $ciniki['session']['cart']['sapos_id'] > 0 ) {
+			$cur_invoice_id = $ciniki['session']['cart']['sapos_id'];
+		}
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'sapos', 'private', 'getReservedQuantities');
+		$rc = ciniki_sapos_getReservedQuantities($ciniki, $business_id, 
+			'ciniki.products.product', array($product['id']), $cur_invoice_id);
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		if( isset($rc['quantities'][$product['id']]) ) {
+			$reserved_quantity = $rc['quantities'][$product['id']]['quantity_reserved'];
+		}
+	}
 
 //	print "<pre>"; print_r($product['object_def']); print "</pre>";
 	if( !isset($product['object_def']['parent']['prices']['unit_amount']) ) {
@@ -117,8 +136,13 @@ function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $a
 			}
 			// Check if product has inventory or unlimited
 			if( ($product['inventory_flags']&0x01) > 0 ) {
-				$product['prices']['1']['limited_units'] = 'yes';
-				$product['prices']['1']['units_available'] = $product['inventory_current_num'];
+				if( ($product['inventory_flags']&0x02) > 0 ) {
+					// Backordering available for this product
+					$product['prices']['1']['limited_units'] = 'no';
+				} else {
+					$product['prices']['1']['limited_units'] = 'yes';
+				}
+				$product['prices']['1']['units_available'] = $product['inventory_current_num'] - $reserved_quantity;
 			}
 		}
 	} else {
@@ -155,10 +179,17 @@ function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $a
 				} else {
 					$product['prices'][$pid]['cart'] = 'no';
 				}
-				$product['prices'][$pid]['object'] = 'ciniki.products.price';
-				$product['prices'][$pid]['object_id'] = $price['id'];
-				$product['prices'][$pid]['limited_units'] = 'yes';
-				$product['prices'][$pid]['units_available'] = $product['inventory_current_num'];
+				$product['prices'][$pid]['object'] = 'ciniki.products.product';
+				$product['prices'][$pid]['object_id'] = $product['id'];
+				$product['prices'][$pid]['price_id'] = $price['id'];
+				if( ($product['inventory_flags']&0x02) > 0 ) {
+					// Backordering available for this product
+					$product['prices'][$pid]['limited_units'] = 'no';
+				} else {
+					$product['prices'][$pid]['limited_units'] = 'yes';
+				}
+				$product['prices'][$pid]['units_inventory'] = $product['inventory_current_num'];
+				$product['prices'][$pid]['units_available'] = $product['inventory_current_num'] - $reserved_quantity;
 				$product['prices'][$pid]['unit_amount_display'] = numfmt_format_currency(
 					$intl_currency_fmt, $price['unit_amount'], $intl_currency);
 			}

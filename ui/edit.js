@@ -50,6 +50,7 @@ function ciniki_products_edit() {
 //		};
 	this.inventoryFlags = {
 		'1':{'name':'Track'},
+		'2':{'name':'Backorder'},
 		};
 	this.init = function() {
 		//

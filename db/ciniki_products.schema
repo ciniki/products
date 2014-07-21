@@ -59,11 +59,8 @@
 #					0x80 -
 #
 # status:			 0 - unknown
-#					 1 - active
-#					 2 - discontinued (active while inventory left)
-#					20 - hidden
-#					21 - inactive
-#					22 - deleted
+#					10 - active
+#					60 - discontinued
 #
 # barcode:			The barcode number for this product.
 #
@@ -122,7 +119,7 @@
 #
 # webflags:					Specify if the product should be shown on the website.
 #
-#							0x01 - Private (do not display on website)
+#							0x01 - Visible, display on the website
 #							0x02 - Category Highlight
 #							0x04 - Sell Online
 #

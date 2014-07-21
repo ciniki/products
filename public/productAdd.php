@@ -62,7 +62,7 @@ function ciniki_products_productAdd(&$ciniki) {
         'long_description'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'name'=>'Long Description'),
         'start_date'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'name'=>'Start Date'),
         'end_date'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'name'=>'End Date'),
-        'webflags'=>array('required'=>'no', 'default'=>'1', 'blank'=>'yes', 'name'=>'Webflags'),
+        'webflags'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'name'=>'Webflags'),
 		// Details
         'detail01'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'', 'name'=>'Detail 01'), 
         'detail02'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'', 'name'=>'Detail 02'), 

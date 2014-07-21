@@ -175,7 +175,7 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 	// Format the webflags_text string
 	//
 	$product['webflags_text'] = '';
-	$product['webflags_text'] .= ($product['webflags_text']!=''?', ':'') . (($product['webflags']&0x01)==0)?'Visible':'Hidden';
+	$product['webflags_text'] .= ($product['webflags_text']!=''?', ':'') . (($product['webflags']&0x01)==1)?'Visible':'Hidden';
 	if( ($product['webflags']&0x02) > 0 ) {
 		$product['webflags_text'] .= ($product['webflags_text']!=''?', ':'') . 'Sold Online';
 	}

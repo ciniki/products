@@ -253,6 +253,9 @@ function ciniki_products_product() {
 				}
 				p.sections.info.list.categories.visible = (pc_object_def.categories!=null?'yes':'no');
 				p.sections.info.list.tags.visible = (pc_object_def.tags!=null?'yes':'no');
+				if( pc_object_def.products['webflags'] != null ) {
+					p.sections.info.list['webflags_text'].visible = 'yes';
+				}
 				if( pc_object_def.products['shipping_weight'] != null ) {
 					p.sections.info.list['shipping_package'].visible = 'yes';
 				}

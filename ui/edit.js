@@ -444,5 +444,16 @@ form;
 	};
 
 	this.deleteProduct = function() {
+		if( this.edit.product_id < 1 ) { return false; }
+		if( confirm("Are you sure you want to remove this product?") ) {
+			M.api.getJSONCb('ciniki.products.productDelete', {'business_id':M.curBusinessID,
+				'product_id':this.edit.product_id}, function(rsp) {
+					if( rsp.stat != 'ok' ) {
+						M.api.err(rsp);
+						return false;
+					}
+					M.ciniki_products_product.product.close();
+				});
+		}
 	};
 }

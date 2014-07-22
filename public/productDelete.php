@@ -84,6 +84,25 @@ function ciniki_products_productDelete(&$ciniki) {
 		}
 	}
 
+	//
+	// Check for sapos
+	//
+	if( isset($modules['ciniki.sapos']) ) {
+		$strsql = "SELECT 'invoices', COUNT(*) "
+			. "FROM ciniki_sapos_invoice_items "
+			. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. "AND object = 'ciniki.products.product' "
+			. "AND object_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
+			. "";
+		$rc = ciniki_core_dbCount($ciniki, $strsql, 'ciniki.products', 'num');
+		if( $rc['stat'] != 'ok' ) {
+			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1830', 'msg'=>'Unable to check for orders', 'err'=>$rc['err']));
+		}
+		if( isset($rc['num']['invoices']) && $rc['num']['invoices'] > 0 ) {
+			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1831', 'msg'=>'Unable to delete, orders still exist for this product.'));
+		}
+	}
+
 	//  
 	// Turn off autocommit
 	//  

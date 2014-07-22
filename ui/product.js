@@ -33,6 +33,8 @@ function ciniki_products_product() {
 //				'barcode':{'label':'Barcode', 'visible':'no'},
 				'price':{'label':'Price', 'visible':'no'},
 				'cost':{'label':'Cost', 'visible':'no'},
+				'start_date':{'label':'Start', 'visible':'no'},
+				'end_date':{'label':'End', 'visible':'no'},
 				'webflags_text':{'label':'Web', 'visible':'yes'},
 				'manufacture_times':{'label':'Manufacture Time', 'visible':'no'},
 				'inventory_current_num':{'label':'Inventory', 'visible':'no'},
@@ -253,6 +255,9 @@ function ciniki_products_product() {
 				}
 				p.sections.info.list.categories.visible = (pc_object_def.categories!=null?'yes':'no');
 				p.sections.info.list.tags.visible = (pc_object_def.tags!=null?'yes':'no');
+				if( pc_object_def.products['status'] != null ) {
+					p.sections.info.list['status_text'].visible = 'yes';
+				}
 				if( pc_object_def.products['webflags'] != null ) {
 					p.sections.info.list['webflags_text'].visible = 'yes';
 				}

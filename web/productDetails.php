@@ -63,6 +63,10 @@ function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $a
 //			. ") "
 		. "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 		. "AND ciniki_products.permalink = '" . ciniki_core_dbQuote($ciniki, $args['product_permalink']) . "' "
+		. "AND ciniki_products.start_date < UTC_TIMESTAMP() "
+		. "AND (ciniki_products.end_date = '0000-00-00 00:00:00' "
+			. "OR ciniki_products.end_date > UTC_TIMESTAMP()"
+			. ") "
 		. "";
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
 	$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.artclub', array(

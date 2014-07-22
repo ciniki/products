@@ -182,6 +182,8 @@ function ciniki_products_edit() {
 			'msrp':{'label':'MSRP', 'type':'text', 'active':(fields.msrp!=null?'yes':'no')},
 			'status':{'label':'Status', 'type':'select', 'options':this.statusOptions, 
 				'active':(fields.status!=null?'yes':'no')},
+			'start_date':{'label':'Start Date', 'type':'date', 'active':(fields.start_date!=null?'yes':'no')},
+			'end_date':{'label':'End Date', 'type':'date', 'active':(fields.end_date!=null?'yes':'no')},
 			'webflags':{'label':'Options', 'hint':'Product Name', 'type':'flags', 'flags':this.webFlags,
 				'active':(fields.webflags!=null?'yes':'no')},
 		}};

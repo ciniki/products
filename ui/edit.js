@@ -210,6 +210,10 @@ function ciniki_products_edit() {
 				{'label':'Options', 'type':'flags', 'flags':this.inventoryFlags}; }
 			if( fields.inventory_current_num != null ) { form.inventory.fields['inventory_current_num'] = 
 				{'label':'Inventory', 'type':'text', 'size':'small'}; }
+			if( fields.inventory_reorder_num != null ) { form.inventory.fields['inventory_reorder_num'] = 
+				{'label':'Reorder Level', 'type':'text', 'size':'small'}; }
+			if( fields.inventory_reorder_quantity != null ) { form.inventory.fields['inventory_reorder_quantity'] = 
+				{'label':'Reorder Quantity', 'type':'text', 'size':'small'}; }
 		}
 		if( M.curBusiness.modules['ciniki.sapos'] != null 
 			&& (M.curBusiness.modules['ciniki.sapos'].flags&0x08) > 0 ) {

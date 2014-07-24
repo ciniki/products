@@ -44,6 +44,8 @@ function ciniki_products_productAdd(&$ciniki) {
         'manufacture_max_time'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'name'=>'Manufacture Maximum Time'), 
         'inventory_flags'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'name'=>'Inventory Flags'), 
         'inventory_current_num'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'name'=>'Current Inventory Number'), 
+        'inventory_reorder_num'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'name'=>'Current Reorder Level'), 
+        'inventory_reorder_quantity'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'name'=>'Current Reorder Quantity'), 
         'price'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'type'=>'currency', 'name'=>'Price'), 
         'unit_discount_amount'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'type'=>'currency', 'name'=>'Discount Amount'),
         'unit_discount_percentage'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'name'=>'Discount Percentage'),

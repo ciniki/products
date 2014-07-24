@@ -37,6 +37,8 @@ function ciniki_products_objects($ciniki) {
 			'manufacture_max_time'=>array(),
 			'inventory_flags'=>array(),
 			'inventory_current_num'=>array(),
+			'inventory_reorder_num'=>array(),
+			'inventory_reorder_quantity'=>array(),
 			'shipping_flags'=>array(),
 			'shipping_weight'=>array(),
 			'shipping_weight_units'=>array(),

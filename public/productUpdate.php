@@ -40,6 +40,8 @@ function ciniki_products_productUpdate(&$ciniki) {
         'manufacture_max_time'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Manufacture Maximum Time'), 
         'inventory_flags'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Inventory Flags'), 
         'inventory_current_num'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Current Inventory Number'), 
+        'inventory_reorder_num'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Current Reorder Level'), 
+        'inventory_reorder_quantity'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Current Reorder Quantity'), 
         'price'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'currency', 'name'=>'Price'), 
         'cost'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'currency', 'name'=>'Cost'), 
         'msrp'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'currency', 'name'=>'MSRP'), 

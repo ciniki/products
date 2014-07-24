@@ -48,6 +48,8 @@ function ciniki_products_typeObjectDefUpdate($ciniki, $object_def, $args) {
 		'manufacture_max_time',
 		'inventory_flags',
 		'inventory_current_num',
+		'inventory_reorder_num',
+		'inventory_reorder_quantity',
 		'shipping_flags',
 		'shipping_weight',
 		'shipping_weight_units',

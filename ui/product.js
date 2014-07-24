@@ -38,6 +38,8 @@ function ciniki_products_product() {
 				'webflags_text':{'label':'Web', 'visible':'yes'},
 				'manufacture_times':{'label':'Manufacture Time', 'visible':'no'},
 				'inventory_current_num':{'label':'Inventory', 'visible':'no'},
+				'inventory_reorder_num':{'label':'Reorder Level', 'visible':'no'},
+				'inventory_reorder_quantity':{'label':'Reorder Quantity', 'visible':'no'},
 				'shipping_flags_text':{'label':'Shipping', 'visible':'no'},
 				'shipping_package':{'label':'Shipping', 'visible':'no'},
 				'detail01':{'label':'', 'visible':'no'},

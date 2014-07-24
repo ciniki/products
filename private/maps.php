@@ -21,11 +21,12 @@ function ciniki_products_maps($ciniki) {
 	);
 	$maps['price'] = array(
 		'available_to'=>array(
-			0x01=>'Customers',
+			0x01=>'Public',
 			0x02=>'Private',
-			0x10=>'Members',
-			0x20=>'Dealers',
-			0x40=>'Distributors',
+			0x10=>'Customers',
+			0x20=>'Members',
+			0x40=>'Dealers',
+			0x80=>'Distributors',
 		),
 	);
 	

@@ -6,11 +6,12 @@ function ciniki_products_prices() {
 		'1':{'name':'Hidden'},
 		};
 	this.availableToFlags = {
-		'1':{'name':'Customers'},
+		'1':{'name':'Public'},
 		'2':{'name':'Private'},
-		'5':{'name':'Members'},
-		'6':{'name':'Dealers'},
-		'7':{'name':'Distributors'},
+		'5':{'name':'Customers'},
+		'6':{'name':'Members'},
+		'7':{'name':'Dealers'},
+		'8':{'name':'Distributors'},
 		};
 	this.init = function() {
 		//
@@ -25,6 +26,7 @@ function ciniki_products_prices() {
         this.edit.sections = { 
 			'price':{'label':'Price', 'fields':{
 				'name':{'label':'Name', 'type':'text'},
+				'pricepoint_id':{'label':'Price Point', 'type':'select', 'options':{}},
 				'available_to':{'label':'Availablity', 'type':'flags', 'default':'1', 'flags':{}},
 				'min_quantity':{'label':'Minimum Quantity', 'type':'text', 'size':'small'},
 				'unit_amount':{'label':'Unit Amount', 'type':'text', 'size':'small'},
@@ -106,28 +108,47 @@ function ciniki_products_prices() {
 				}
 			}
 		}
-		
+		//
+		// Setup the pricepoint field
+		//
+		if( M.curBusiness.modules['ciniki.customers'] != null
+			&& (M.curBusiness.modules['ciniki.customers'].flags&0x1000) > 0 
+			) {
+			if( M.curBusiness.customers.settings != null 
+				&& M.curBusiness.customers.settings.pricepoints != null 
+				) {
+				this.edit.sections.price.fields.pricepoint_id.options = {'0':'None'};
+				var pp = M.curBusiness.customers.settings.pricepoints;
+				for(i in pp) {
+					this.edit.sections.price.fields.pricepoint_id.options[pp[i].pricepoint.id] = pp[i].pricepoint.name;
+				}
+			}
+		}
+
 		//
 		// Setup the available_to flags and webflags
 		//
 		this.edit.sections.price.fields.webflags.flags = {'1':{'name':'Hidden'}};
+		this.edit.sections.price.fields.available_to.flags = {};
 		if( (M.curBusiness.modules['ciniki.customers'].flags&0x0112) > 0 ) {
-			this.edit.sections.price.fields.available_to.flags = {'1':{'name':'Customers'}};
+			this.edit.sections.price.fields.available_to.flags['1'] = {'name':'Public'};
+			this.edit.sections.price.fields.available_to.visible = 'yes';
+			this.edit.sections.price.fields.available_to.flags['5'] = {'name':'Customers'};
 			this.edit.sections.price.fields.available_to.visible = 'yes';
 		} else {
 			this.edit.sections.price.fields.available_to.visible = 'no';
 		}
 		if( (M.curBusiness.modules['ciniki.customers'].flags&0x02) > 0 ) {
-			this.edit.sections.price.fields.available_to.flags['5'] = {'name':'Members'};
-			this.edit.sections.price.fields.webflags.flags['5'] = {'name':'Show Members Price'};
+			this.edit.sections.price.fields.available_to.flags['6'] = {'name':'Members'};
+			this.edit.sections.price.fields.webflags.flags['6'] = {'name':'Show Members Price'};
 		}
 		if( (M.curBusiness.modules['ciniki.customers'].flags&0x10) > 0 ) {
-			this.edit.sections.price.fields.available_to.flags['6'] = {'name':'Dealers'};
-			this.edit.sections.price.fields.webflags.flags['6'] = {'name':'Show Dealers Price'};
+			this.edit.sections.price.fields.available_to.flags['7'] = {'name':'Dealers'};
+			this.edit.sections.price.fields.webflags.flags['7'] = {'name':'Show Dealers Price'};
 		}
 		if( (M.curBusiness.modules['ciniki.customers'].flags&0x100) > 0 ) {
-			this.edit.sections.price.fields.available_to.flags['7'] = {'name':'Distributors'};
-			this.edit.sections.price.fields.webflags.flags['7'] = {'name':'Show Distributors Price'};
+			this.edit.sections.price.fields.available_to.flags['8'] = {'name':'Distributors'};
+			this.edit.sections.price.fields.webflags.flags['8'] = {'name':'Show Distributors Price'};
 		}
 		this.showEdit(cb, args.price_id, args.product_id);
 	}

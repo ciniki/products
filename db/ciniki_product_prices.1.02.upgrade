@@ -1,0 +1,5 @@
+#
+# This file will upgrade the database table to version 1.02.
+#
+ALTER TABLE ciniki_product_prices ADD COLUMN pricepoint_id int NOT NULL after name;
+ALTER TABLE ciniki_product_prices COMMENT='v1.02';

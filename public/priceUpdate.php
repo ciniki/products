@@ -23,6 +23,7 @@ function ciniki_products_priceUpdate(&$ciniki) {
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
         'price_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Registration'), 
 		'name'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Name'),
+		'pricepoint_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Price Point'),
 		'available_to'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Available To'),
 		'unit_amount'=>array('required'=>'no', 'blank'=>'no', 'type'=>'currency', 'name'=>'Unit Amount'),
 		'unit_discount_amount'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'currency', 

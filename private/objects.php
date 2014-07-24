@@ -110,6 +110,7 @@ function ciniki_products_objects($ciniki) {
 		'table'=>'ciniki_product_prices',
 		'fields'=>array(
 			'product_id'=>array('ref'=>'ciniki.products.product'),
+			'pricepoint_id'=>array('ref'=>'ciniki.customers.pricepoint'),
 			'available_to'=>array(),
 			'min_quantity'=>array(),
 			'unit_amount'=>array(),

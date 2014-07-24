@@ -18,16 +18,20 @@
 #
 # name:				The name/description of the price and who it is for.
 #
-# available_to:		The flags that control who has access to this pricing
+# pricepoint_id:	The ID of the customer price point for this price. This refers to the
+#					ciniki_customers_pricepoints table.  If the field is zero then no
+#					pricepoint is used.  Pricepoints can be used in conjunction with available_to.
 #
-#					0x01 - Public/Customers
+# available_to:		The flags that control who has access to this pricing.  
+#
+#					0x01 - Public (unregistered customer OR customer/members/dealers/distributors)
 #					0x02 - Private (internal use only)
 #					0x04
 #					0x08
-#					0x10 - Members
-#					0x20 - Dealers
-#					0x40 - Distributors
-#					0x80 -
+#					0x10 - Customers (registered customers, exist in ciniki_customers)
+#					0x20 - Members (registered customers and a member_status = 10)
+#					0x40 - Dealers (registered customers and a dealer_status = 10)
+#					0x80 - Distributors (registered customers and a distributor_status = 10)
 #
 # min_quantity:		The minimum quantity required for this price.  Typically this 
 #					will be 1, but can be used to offer bulk discounts.
@@ -57,6 +61,7 @@ create table ciniki_product_prices (
 	business_id int not null,
 	product_id int not null,
 	name varchar(150) not null,
+	price_point_id int not null,
 	available_to tinyint unsigned not null,
 	min_quantity int not null,
 	unit_amount decimal(19,4) not null,
@@ -70,4 +75,4 @@ create table ciniki_product_prices (
 	last_updated datetime not null,
 	primary key (id),
 	index sync (business_id, uuid, last_updated)
-) ENGINE='InnoDB', COMMENT='v1.01', CHARACTER SET latin1, COLLATE latin1_swedish_ci;
+) ENGINE='InnoDB', COMMENT='v1.02';

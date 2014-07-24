@@ -56,6 +56,8 @@ function ciniki_products_priceGet($ciniki) {
 	$strsql = "SELECT ciniki_product_prices.id, "
 		. "ciniki_product_prices.product_id, "
 		. "ciniki_product_prices.name, "
+		. "ciniki_product_prices.pricepoint_id, "
+		. "IFNULL(ciniki_customer_pricepoints.name, '') AS pricepoint_id_text, "
 		. "ciniki_product_prices.available_to, "
 		. "ciniki_product_prices.min_quantity, "
 		. "ciniki_product_prices.unit_amount, "
@@ -66,13 +68,17 @@ function ciniki_products_priceGet($ciniki) {
 		. "ciniki_product_prices.end_date, "
 		. "ciniki_product_prices.webflags "
 		. "FROM ciniki_product_prices "
+		. "LEFT JOIN ciniki_customer_pricepoints ON ("
+			. "ciniki_product_prices.pricepoint_id = ciniki_customer_pricepoints.id "
+			. "AND ciniki_customer_pricepoints.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. ") "
 		. "WHERE ciniki_product_prices.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "AND ciniki_product_prices.id = '" . ciniki_core_dbQuote($ciniki, $args['price_id']) . "' "
 		. "";
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
 	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
 		array('container'=>'prices', 'fname'=>'id', 'name'=>'price',
-			'fields'=>array('id', 'product_id', 'name', 'available_to',
+			'fields'=>array('id', 'product_id', 'name', 'pricepoint_id', 'pricepoint_id_text', 'available_to',
 				'min_quantity', 'unit_amount', 'unit_discount_amount', 'unit_discount_percentage',
 				'taxtype_id', 'start_date', 'end_date', 'webflags'),
 			'utctotz'=>array('start_date'=>array('timezone'=>$intl_timezone, 'format'=>$date_format),

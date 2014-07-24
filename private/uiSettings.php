@@ -12,7 +12,7 @@
 // Returns
 // -------
 //
-function ciniki_products_uiSettings($ciniki, $business_id) {
+function ciniki_products_uiSettings($ciniki, $modules, $business_id) {
 
 	$settings = array();
 

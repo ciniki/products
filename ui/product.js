@@ -128,11 +128,30 @@ function ciniki_products_product() {
 		this.product.cellValue = function(s, i, j, d) {
 			if( s == 'prices' ) {
 				if( j == 0 ) {
-					if( d.price.name != '' ) {
-						return d.price.name + ' <span class="subdue">' + d.price.available_to_text + '</span>';
-					} else {
-						return d.price.available_to_text;
+					var txt = '';
+					if( M.curBusiness.modules['ciniki.customers'] != null 
+						&& (M.curBusiness.modules['ciniki.customers'].flags&0x1000) ) {
+						if( d.price.pricepoint_id == 0 ) {
+							txt += 'None';
+						} else {
+							txt += (d.price.pricepoint_id_text==''?'Unknown':d.price.pricepoint_id_text);
+						}
 					}
+					if( d.price.name != '' ) {
+						if( txt != '' ) {
+							txt += ' <span class="subdue">' + d.price.name + ' [' + d.price.available_to_text + ']</span>';
+						} else {
+							txt += d.price.name + ' <span class="subdue">' + d.price.available_to_text + '</span>';
+							
+						}
+					} else {
+						if( txt != '' ) {
+							txt += ' <span class="subdue">' + d.price.available_to_text + '</span>';
+						} else {
+							txt += d.price.available_to_text;
+						}
+					}
+					return txt;
 				} else if( j == 1 ) {
 					return d.price.unit_amount_display;
 				}

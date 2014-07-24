@@ -74,6 +74,7 @@ function ciniki_products_typeObjectDefUpdate($ciniki, $object_def, $args) {
 		);
 	$price_fields = array(
 		'name',
+		'pricepoint_id',
 		'available_to',
 		'min_quantity',
 		'unit_amount',

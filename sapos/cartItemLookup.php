@@ -69,11 +69,11 @@ function ciniki_products_sapos_cartItemLookup($ciniki, $business_id, $customer, 
 		// Check the pricepoint_id is valid for this customer, only if specified
 		//
 		if( $product['pricepoint_id'] > 0 ) {
-			if( !isset($customer['pricepoint_id']) || $customer['pricepoint_id'] == 0 ) {
+			if( !isset($customer['pricepoint']['id']) || $customer['pricepoint']['id'] == 0 ) {
 				return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1839', 'msg'=>"I'm sorry, but this product is not available to you."));
 			}
-			if( $product['pricepoint_id'] != $customer['pricepoint_id'] ) {
-				if( !isset($customer['pricepoint_sequence']) || $customer['pricepoint_sequence'] == '' ) {
+			if( $product['pricepoint']['id'] != $customer['pricepoint']['id'] ) {
+				if( !isset($customer['pricepoint']['sequence']) || $customer['pricepoint']['sequence'] == '' ) {
 					return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1841', 'msg'=>"I'm sorry, but this product is not available to you."));
 				}
 				// Get the sequence for this pricepoint and see if it's lower than customers pricepoint_sequence
@@ -89,7 +89,7 @@ function ciniki_products_sapos_cartItemLookup($ciniki, $business_id, $customer, 
 				if( !isset($rc['pricepoint']) ) {
 					return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1840', 'msg'=>"I'm sorry but we seem to be having difficulty updating your shopping cart.  Please call customer support."));
 				}
-				if( $rc['pricepoint']['sequence'] > $customer['pricepoint_sequence'] ) {
+				if( $rc['pricepoint']['sequence'] > $customer['pricepoint']['sequence'] ) {
 					return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1842', 'msg'=>"I'm sorry, but this product is not available to you."));
 				}
 			}

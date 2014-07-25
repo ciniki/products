@@ -162,7 +162,9 @@ function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $a
 		// If the customer has a pricepoint set, then get the applicable prices for that customer
 		//
 //		print "<pre>" . print_r($ciniki['session'], true) . "</pre>";
-		if( isset($ciniki['session']['customer']['pricepoint_id']) && $ciniki['session']['customer']['pricepoint_id'] > 0 ) {
+		if( isset($ciniki['session']['customer']['pricepoint']['id']) 
+			&& $ciniki['session']['customer']['pricepoint']['id'] > 0 
+			) {
 			//
 			// Get all prices, regardless of pricepoint
 			//
@@ -170,6 +172,7 @@ function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $a
 				. "ciniki_product_prices.name, "
 				. "ciniki_product_prices.pricepoint_id, "
 				. "ciniki_customer_pricepoints.sequence AS pricepoint_sequence, "
+				. "ciniki_customer_pricepoints.flags AS pricepoint_flags, "
 				. "ciniki_product_prices.available_to, "
 				. "ciniki_product_prices.unit_amount, "
 				. "ciniki_product_prices.unit_discount_amount, "
@@ -182,8 +185,14 @@ function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $a
 				. "WHERE ciniki_product_prices.product_id = '" . ciniki_core_dbQuote($ciniki, $product['id']) . "' "
 				. "AND ciniki_product_prices.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 				. "AND (ciniki_product_prices.webflags&0x01) = 0 "
-				. "AND ((ciniki_product_prices.available_to&$price_flags) > 0 OR (webflags&0xF0) > 0) "
-				. "ORDER BY ciniki_customer_pricepoints.sequence ASC, ciniki_product_prices.name "
+				. "AND ((ciniki_product_prices.available_to&$price_flags) > 0 OR (webflags&available_to&0xF0) > 0) "
+				. "";
+			if( ($ciniki['session']['customer']['pricepoint']['flags']&0x01) == 0 ) {
+				$strsql .= "AND (ciniki_product_prices.pricepoint_id = '" . ciniki_core_dbQuote($ciniki, $ciniki['session']['customer']['pricepoint']['id']) . "' "
+					. " OR ciniki_product_prices.pricepoint_id = 0 "
+					. ") ";
+			}
+			$strsql .= "ORDER BY ciniki_customer_pricepoints.sequence ASC, ciniki_product_prices.name "
 				. "";
 			$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
 				array('container'=>'prices', 'fname'=>'id',
@@ -205,11 +214,11 @@ function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $a
 			$pricepoint_found = 'no';
 			if( isset($product['prices']) ) {
 				foreach($product['prices'] as $pid => $price) {
-					if( $price['pricepoint_sequence'] > $ciniki['session']['customer']['pricepoint_sequence'] ) {
+					if( $price['pricepoint_sequence'] > $ciniki['session']['customer']['pricepoint']['sequence'] ) {
 						unset($product['prices'][$pid]);
 						continue;
 					}
-					if( $price['pricepoint_id'] == $ciniki['session']['customer']['pricepoint_id'] ) {
+					if( $price['pricepoint_id'] == $ciniki['session']['customer']['pricepoint']['id'] ) {
 						$product['prices'] = array($pid=>$price);
 						$pricepoint_found = 'yes';
 						break;
@@ -237,7 +246,12 @@ function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $a
 				. "AND ciniki_product_prices.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 				. "AND ciniki_product_prices.pricepoint_id = 0 "
 				. "AND (ciniki_product_prices.webflags&0x01) = 0 "
-				. "AND ((ciniki_product_prices.available_to&$price_flags) > 0 OR (webflags&0xF0) > 0) "
+				// Find only prices that are available to customer OR visible on website
+
+				. "AND ((ciniki_product_prices.available_to&$price_flags) > 0 "
+					// Use available to with webflags to make sure the price is available to that group
+					// then make sure one is turned on
+					. "OR (webflags&available_to&0xF0) > 0) "
 				. "ORDER BY ciniki_product_prices.name "
 				. "";
 			$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(

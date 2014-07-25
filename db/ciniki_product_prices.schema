@@ -49,8 +49,9 @@
 #
 #						0x01 - Hidden, do not show price on the website.
 #						0x10 - Show Members price to public
-#						0x20 - Show Dealers price to public
-#						0x40 - Show Distributors price to public
+#						0x20 - Show Members price to public
+#						0x40 - Show Dealers price to public
+#						0x80 - Show Distributors price to public
 #
 # date_added:			The UTC date and time the price was added to the database.
 # last_updated:			The UTC date and time of the last update.

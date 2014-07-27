@@ -180,6 +180,7 @@ function ciniki_products_edit() {
 			'price':{'label':'Price', 'type':'text', 'active':(fields.price!=null?'yes':'no')},
 			'cost':{'label':'Cost', 'type':'text', 'active':(fields.cost!=null?'yes':'no')},
 			'msrp':{'label':'MSRP', 'type':'text', 'active':(fields.msrp!=null?'yes':'no')},
+			'sell_unit':{'label':'Sell Unit', 'type':'text', 'active':(fields.sell_unit!=null?'yes':'no')},
 			'status':{'label':'Status', 'type':'select', 'options':this.statusOptions, 
 				'active':(fields.status!=null?'yes':'no')},
 			'start_date':{'label':'Start Date', 'type':'date', 'active':(fields.start_date!=null?'yes':'no')},

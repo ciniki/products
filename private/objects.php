@@ -52,6 +52,7 @@ function ciniki_products_objects($ciniki) {
 			'taxtype_id'=>array(),
 			'cost'=>array(),
 			'msrp'=>array(),
+			'sell_unit'=>array(),
 			'primary_image_id'=>array('ref'=>'ciniki.images.image'),
 			'short_description'=>array(),
 			'long_description'=>array(),

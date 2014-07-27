@@ -77,6 +77,8 @@
 #
 # msrp:						The manufacturer's suggested retail price.
 #
+# sell_unit:				The unit size for the item (pair/each/carton/etc)
+#
 # supplier_id:				The ID of the supplier from the ciniki_product_suppliers table.
 # supplier_item_number:		The item number used for ordering.
 # supplier_minimum_order:	The minimum number of units that must be ordered.
@@ -151,6 +153,7 @@ create table ciniki_products (
 	taxtype_id int not null,
 	cost decimal(19,4) not null,
 	msrp decimal(19,4) not null,
+	sell_unit varchar(50) not null,
 	supplier_id int not null,
 	supplier_item_number varchar(100) not null,
 	supplier_minimum_order int not null,

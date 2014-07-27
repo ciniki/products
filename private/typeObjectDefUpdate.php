@@ -40,6 +40,7 @@ function ciniki_products_typeObjectDefUpdate($ciniki, $object_def, $args) {
 		'taxtype_id',
 		'cost',
 		'msrp',
+		'sell_unit',
 		'supplier_id',
 		'supplier_item_number',
 		'supplier_minimum_order',

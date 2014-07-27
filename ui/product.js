@@ -33,6 +33,8 @@ function ciniki_products_product() {
 //				'barcode':{'label':'Barcode', 'visible':'no'},
 				'price':{'label':'Price', 'visible':'no'},
 				'cost':{'label':'Cost', 'visible':'no'},
+				'msrp':{'label':'MSRP', 'visible':'no'},
+				'sell_unit':{'label':'Sell Unit', 'visible':'no'},
 				'start_date':{'label':'Start', 'visible':'no'},
 				'end_date':{'label':'End', 'visible':'no'},
 				'webflags_text':{'label':'Web', 'visible':'yes'},

@@ -67,6 +67,7 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 		. "ciniki_products.price, "
 		. "ciniki_products.cost, "
 		. "ciniki_products.msrp, "
+		. "ciniki_products.sell_unit, "
 		. "ciniki_products.shipping_flags, "
 		. "ciniki_products.shipping_weight, "
 		. "ciniki_products.shipping_weight_units, "
@@ -110,7 +111,7 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 				'manufacture_min_time', 'manufacture_max_time', 
 				'inventory_flags', 'inventory_current_num', 
 				'inventory_reorder_num', 'inventory_reorder_quantity',
-				'barcode', 'price', 'cost', 'msrp', 
+				'barcode', 'price', 'cost', 'msrp', 'sell_unit',
 				'shipping_flags', 'shipping_weight', 'shipping_weight_units',
 				'shipping_length', 'shipping_width', 'shipping_height', 'shipping_size_units',
 				'primary_image_id',

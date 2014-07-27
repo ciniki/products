@@ -3,4 +3,5 @@
 #
 ALTER TABLE ciniki_products ADD COLUMN inventory_reorder_num int not null AFTER inventory_current_num;
 ALTER TABLE ciniki_products ADD COLUMN inventory_reorder_quantity int not null AFTER inventory_reorder_num;
+ALTER TABLE ciniki_products ADD COLUMN sell_unit varchar(50) not null AFTER msrp;
 ALTER TABLE ciniki_products COMMENT='v1.12';

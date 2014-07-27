@@ -86,6 +86,7 @@ function ciniki_products_main() {
 			'mc', 'medium', 'sectioned', 'ciniki.products.main.list');
 		this.list.data = {};
 		this.list.category = '';
+		this.list.subcategory = '';
 		this.list.sections = {
 			'products':{'label':'Products', 'type':'simplegrid', 'num_cols':1,
 				'headerValues':null, 

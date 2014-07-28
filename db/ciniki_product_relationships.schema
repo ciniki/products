@@ -20,7 +20,8 @@
 # relationship_type:	The possible relationships are:
 #
 #						0 - unknown
-#						10 - Similar products
+#						10 - Similar products - reciprocal
+#						11 - Similar products - don't cross list
 #
 # related_id:			The ID of the product who is related to product_id.
 #

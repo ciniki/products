@@ -6,7 +6,8 @@ function ciniki_products_relationships() {
 	this.main = null;
 
 	this.relationshipOptions = {
-		'10':'Similar Product',
+		'10':'Reciprocal',
+		'11':'One Way',
 		};
 
 	this.init = function() {
@@ -19,9 +20,11 @@ function ciniki_products_relationships() {
 		this.edit.data = {};
 		this.edit.sections = {
 			'relationship':{'label':'Similar Product', 'fields':{
-//				'relationship_type':{'label':'Type', 'type':'select', 'options':this.relationshipOptions},
-				'product_id':{'label':'', 'hidelabel':'yes', 'hint':'Search for product', 'active':'no', 'type':'fkid', 'livesearch':'yes'},
-				'related_id':{'label':'', 'hidelabel':'yes', 'hint':'Search for product', 'active':'no', 'type':'fkid', 'livesearch':'yes'},
+				'product_id':{'label':'Product', 'hidelabel':'no', 'hint':'Search for product', 'active':'no', 'type':'fkid', 'livesearch':'yes'},
+				'related_id':{'label':'Product', 'hidelabel':'no', 'hint':'Search for product', 'active':'no', 'type':'fkid', 'livesearch':'yes'},
+				}},
+			'_type':{'label':'', 'fields':{
+				'relationship_type':{'label':'Type', 'type':'toggle', 'toggles':this.relationshipOptions},
 				}},
 			'_notes':{'label':'Notes', 'fields':{
 				'notes':{'label':'', 'hidelabel':'yes', 'type':'textarea'},

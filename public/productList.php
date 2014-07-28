@@ -44,8 +44,46 @@ function ciniki_products_productList($ciniki) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
 
-	if( isset($args['category']) && $args['category'] == '' ) {
-		$strsql = "SELECT ciniki_products.id, ciniki_products.name, "
+	if( isset($args['category']) && $args['category'] != '' 
+		&& isset($args['subcategory']) && $args['subcategory'] != '' 
+		) {
+		$strsql = "SELECT ciniki_products.id, "
+			. "ciniki_products.code, "
+			. "ciniki_products.name, "
+			. "IF((inventory_flags&0x01)=1,inventory_current_num,'') AS inventory_current_num "
+			. "FROM ciniki_product_tags AS t1 "
+			. "LEFT JOIN ciniki_product_tags AS t2 ON ("
+				. "t1.product_id = t2.product_id "
+				. "AND t2.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+				. "AND t2.permalink = '" . ciniki_core_dbQuote($ciniki, $args['subcategory']) . "' "
+				. "AND t2.tag_type > 10 "
+				. "AND t2.tag_type < 30 "
+				. ") "
+			. "LEFT JOIN ciniki_products ON ("
+				. "t2.product_id = ciniki_products.id "
+				. "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+				. ") "
+			. "WHERE t1.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. "AND t1.permalink = '" . ciniki_core_dbQuote($ciniki, $args['category']) . "' "
+			. "AND t1.tag_type = 10 "
+			. "ORDER BY ciniki_products.name "
+			. "";
+		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
+			array('container'=>'products', 'fname'=>'id', 'name'=>'product',
+				'fields'=>array('id', 'code', 'name', 'inventory_current_num')),
+			));
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		if( !isset($rc['products']) ) {
+			return array('stat'=>'ok', 'products'=>array());
+		}
+		return array('stat'=>'ok', 'products'=>$rc['products']);
+		
+
+	}
+	elseif( isset($args['category']) && $args['category'] == '' ) {
+		$strsql = "SELECT ciniki_products.id, ciniki_products.code, ciniki_products.name, "
 			. "IF((inventory_flags&0x01)=1,inventory_current_num,'') AS inventory_current_num "
 			. "FROM ciniki_products "
 			. "LEFT JOIN ciniki_product_tags ON ("
@@ -58,7 +96,7 @@ function ciniki_products_productList($ciniki) {
 			. "";
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
 			array('container'=>'products', 'fname'=>'id', 'name'=>'product',
-				'fields'=>array('id', 'name', 'inventory_current_num')),
+				'fields'=>array('id', 'code', 'name', 'inventory_current_num')),
 			));
 		if( $rc['stat'] != 'ok' ) {
 			return $rc;
@@ -71,6 +109,7 @@ function ciniki_products_productList($ciniki) {
 
 	elseif( isset($args['category']) ) {
 		$strsql = "SELECT ciniki_products.id, "
+			. "ciniki_products.code, "
 			. "ciniki_products.name, "
 			. "IF((inventory_flags&0x01)=1,inventory_current_num,'') AS inventory_current_num "
 			. "FROM ciniki_product_tags "
@@ -84,7 +123,7 @@ function ciniki_products_productList($ciniki) {
 			. "";
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
 			array('container'=>'products', 'fname'=>'id', 'name'=>'product',
-				'fields'=>array('id', 'name', 'inventory_current_num')),
+				'fields'=>array('id', 'code', 'name', 'inventory_current_num')),
 			));
 		if( $rc['stat'] != 'ok' ) {
 			return $rc;
@@ -98,6 +137,7 @@ function ciniki_products_productList($ciniki) {
 	elseif( isset($args['supplier_id']) ) {
 		$strsql = "SELECT ciniki_products.id, "
 			. "ciniki_products.category, "
+			. "ciniki_products.code, "
 			. "ciniki_products.name, "
 			. "IF((inventory_flags&0x01)=1,inventory_current_num,'') AS inventory_current_num "
 			. "FROM ciniki_products "
@@ -107,7 +147,7 @@ function ciniki_products_productList($ciniki) {
 			. "";
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
 			array('container'=>'products', 'fname'=>'id', 'name'=>'product',
-				'fields'=>array('id', 'name')),
+				'fields'=>array('id', 'code', 'name')),
 			));
 		if( $rc['stat'] != 'ok' ) {
 			return $rc;
@@ -117,20 +157,7 @@ function ciniki_products_productList($ciniki) {
 		}
 		return array('stat'=>'ok', 'products'=>$rc['products']);
 	} else {
-		$strsql .= "ORDER BY category, name ";
-		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
-			array('container'=>'categories', 'fname'=>'category', 'name'=>'category',
-				'fields'=>array('name'=>'category')),
-			array('container'=>'products', 'fname'=>'id', 'name'=>'product',
-				'fields'=>array('id', 'category', 'name')),
-			));
-		if( $rc['stat'] != 'ok' ) {
-			return $rc;
-		}
-		if( !isset($rc['categories']) ) {
-			return array('stat'=>'ok', 'categories'=>array());
-		}
-		return array('stat'=>'ok', 'categories'=>$rc['categories']);
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1843', 'msg'=>'Unable to find products'));
 	}
 
 	return $rc;

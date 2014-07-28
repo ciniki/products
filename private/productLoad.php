@@ -396,9 +396,9 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 				. "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 				. ") "
 			. "WHERE (ciniki_product_relationships.product_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
-				. "OR ciniki_product_relationships.related_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
+				. "OR (ciniki_product_relationships.related_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
+					. "AND ciniki_product_relationships.relationship_type = 10) "
 				. ") "
-			. "AND ciniki_product_relationships.relationship_type = 10 "
 			. "AND ciniki_product_relationships.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 			. ""; 
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(

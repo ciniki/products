@@ -59,17 +59,22 @@ function ciniki_products_main() {
 		this.menu.cellValue = function(s, i, j, d) {
 			if( s == 'categories' ) {
 				switch(j) {
-					case 0: return ((d.category.name!='')?d.category.name:'Uncategorized') + ' <span class="count">' + d.category.product_count + '</span>';
+					case 0: return ((d.category.name!='')?d.category.name:'*Uncategorized') + ' <span class="count">' + d.category.product_count + '</span>';
 					}
 			} else if( s == 'suppliers' ) {
 				switch(j) {
-					case 0: return ((d.supplier.name!='')?d.supplier.name:'Unspecified') + ' <span class="count">' + d.supplier.product_count + '</span>';
+					case 0: return ((d.supplier.name!='')?d.supplier.name:'*No Supplier') + ' <span class="count">' + d.supplier.product_count + '</span>';
 				}
 			}
 		};
 		this.menu.rowFn = function(s, i, d) {
 			if( s == 'categories' ) {
-				return 'M.ciniki_products_main.showList(\'M.ciniki_products_main.showMenu();\',\'category\',\'' + escape(d.category.permalink) + '\',\'' + escape(d.category.name) + '\');';
+				if( d.category.permalink == '' ) {
+					return 'M.ciniki_products_main.showList(\'M.ciniki_products_main.showMenu();\',\'category\',\'' + escape(d.category.permalink) + '\',\'Uncategorized\');';
+				} else {
+					return 'M.ciniki_products_main.showCategory(\'M.ciniki_products_main.showMenu();\',\'' + d.category.permalink + '\');';
+				}
+//				return 'M.ciniki_products_main.showList(\'M.ciniki_products_main.showMenu();\',\'category\',\'' + escape(d.category.permalink) + '\',\'' + escape(d.category.name) + '\');';
 			} else if( s == 'suppliers' ) {
 				return 'M.ciniki_products_main.showList(\'M.ciniki_products_main.showMenu();\',\'supplier_id\',\'' + d.supplier.id + '\',\'' + escape(d.supplier.name) + '\');';
 			}
@@ -77,6 +82,43 @@ function ciniki_products_main() {
 		this.menu.addButton('add', 'Add', 'M.startApp(\'ciniki.products.edit\',null,\'M.ciniki_products_main.showMenu();\',\'mc\',{\'product_id\':\'0\'});');
 		this.menu.addButton('tools', 'Tools', 'M.ciniki_products_main.tools.show(\'M.ciniki_products_main.showMenu();\');');
 		this.menu.addClose('Back');
+
+		//
+		// The details for a category
+		//
+		this.category = new M.panel('Product Category',
+			'ciniki_products_main', 'category',
+			'mc', 'medium', 'sectioned', 'ciniki.products.main.category');
+		this.category.data = {};
+		this.category.category = '';
+		this.category.sections = {};
+		this.category.sectionData = function(s) {
+			return this.data[s];
+		};
+		this.category.noData = function() { return 'No products found'; }
+		this.category.cellValue = function(s, i, j, d) {
+			if( s == 'products' ) {
+				switch(j) {
+					case 0: return (d.product.code!=''?d.product.code+' - ':'') + d.product.name;
+					case 1: return d.product.inventory_current_num;
+				}
+			} else {
+				switch(j) {
+					case 0: return d.category.name;
+				}
+			}
+		};
+		this.category.rowFn = function(s, i, d) {
+			if( s == 'products' ) {
+				return 'M.startApp(\'ciniki.products.product\',null,\'M.ciniki_products_main.showCategory();\',\'mc\',{\'product_id\':\'' + d.product.id + '\',\'list\':M.ciniki_products_main.category.data[\'' + s + '\']});';
+			} else {
+				return 'M.ciniki_products_main.showList(\'M.ciniki_products_main.showCategory();\',\'subcategory\',\'' + escape(this.category_permalink) + '\',\'' + this.title + ' - ' + escape(d.category.name) + '\',\'' + escape(d.category.permalink) + '\');';
+//				return 'M.ciniki_products_main.showSubCategory(\'M.ciniki_products_main.showMenu();\',M.ciniki_products_main.category.category_permalink,\'' + d.category.permalink + '\');';
+			}
+		};
+		this.category.addButton('add', 'Add', 'M.startApp(\'ciniki.products.edit\',null,\'M.ciniki_products_main.showList();\',\'mc\',{\'product_id\':\'0\',\'category\':M.ciniki_products_main.list._type});');
+		this.category.addClose('Back');
+	
 
 		//
 		// The list of products
@@ -92,7 +134,6 @@ function ciniki_products_main() {
 				'headerValues':null, 
 				'addTxt':'Add Product',
 				'addFn':'M.ciniki_products_main.addProduct();',
-//				'addFn':'M.startApp(\'ciniki.products.edit\',null,\'M.ciniki_products_main.showList();\',\'mc\',{\'product_id\':\'0\',\'' + M.ciniki_products_main.list._listtype + '\':M.ciniki_products_main.list._type});',
 				},
 		};
 		this.list.sectionData = function(s) {
@@ -101,7 +142,7 @@ function ciniki_products_main() {
 		this.list.noData = function() { return 'No products found'; }
 		this.list.cellValue = function(s, i, j, d) {
 			switch(j) {
-				case 0: return d.product.name;
+				case 0: return (d.product.code!=''?d.product.code+' - ':'') + d.product.name;
 				case 1: return d.product.inventory_current_num;
 			}
 		};
@@ -210,18 +251,70 @@ function ciniki_products_main() {
 	};
 
 	//
+	// Show the details about a category
+	//
+	this.showCategory = function(cb, c) {
+		if( c != null ) { this.category.category_permalink = c; }
+		M.api.getJSONCb('ciniki.products.categoryDetails', {'business_id':M.curBusinessID,
+			'category':this.category.category_permalink}, function(rsp) {
+				if( rsp.stat != 'ok' ) {
+					M.api.err(rsp);
+					return false;
+				}
+				var p = M.ciniki_products_main.category;
+				if( rsp.details.category_title != null ) {
+					p.title = rsp.details.category_title;
+				}
+				p.data = {};
+				p.sections = {};
+				var plist_label = 'Products';
+				if( rsp.subcategorytypes != null ) {
+					for(i in rsp.subcategorytypes) {
+						plist_label = 'Uncategorized Products';
+						p.sections[i] = {'label':rsp.subcategorytypes[i].type.name, 
+							'type':'simplegrid', 'num_cols':1,
+							'headerValues':null,
+							'addTxt':'Add Product',
+							'addFn':'M.startApp(\'ciniki.products.edit\',null,\'M.ciniki_products_main.showCategory();\',\'mc\',{\'product_id\':0});',
+						};
+						p.data[i] = rsp.subcategorytypes[i].type.categories;
+					}
+				}
+				if( rsp.products != null && rsp.products.length > 0 ) {
+					p.sections['products'] = {'label':plist_label, 'type':'simplegrid', 'num_cols':1,
+						'headerValues':null, 
+						'addTxt':'Add Product',
+						'addFn':'M.startApp(\'ciniki.products.edit\',null,\'M.ciniki_products_main.showCategory();\',\'mc\',{\'product_id\':0});',
+						};
+					p.data.products = rsp.products;
+				}
+				p.refresh();
+				p.show(cb);
+		});
+	};
+
+	this.showSubCategory = function(cb, category, subcat) {
+		
+	};
+
+	//
 	// Show the list of products for a category
 	//
-	this.showList = function(cb, listtype, type, title) {
+	this.showList = function(cb, listtype, type, title, type2) {
 		var args = {'business_id':M.curBusinessID};
 		if( listtype != null ) {
 			this.list._listtype = listtype;
 			this.list._type = unescape(type);
+			if( type2 != null ) { this.list._type2 = unescape(type2); } else { this.list._type2 = ''; }
 			this.list._title = unescape(title);
 		}
 		this.list.sections.products.label = 'Products';
 		if( this.list._listtype == 'category' ) {
 			args['category'] = this.list._type;
+			this.list.sections.products.label = unescape(this.list._title);
+		} else if( this.list._listtype == 'subcategory' ) {
+			args['category'] = this.list._type;
+			args['subcategory'] = this.list._type2;
 			this.list.sections.products.label = unescape(this.list._title);
 		} else if( this.list._listtype == 'supplier_id' ) {
 			args['supplier_id'] = this.list._type;
@@ -243,6 +336,8 @@ function ciniki_products_main() {
 
 	this.addProduct = function() {
 		if( this.list._listtype == 'category' ) {
+			M.startApp('ciniki.products.edit',null,'M.ciniki_products_main.showList();','mc',{'product_id':'0','category':M.ciniki_products_main.list._type});
+		} else if( this.list._listtype == 'subcategory' ) {
 			M.startApp('ciniki.products.edit',null,'M.ciniki_products_main.showList();','mc',{'product_id':'0','category':M.ciniki_products_main.list._type});
 		} else if( this.list._listtype == 'supplier_id' ) {
 			M.startApp('ciniki.products.edit',null,'M.ciniki_products_main.showList();','mc',{'product_id':'0','supplier_id':M.ciniki_products_main.list._type,'supplier_name':escape(M.ciniki_products_main.list.sections.products.label)});

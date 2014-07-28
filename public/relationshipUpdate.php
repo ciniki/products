@@ -36,7 +36,7 @@ function ciniki_products_relationshipUpdate(&$ciniki) {
         'relationship_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Relationship'), 
         'product_id'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Product'), 
         'relationship_type'=>array('required'=>'no', 'blank'=>'no', 
-			'validlist'=>array('10'), 'name'=>'Relationship Type'), 
+			'validlist'=>array('10', '11'), 'name'=>'Relationship Type'), 
         'related_id'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Related Product'), 
         'date_started'=>array('required'=>'no', 'type'=>'date', 'blank'=>'yes', 'name'=>'Date Started'), 
         'date_ended'=>array('required'=>'no', 'type'=>'date', 'blank'=>'yes', 'name'=>'Date Ended'), 

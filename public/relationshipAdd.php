@@ -13,7 +13,8 @@
 // relationship_type:	The type of relationship between the product_id and
 //						the related_id.  
 //						
-//						10 - similar product
+//						10 - similar product, cross linked
+//						11 - similar product, don't cross link
 //
 // related_id: 			The ID of the related product.
 //
@@ -34,7 +35,7 @@ function ciniki_products_relationshipAdd(&$ciniki) {
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
         'product_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Product'), 
         'relationship_type'=>array('required'=>'no', 'blank'=>'no', 'default'=>'10',
-			'validlist'=>array('10'), 'name'=>'Relationship Type'), 
+			'validlist'=>array('10','11'), 'name'=>'Relationship Type'), 
         'related_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Related Product'), 
         'date_started'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'blank'=>'yes', 'name'=>'Date Started'), 
         'date_ended'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'blank'=>'yes', 'name'=>'Date Ended'), 
@@ -66,6 +67,7 @@ function ciniki_products_relationshipAdd(&$ciniki) {
 				. "AND related_id = '" . ciniki_core_dbQuote($ciniki, $args['related_id']) . "' "
 			. ") OR ("
 				. "product_id = '" . ciniki_core_dbQuote($ciniki, $args['related_id']) . "' "
+				. "AND relationship_type = 10 "
 				. "AND related_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
 			. ")) "
 			. "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "

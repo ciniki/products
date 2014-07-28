@@ -84,6 +84,22 @@ function ciniki_products_objects($ciniki) {
 			),
 		'history_table'=>'ciniki_product_history',
 		);
+	$objects['category'] = array(
+		'name'=>'Category',
+		'sync'=>'yes',
+		'table'=>'ciniki_product_categories',
+		'fields'=>array(
+			'tag_type'=>array(),
+			'permalink'=>array(),
+			'name'=>array(),
+			'sequence'=>array(),
+			'primary_image_id'=>array(),
+			'synopsis'=>array(),
+			'description'=>array(),
+			'webflags'=>array(),
+			),
+		'history_table'=>'ciniki_product_history',
+		);
 	$objects['supplier'] = array(
 		'name'=>'Supplier',
 		'sync'=>'yes',

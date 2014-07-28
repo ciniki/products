@@ -361,10 +361,13 @@ function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $a
 				. "AND ciniki_products.id <> '" . ciniki_core_dbQuote($ciniki, $product['id']) . "' "
 				. "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 				. ") "
-			. "WHERE (ciniki_product_relationships.product_id = '" . ciniki_core_dbQuote($ciniki, $product['id']) . "' "
-				. "OR ciniki_product_relationships.related_id = '" . ciniki_core_dbQuote($ciniki, $product['id']) . "' "
+			// Check for a relationship where the requested product is the primary, 
+			// OR where the product is the secondary and it's a cross linked relationship_type
+			. "WHERE ((ciniki_product_relationships.product_id = '" . ciniki_core_dbQuote($ciniki, $product['id']) . "' "
+					. "OR (ciniki_product_relationships.related_id = '" . ciniki_core_dbQuote($ciniki, $product['id']) . "' "
+						. "AND ciniki_product_relationships.relationship_type = 10) "
+					. ") "
 				. ") "
-			. "AND ciniki_product_relationships.relationship_type = 10 "
 			. "AND ciniki_product_relationships.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 			. ""; 
 		$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(

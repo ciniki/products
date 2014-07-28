@@ -173,7 +173,7 @@ function ciniki_products_categoryDetails($ciniki) {
 									}
 								}
 								if( $found == 'no' ) {
-									$types[$sub_cat_name]['categories'][] = $new_cat;
+									$types[$sub_cat_name]['categories'][] = $type['categories'][$new_id];
 								}
 							}
 						}

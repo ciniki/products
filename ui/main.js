@@ -104,7 +104,7 @@ function ciniki_products_main() {
 				}
 			} else {
 				switch(j) {
-					case 0: return d.category.name;
+					case 0: return (d.category.name!=null?d.category.name:'Unknown');
 				}
 			}
 		};

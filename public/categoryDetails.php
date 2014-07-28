@@ -185,7 +185,6 @@ function ciniki_products_categoryDetails($ciniki) {
 			// Check if there's more than one sub-category type
 			//
 			$rsp['subcategorytypes'] = array();
-			print_r($types);
 			foreach($types as $tname => $type) {
 				$rsp['subcategorytypes'][] = array('type'=>$type);
 			}

@@ -106,7 +106,7 @@ function ciniki_products_categoryDetails($ciniki) {
 			. "AND t1.permalink = '" . ciniki_core_dbQuote($ciniki, $args['category']) . "' "
 			. "AND t1.tag_type = 10 "
 			. "GROUP BY t2.tag_type, t2.tag_name, type_id "
-			. "ORDER BY t2.tag_type, t2.tag_name, type_id "
+			. "ORDER BY type_id, t2.tag_type, t2.tag_name "
 			. "";
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
 			array('container'=>'product_types', 'fname'=>'type_id', 'name'=>'product_type',
@@ -173,7 +173,7 @@ function ciniki_products_categoryDetails($ciniki) {
 									}
 								}
 								if( $found == 'no' ) {
-									$types[$sub_cat_name]['categories'][] = $type['categories'][$new_id];
+									$types[$sub_cat_name]['categories'][] = $new_cat;
 								}
 							}
 						}
@@ -185,6 +185,7 @@ function ciniki_products_categoryDetails($ciniki) {
 			// Check if there's more than one sub-category type
 			//
 			$rsp['subcategorytypes'] = array();
+			print_r($types);
 			foreach($types as $tname => $type) {
 				$rsp['subcategorytypes'][] = array('type'=>$type);
 			}

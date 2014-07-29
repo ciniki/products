@@ -86,6 +86,7 @@ function ciniki_products_web_subcategoryDetails($ciniki, $settings, $business_id
 		. "WHERE t1.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 		. "AND t1.permalink = '" . ciniki_core_dbQuote($ciniki, $args['category_permalink']) . "' "
 		. "AND t1.tag_type = 10 "
+		. "AND NOT ISNULL(t2.tag_name) "
 		. "LIMIT 1 "
 		. "";
 	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'tag');

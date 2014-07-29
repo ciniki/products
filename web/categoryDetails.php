@@ -92,7 +92,7 @@ function ciniki_products_web_categoryDetails($ciniki, $settings, $business_id, $
 		. "AND t1.permalink = '" . ciniki_core_dbQuote($ciniki, $args['category_permalink']) . "' "
 		. "AND t1.tag_type = 10 "
 		. "GROUP BY type_id, t2.tag_type, t2.tag_name "
-		. "ORDER BY type_id, t2.tag_type, t2.tag_name "
+		. "ORDER BY type_id, t2.tag_type, IFNULL(ciniki_product_categories.sequence, 999), t2.tag_name "
 		. "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
 	$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(

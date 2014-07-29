@@ -23,6 +23,7 @@ function ciniki_products_web_categories($ciniki, $settings, $business_id) {
 	$strsql = "SELECT ciniki_product_tags.tag_name AS name, "
 		. "IFNULL(ciniki_product_categories.name, '') AS cat_name, "
 		. "IFNULL(ciniki_product_categories.primary_image_id, 0) AS primary_image_id, "
+//		. "IFNULL(ciniki_product_categories.sequence, 999) AS sort_order, "
 		. "ciniki_product_tags.permalink, "
 		. "COUNT(ciniki_products.id) AS num_products "
 		. "FROM ciniki_product_tags "
@@ -45,7 +46,7 @@ function ciniki_products_web_categories($ciniki, $settings, $business_id) {
 		. "AND ciniki_product_tags.tag_type = 10 "
 		. "AND ciniki_product_tags.tag_name <> '' "
 		. "GROUP BY ciniki_product_tags.tag_name "
-		. "ORDER BY ciniki_product_tags.tag_name "
+		. "ORDER BY IFNULL(ciniki_product_categories.sequence, 99), ciniki_product_tags.tag_name "
 		. "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
 	$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(

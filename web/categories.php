@@ -47,7 +47,6 @@ function ciniki_products_web_categories($ciniki, $settings, $business_id) {
 		. "GROUP BY ciniki_product_tags.tag_name "
 		. "ORDER BY ciniki_product_tags.tag_name "
 		. "";
-	print_r($strsql);
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
 	$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
 		array('container'=>'categories', 'fname'=>'name', 

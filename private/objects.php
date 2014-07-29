@@ -89,8 +89,8 @@ function ciniki_products_objects($ciniki) {
 		'sync'=>'yes',
 		'table'=>'ciniki_product_categories',
 		'fields'=>array(
-			'tag_type'=>array(),
-			'permalink'=>array(),
+			'category'=>array(),
+			'subcategory'=>array(),
 			'name'=>array(),
 			'sequence'=>array(),
 			'primary_image_id'=>array(),

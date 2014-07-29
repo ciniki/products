@@ -52,11 +52,18 @@ function ciniki_products_productStats($ciniki) {
 	// Get the list of categories and counts
 	//
 	$strsql = "SELECT tag_name AS name, ciniki_product_tags.permalink, "
+// Don't want the name, it's only for the website
+//		. "IFNULL(ciniki_product_categories.name, '') AS cat_name, "
 		. "COUNT(ciniki_products.id) AS num_products "
 		. "FROM ciniki_product_tags "
 		. "LEFT JOIN ciniki_products ON ("
 			. "ciniki_product_tags.product_id = ciniki_products.id "
 			. "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. ") "
+		. "LEFT JOIN ciniki_product_categories ON ("
+			. "ciniki_product_tags.permalink = ciniki_product_categories.category "
+			. "AND ciniki_product_categories.subcategory = '' "
+			. "AND ciniki_product_categories.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 			. ") "
 		. "WHERE ciniki_product_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "AND ciniki_product_tags.tag_type = 10 "
@@ -87,6 +94,11 @@ function ciniki_products_productStats($ciniki) {
 		$categories = array();
 	} else {
 		$categories = $rc['categories'];
+//		foreach($categories as $cid => $cat) {
+//			if( $cat['category']['cat_name'] != '' ) {
+//				$categories[$cid]['category']['name'] = $cat['category']['cat_name'];
+//			}
+//		}
 	}
 
 	//

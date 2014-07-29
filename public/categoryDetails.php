@@ -54,8 +54,8 @@ function ciniki_products_categoryDetails($ciniki) {
 		. "IFNULL(ciniki_product_categories.name, '') AS name "
 		. "FROM ciniki_product_tags "
 		. "LEFT JOIN ciniki_product_categories ON ("
-			. "ciniki_product_tags.tag_type = ciniki_product_categories.tag_type "
-			. "AND ciniki_product_tags.permalink = ciniki_product_categories.permalink "
+			. "ciniki_product_tags.permalink = ciniki_product_categories.category "
+			. "AND ciniki_product_categories.subcategory = '' "
 			. "AND ciniki_product_categories.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 			. ") "
 		. "WHERE ciniki_product_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
@@ -68,11 +68,11 @@ function ciniki_products_categoryDetails($ciniki) {
 		return $rc;
 	}
 	if( isset($rc['tag']) ) {
-		if( $rc['tag']['name'] != '' ) {
-			$rsp['details']['category_title'] = $rc['tag']['name'];
-		} else {
+//		if( $rc['tag']['name'] != '' ) {
+//			$rsp['details']['category_title'] = $rc['tag']['name'];
+//		} else {
 			$rsp['details']['category_title'] = $rc['tag']['tag_name'];
-		}
+//		}
 	}
 
 	//
@@ -92,9 +92,8 @@ function ciniki_products_categoryDetails($ciniki) {
 				. "AND t2.tag_type < 30 "
 				. ") "
 			. "LEFT JOIN ciniki_product_categories ON ("
-				. "t2.tag_type = ciniki_product_categories.tag_type "
-				. "AND t2.tag_name <> '' "
-				. "AND t2.permalink = ciniki_product_categories.permalink "
+				. "t1.permalink = ciniki_product_categories.category "
+				. "AND t2.permalink = ciniki_product_categories.subcategory "
 				. "AND ciniki_product_categories.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 				. ") "
 			. "LEFT JOIN ciniki_products ON ("
@@ -105,7 +104,7 @@ function ciniki_products_categoryDetails($ciniki) {
 			. "WHERE t1.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 			. "AND t1.permalink = '" . ciniki_core_dbQuote($ciniki, $args['category']) . "' "
 			. "AND t1.tag_type = 10 "
-			. "GROUP BY t2.tag_type, t2.tag_name, type_id "
+			. "GROUP BY type_id, t2.tag_type, t2.tag_name "
 			. "ORDER BY type_id, t2.tag_type, t2.tag_name "
 			. "";
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(

@@ -442,11 +442,17 @@ function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $a
 	// If specified, get the category title
 	//
 	if( isset($args['category_permalink']) && $args['category_permalink'] != '' ) {
-		$strsql = "SELECT tag_name "
-			. "FROM ciniki_product_tags "
-			. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
-			. "AND permalink = '" . ciniki_core_dbQuote($ciniki, $args['category_permalink']) . "' "
-			. "AND tag_type = 10 "
+		$strsql = "SELECT t1.tag_name, c1.name "
+			. "FROM ciniki_product_tags AS t1 "
+			. "LEFT JOIN ciniki_product_categories AS c1 ON ("
+				. "t1.permalink = c1.category "
+				. "AND c1.subcategory = '' "
+				. "AND c1.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+				. ") "
+			. "WHERE t1.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+			. "AND t1.permalink = '" . ciniki_core_dbQuote($ciniki, $args['category_permalink']) . "' "
+			. "AND t1.product_id = '" . ciniki_core_dbQuote($ciniki, $product['id']) . "' "
+			. "AND t1.tag_type = 10 "
 			. "LIMIT 1 "
 			. "";
 		$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'tag');
@@ -454,7 +460,11 @@ function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $a
 			return $rc;
 		}
 		if( isset($rc['tag']) ) {
-			$product['category_title'] = $rc['tag']['tag_name'];
+			if( $rc['tag']['name'] != '' ) {
+				$product['category_title'] = $rc['tag']['name'];
+			} else {
+				$product['category_title'] = $rc['tag']['tag_name'];
+			}
 		}
 	}
 

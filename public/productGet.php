@@ -96,15 +96,6 @@ function ciniki_products_productGet($ciniki) {
 				$rsp['subcategories-' . $type['type']['tag_type']] = $type['type']['tags'];
 			}
 		}
-//		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsList');
-//		$rc = ciniki_core_tagsList($ciniki, 'ciniki.products', $args['business_id'], 
-//			'ciniki_product_tags', 11);
-//		if( $rc['stat'] != 'ok' ) {
-//			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1818', 'msg'=>'Unable to get list of sub-categories', 'err'=>$rc['err']));
-//		}
-//		if( isset($rc['tags']) ) {
-//			$rsp['subcategories'] = $rc['tags'];
-//		}
 	}
 
 	//

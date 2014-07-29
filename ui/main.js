@@ -116,7 +116,8 @@ function ciniki_products_main() {
 //				return 'M.ciniki_products_main.showSubCategory(\'M.ciniki_products_main.showMenu();\',M.ciniki_products_main.category.category_permalink,\'' + d.category.permalink + '\');';
 			}
 		};
-		this.category.addButton('add', 'Add', 'M.startApp(\'ciniki.products.edit\',null,\'M.ciniki_products_main.showList();\',\'mc\',{\'product_id\':\'0\',\'category\':M.ciniki_products_main.list._type});');
+		this.category.addButton('add', 'Add', 'M.startApp(\'ciniki.products.edit\',null,\'M.ciniki_products_main.showCategory();\',\'mc\',{\'product_id\':\'0\',\'category\':M.ciniki_products_main.list._type});');
+		this.category.addButton('edit', 'Edit', 'M.startApp(\'ciniki.products.category\',null,\'M.ciniki_products_main.showCategory();\',\'mc\',{\'category\':M.ciniki_products_main.category.category_permalink,\'subcategory\':\'\'});');
 		this.category.addClose('Back');
 	
 
@@ -309,13 +310,16 @@ function ciniki_products_main() {
 			this.list._title = unescape(title);
 		}
 		this.list.sections.products.label = 'Products';
+		this.list.delButton('edit');
 		if( this.list._listtype == 'category' ) {
 			args['category'] = this.list._type;
 			this.list.sections.products.label = unescape(this.list._title);
+			this.list.addButton('edit', 'Edit', 'M.startApp(\'ciniki.products.category\',null,\'M.ciniki_products_main.showCategory();\',\'mc\',{\'category\':M.ciniki_products_main.list._type,\'subcategory\':\'\'});');
 		} else if( this.list._listtype == 'subcategory' ) {
 			args['category'] = this.list._type;
 			args['subcategory'] = this.list._type2;
 			this.list.sections.products.label = unescape(this.list._title);
+			this.list.addButton('edit', 'Edit', 'M.startApp(\'ciniki.products.category\',null,\'M.ciniki_products_main.showCategory();\',\'mc\',{\'category\':M.ciniki_products_main.list._type,\'subcategory\':M.ciniki_products_main.list._type2});');
 		} else if( this.list._listtype == 'supplier_id' ) {
 			args['supplier_id'] = this.list._type;
 			this.list.sections.products.label = unescape(this.list._title);

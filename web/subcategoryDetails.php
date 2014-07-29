@@ -34,8 +34,8 @@ function ciniki_products_web_subcategoryDetails($ciniki, $settings, $business_id
 		. "IFNULL(ciniki_product_categories.description, '') AS description "
 		. "FROM ciniki_product_tags "
 		. "LEFT JOIN ciniki_product_categories ON ("
-			. "ciniki_product_tags.tag_type = ciniki_product_categories.tag_type "
-			. "AND ciniki_product_tags.permalink = ciniki_product_categories.permalink "
+			. "ciniki_product_tags.permalink = ciniki_product_categories.category "
+			. "AND ciniki_product_categories.subcategory = '' "
 			. "AND ciniki_product_categories.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 			. ") "
 		. "WHERE ciniki_product_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
@@ -64,22 +64,28 @@ function ciniki_products_web_subcategoryDetails($ciniki, $settings, $business_id
 	//
 	// Get the sub-category name and details
 	//
-	$strsql = "SELECT ciniki_product_tags.tag_name, "
+	$strsql = "SELECT t2.tag_name, "
 		. "IFNULL(ciniki_product_categories.name, '') AS name, "
 		. "IFNULL(ciniki_product_categories.sequence, 0) AS sequence, "
 		. "IFNULL(ciniki_product_categories.primary_image_id, 0) AS image_id, "
 		. "IFNULL(ciniki_product_categories.synopsis, '') AS synopsis, "
 		. "IFNULL(ciniki_product_categories.description, '') AS description "
-		. "FROM ciniki_product_tags "
+		. "FROM ciniki_product_tags AS t1 "
+		. "LEFT JOIN ciniki_product_tags AS t2 ON ("
+			. "t1.product_id = t2.product_id "
+			. "AND t2.permalink = '" . ciniki_core_dbQuote($ciniki, $args['subcategory_permalink']) . "' "
+			. "AND t2.tag_type > 10 "
+			. "AND t2.tag_type < 30 "
+			. "AND t2.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+			. ") "
 		. "LEFT JOIN ciniki_product_categories ON ("
-			. "ciniki_product_tags.tag_type = ciniki_product_categories.tag_type "
-			. "AND ciniki_product_tags.permalink = ciniki_product_categories.permalink "
+			. "t1.permalink = ciniki_product_categories.category "
+			. "AND t2.permalink = ciniki_product_categories.subcategory "
 			. "AND ciniki_product_categories.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 			. ") "
-		. "WHERE ciniki_product_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
-		. "AND ciniki_product_tags.permalink = '" . ciniki_core_dbQuote($ciniki, $args['subcategory_permalink']) . "' "
-		. "AND ciniki_product_tags.tag_type > 10 "
-		. "AND ciniki_product_tags.tag_type < 30 "
+		. "WHERE t1.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+		. "AND t1.permalink = '" . ciniki_core_dbQuote($ciniki, $args['category_permalink']) . "' "
+		. "AND t1.tag_type = 10 "
 		. "LIMIT 1 "
 		. "";
 	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'tag');
@@ -94,9 +100,9 @@ function ciniki_products_web_subcategoryDetails($ciniki, $settings, $business_id
 		}
 		$rsp['details']['image_id'] = $rc['tag']['image_id'];
 		if( $rc['tag']['description'] != '' ) {
-			$rsp['details']['description'] = $rc['tag']['description'];
+			$rsp['details']['content'] = $rc['tag']['description'];
 		} else {
-			$rsp['details']['description'] = $rc['tag']['synopsis'];
+			$rsp['details']['content'] = $rc['tag']['synopsis'];
 		}
 	}
 

@@ -123,6 +123,23 @@ function ciniki_products_objects($ciniki) {
 			),
 		'history_table'=>'ciniki_product_history',
 		);
+	$objects['audio'] = array(
+		'name'=>'Audio',
+		'sync'=>'yes',
+		'table'=>'ciniki_product_audio',
+		'fields'=>array(
+			'product_id'=>array('ref'=>'ciniki.products.product'),
+			'name'=>array(),
+			'permalink'=>array(),
+			'sequence'=>array(),
+			'webflags'=>array(),
+			'mp3_audio_id'=>array('ref'=>'ciniki.audio.file'),
+			'wav_audio_id'=>array('ref'=>'ciniki.audio.file'),
+			'ogg_audio_id'=>array('ref'=>'ciniki.audio.file'),
+			'description'=>array(),
+			),
+		'history_table'=>'ciniki_product_history',
+		);
 	$objects['price'] = array(
 		'name'=>'Price',
 		'sync'=>'yes',

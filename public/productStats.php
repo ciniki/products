@@ -68,6 +68,7 @@ function ciniki_products_productStats($ciniki) {
 		. "WHERE ciniki_product_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "AND ciniki_product_tags.tag_type = 10 "
 		. "GROUP BY ciniki_product_tags.tag_name "
+		. "ORDER BY ciniki_product_categories.sequence, ciniki_product_tags.tag_name "
 		. "";
 //	$strsql = "SELECT category AS name, "
 //		. "IF(category='','Uncategorized',category) AS name, "

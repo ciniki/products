@@ -116,6 +116,7 @@ function ciniki_products_objects($ciniki) {
 		'fields'=>array(
 			'product_id'=>array('ref'=>'ciniki.products.product'),
 			'name'=>array(),
+			'sequence'=>array(),
 			'permalink'=>array(),
 			'webflags'=>array(),
 			'image_id'=>array('ref'=>'ciniki.images.image'),

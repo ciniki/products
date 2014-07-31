@@ -20,7 +20,7 @@
 #					displayed on the website.  This could be used for 
 #					artists to submit porfolios and determine which ones show up.
 #
-#					0x01 - Private (do not show on website, can be used to share marketing material with organizers)
+#					0x01 - Visible on website
 #
 # image_id:			The ID of the image in the ciniki.images module.
 #

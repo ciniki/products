@@ -3,7 +3,7 @@
 //
 function ciniki_products_images() {
 	this.webFlags = {
-		'1':{'name':'Hidden'},
+		'1':{'name':'Visible'},
 		};
 	this.init = function() {
 		//
@@ -22,6 +22,7 @@ function ciniki_products_images() {
 			}},
 			'info':{'label':'Information', 'type':'simpleform', 'fields':{
 				'name':{'label':'Title', 'type':'text'},
+				'sequence':{'label':'Order', 'type':'text', 'size':'small'},
 				'webflags':{'label':'Website', 'type':'flags', 'join':'yes', 'flags':this.webFlags},
 			}},
 			'_description':{'label':'Description', 'type':'simpleform', 'fields':{
@@ -93,7 +94,7 @@ function ciniki_products_images() {
 				});
 		} else {
 			this.edit.reset();
-			this.edit.data = {};
+			this.edit.data = {'webflags':1};
 			this.edit.refresh();
 			this.edit.show(cb);
 		}

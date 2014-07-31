@@ -47,6 +47,7 @@ function ciniki_products_imageGet($ciniki) {
 	$strsql = "SELECT ciniki_product_images.id, "
 		. "ciniki_product_images.name, "
 		. "ciniki_product_images.permalink, "
+		. "ciniki_product_images.sequence, "
 		. "ciniki_product_images.webflags, "
 		. "ciniki_product_images.image_id, "
 		. "ciniki_product_images.description "
@@ -57,7 +58,7 @@ function ciniki_products_imageGet($ciniki) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
 	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
 		array('container'=>'images', 'fname'=>'id', 'name'=>'image',
-			'fields'=>array('id', 'name', 'permalink', 'webflags', 'image_id', 'description')),
+			'fields'=>array('id', 'name', 'permalink', 'sequence', 'webflags', 'image_id', 'description')),
 		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;

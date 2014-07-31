@@ -305,6 +305,7 @@ function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $a
 		. "FROM ciniki_product_images "
 		. "WHERE product_id = '" . ciniki_core_dbQuote($ciniki, $product['id']) . "' "
 		. "AND business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+		. "AND (webflags&0x01) = 1 "		// Visible images
 		. "ORDER BY sequence, date_added, name "
 		. "";
 	$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(

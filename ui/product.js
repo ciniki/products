@@ -96,7 +96,7 @@ function ciniki_products_product() {
 		};
 		this.product.addDropImage = function(iid) {
 			var rsp = M.api.getJSON('ciniki.products.imageAdd',
-				{'business_id':M.curBusinessID, 'image_id':iid, 'product_id':M.ciniki_products_product.product.product_id});
+				{'business_id':M.curBusinessID, 'image_id':iid, 'product_id':M.ciniki_products_product.product.product_id, 'webflags':1});
 			if( rsp.stat != 'ok' ) {
 				M.api.err(rsp);
 				return false;

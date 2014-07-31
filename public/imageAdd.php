@@ -19,6 +19,7 @@ function ciniki_products_imageAdd(&$ciniki) {
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
         'product_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Product'), 
         'name'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'', 'name'=>'Title'), 
+        'sequence'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'1', 'name'=>'Sequence'), 
         'permalink'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'name'=>'Permalink'), 
         'webflags'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'name'=>'Website Flags'), 
 		'image_id'=>array('required'=>'yes', 'blank'=>'yes', 'name'=>'Image'),
@@ -82,11 +83,78 @@ function ciniki_products_imageAdd(&$ciniki) {
 	if( $args['product_id'] <= 0 ) {
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1474', 'msg'=>'No product specified'));
 	}
-   
+
+	//
+	// Get the next sequence
+	//
+	$adjust_sequence = 'yes';
+	if( $args['sequence'] == 0 ) {
+		$strsql = "SELECT MAX(sequence) AS sequence "
+			. "FROM ciniki_product_images "
+			. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. "AND product_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
+			. "";
+		$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'max');
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		if( isset($rc['max']['sequence']) && $rc['max']['sequence'] > 0 ) {
+			$args['sequence'] = $rc['max']['sequence'] + 1;
+			$adjust_sequence = 'no';
+		}
+	}
+
+	//
+	// Start a transaction
+	//
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionStart');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionRollback');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionCommit');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbAddModuleHistory');
+	$rc = ciniki_core_dbTransactionStart($ciniki, 'ciniki.products');
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+
 	//
 	// Add the product to the database
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
-	return ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.products.image', $args, 0x07);
+	$rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.products.image', $args, 0x04);
+	if( $rc['stat'] != 'ok' ) {
+		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
+		return $rc;
+	}
+	$product_id = $rc['id'];
+
+	//
+	// Update the sequence
+	//
+	if( isset($args['sequence']) && $adjust_sequence == 'yes' ) {
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'imageUpdateSequences');
+		$rc = ciniki_products_imageUpdateSequences($ciniki, $args['business_id'], $product_id, 
+			$args['sequence'], -1);
+		if( $rc['stat'] != 'ok' ) {
+			ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
+			return $rc;
+		}
+	}
+
+	//
+	// Commit the changes to the database
+	//
+	$rc = ciniki_core_dbTransactionCommit($ciniki, 'ciniki.products');
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+
+	//
+	// Update the last_change date in the business modules
+	// Ignore the result, as we don't want to stop user updates if this fails.
+	//
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
+	ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'products');
+
+	return array('stat'=>'ok', 'id'=>$location_id);
 }
 ?>

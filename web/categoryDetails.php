@@ -86,6 +86,7 @@ function ciniki_products_web_categoryDetails($ciniki, $settings, $business_id, $
 		. "LEFT JOIN ciniki_products ON ("
 			. "t2.product_id = ciniki_products.id "
 			. "AND ciniki_products.parent_id = 0 "
+			. "AND (ciniki_products.webflags&0x01) > 0 "
 			. "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 			. ") "
 		. "WHERE t1.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "

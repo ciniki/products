@@ -112,7 +112,7 @@ function ciniki_products_types() {
 				'parent_product_detail09':{'label':'Details 9', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'parent_product_detail09-name':{'label':'Name 9', 'type':'text'},
 				}},
-			'parent_other':{'label':'Parent Images', 'aside':'yes', 'fields':{
+			'parent_other':{'label':'Parent Other Details', 'aside':'yes', 'fields':{
 				'parent_categories':{'label':'Categories', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'parent_subcategories-11':{'label':'Sub-Categories', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'parent_subcategories-11-sname':{'label':'Single Name', 'type':'text'},
@@ -131,6 +131,7 @@ function ciniki_products_types() {
 				'parent_subcategories-15-pname':{'label':'Plural Name', 'type':'text'},
 				'parent_tags':{'label':'Tags', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'parent_images':{'label':'Images', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
+				'parent_audio':{'label':'Audio', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'parent_files':{'label':'Files', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'parent_similar':{'label':'Similar', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'parent_recipes':{'label':'Recipes', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
@@ -208,8 +209,9 @@ function ciniki_products_types() {
 				'child_product_detail09':{'label':'Details 9', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'child_product_detail09-name':{'label':'Name 9', 'type':'text'},
 				}},
-			'child_other':{'label':'Child Images', 'fields':{
+			'child_other':{'label':'Other Details', 'fields':{
 				'child_images':{'label':'Images', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
+				'child_audio':{'label':'Audio', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'child_files':{'label':'Files', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'child_similar':{'label':'Similar', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'child_recipes':{'label':'Recipes', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},

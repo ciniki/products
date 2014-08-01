@@ -21,6 +21,7 @@ function ciniki_products_productGet($ciniki) {
 		'prices'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Prices'),
 		'files'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Files'),
 		'images'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Images'),
+		'audio'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Audio'),
 		'similar'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Similar Products'),
 		'recipes'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Recommended Recipes'),
 		'categories'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'All Categories'),

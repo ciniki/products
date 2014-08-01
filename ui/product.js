@@ -82,6 +82,11 @@ function ciniki_products_product() {
 				'addTxt':'Add Additional Image',
 				'addFn':'M.startApp(\'ciniki.products.images\',null,\'M.ciniki_products_product.showProduct();\',\'mc\',{\'product_id\':M.ciniki_products_product.product.product_id,\'add\':\'yes\'});',
 				},
+			'audio':{'label':'Audio', 'visible':'no', 'type':'simplegrid', 'num_cols':1,
+				'cellClasses':['multiline'],
+				'addTxt':'Add Additional Audio',
+				'addFn':'M.startApp(\'ciniki.products.audio\',null,\'M.ciniki_products_product.showProduct();\',\'mc\',{\'product_id\':M.ciniki_products_product.product.product_id,\'add\':\'yes\'});',
+				},
 			'similar':{'label':'Similar Products', 'visible':'no', 'type':'simplegrid', 'num_cols':1,
 				'addTxt':'Add similar product',
 				'addFn':'M.startApp(\'ciniki.products.relationships\',null,\'M.ciniki_products_product.showProduct();\',\'mc\',{\'product_id\':M.ciniki_products_product.product.product_id});',
@@ -160,6 +165,25 @@ function ciniki_products_product() {
 					return d.price.unit_amount_display;
 				}
 			}
+			if( s == 'audio' && j == 0 ) {
+				var subtext = '';
+				if( d.audio.mp3_audio_id_filename != null && d.audio.mp3_audio_id_filename != '' ) {
+					subtext += (subtext!=''?', ':'') + d.audio.mp3_audio_id_filename;
+				}
+				if( d.audio.wav_audio_id_filename != null && d.audio.wav_audio_id_filename != '' ) {
+					subtext += (subtext!=''?', ':'') + d.audio.wav_audio_id_filename;
+				}
+				if( d.audio.ogg_audio_id_filename != null && d.audio.ogg_audio_id_filename != '' ) {
+					subtext += (subtext!=''?', ':'') + d.audio.ogg_audio_id_filename;
+				}
+				if( d.audio.name != null && d.audio.name != '' ) {
+					return '<span class="maintext">' + d.audio.name + '</span>' + (subtext!=''?'<span class="subtext">' + subtext + '</span>':'');
+				} else if( subtext != '' ) {
+					return subtext;
+				} else {
+					return 'Missing audio files';
+				}
+			}
 			if( s == 'files' && j == 0 ) {
 				return '<span class="maintext">' + d.file.name + '</span>';
 			}
@@ -173,6 +197,9 @@ function ciniki_products_product() {
 		this.product.rowFn = function(s, i, d) {	
 			if( s == 'prices' ) {
 				return 'M.startApp(\'ciniki.products.prices\',null,\'M.ciniki_products_product.showProduct();\',\'mc\',{\'price_id\':\'' + d.price.id + '\',\'type_id\':M.ciniki_products_product.product.data.type_id});';
+			}
+			if( s == 'audio' ) {
+				return 'M.startApp(\'ciniki.products.audio\',null,\'M.ciniki_products_product.showProduct();\',\'mc\',{\'product_audio_id\':\'' + d.audio.id + '\'});';
 			}
 			if( s == 'files' ) {
 				return 'M.startApp(\'ciniki.products.files\',null,\'M.ciniki_products_product.showProduct();\',\'mc\',{\'file_id\':\'' + d.file.id + '\'});';
@@ -242,7 +269,7 @@ function ciniki_products_product() {
 		if( list != null ) { this.product.prevnext.list = list; }
 		M.api.getJSONCb('ciniki.products.productGet', {'business_id':M.curBusinessID,
 			'product_id':this.product.product_id, 'prices':'yes',
-			'files':'yes', 'images':'yes', 'similar':'yes', 'recipes':'yes'}, function(rsp) {
+			'files':'yes', 'images':'yes', 'audio':'yes', 'similar':'yes', 'recipes':'yes'}, function(rsp) {
 				if( rsp.stat != 'ok' ) {
 					M.api.err(rsp);
 					return false;
@@ -306,6 +333,7 @@ function ciniki_products_product() {
 				p.sections.images.visible = (pc_object_def.images!=null?'yes':'no');
 				p.sections._images.visible = (pc_object_def.images!=null?'yes':'no');
 				p.sections.files.visible = (pc_object_def.files!=null?'yes':'no');
+				p.sections.audio.visible = (pc_object_def.audio!=null?'yes':'no');
 				p.sections.similar.visible = (pc_object_def.similar!=null?'yes':'no');
 				p.sections.recipes.visible = (pc_object_def.recipes!=null?'yes':'no');
 				// Setup prev/next buttons

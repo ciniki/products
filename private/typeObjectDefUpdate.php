@@ -173,7 +173,7 @@ function ciniki_products_typeObjectDefUpdate($ciniki, $object_def, $args) {
 
 	$extras = array('categories', 
 //		'subcategories-11', 'subcategories-12', 'subcategories-13', 'subcategories-14', 'subcategories-15', 
-		'tags', 'images', 'files', 'similar', 'recipes');
+		'tags', 'images', 'audio', 'files', 'similar', 'recipes');
 	foreach($extras as $extra) {
 		$field = 'parent_' . $extra;
 		if( isset($args[$field]) ) {

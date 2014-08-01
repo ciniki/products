@@ -103,6 +103,7 @@ function ciniki_products_typeGet($ciniki) {
 	}
 	if( isset($object_def['parent']['tags']) ) { $type['parent_tags'] = 'on'; }
 	if( isset($object_def['parent']['images']) ) { $type['parent_images'] = 'on'; }
+	if( isset($object_def['parent']['audio']) ) { $type['parent_audio'] = 'on'; }
 	if( isset($object_def['parent']['files']) ) { $type['parent_files'] = 'on'; }
 	if( isset($object_def['parent']['similar']) ) { $type['parent_similar'] = 'on'; }
 	if( isset($object_def['parent']['recipes']) ) { $type['parent_recipes'] = 'on'; }
@@ -126,6 +127,7 @@ function ciniki_products_typeGet($ciniki) {
 //	if( isset($object_def['child']['subcategories']) ) { $type['child_subcategories'] = 'on'; }
 	if( isset($object_def['child']['tags']) ) { $type['child_tags'] = 'on'; }
 	if( isset($object_def['child']['images']) ) { $type['child_images'] = 'on'; }
+	if( isset($object_def['child']['audio']) ) { $type['child_audio'] = 'on'; }
 	if( isset($object_def['child']['files']) ) { $type['child_files'] = 'on'; }
 	if( isset($object_def['child']['similar']) ) { $type['child_similar'] = 'on'; }
 	if( isset($object_def['child']['recipes']) ) { $type['child_recipes'] = 'on'; }

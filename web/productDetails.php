@@ -323,6 +323,55 @@ function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $a
 	}
 
 	//
+	// Check if any audio attached to product
+	//
+	$strsql = "SELECT ciniki_product_audio.id, "
+		. "ciniki_product_audio.name, "
+		. "ciniki_product_audio.sequence, "
+		. "ciniki_product_audio.webflags, "
+		. "ciniki_product_audio.mp3_audio_id, "
+		. "ciniki_product_audio.wav_audio_id, "
+		. "ciniki_product_audio.ogg_audio_id, "
+		. "ciniki_audio.id AS audio_id, "
+		. "ciniki_audio.original_filename, "
+		. "ciniki_audio.type AS audio_type, "
+		. "ciniki_audio.type AS extension, "
+		. "ciniki_audio.uuid AS audio_uuid, "
+		. "ciniki_product_audio.description "
+		. "FROM ciniki_product_audio "
+		. "LEFT JOIN ciniki_audio ON ("
+			. "(ciniki_product_audio.mp3_audio_id = ciniki_audio.id "
+				. "OR ciniki_product_audio.wav_audio_id = ciniki_audio.id "
+				. "OR ciniki_product_audio.ogg_audio_id = ciniki_audio.id "
+				. ") "
+			. "AND ciniki_audio.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+			. ") "
+		. "WHERE ciniki_product_audio.product_id = '" . ciniki_core_dbQuote($ciniki, $product['id']) . "' "
+		. "AND ciniki_product_audio.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+		. "AND (ciniki_product_audio.webflags&0x01) = 1 "
+		. "ORDER BY ciniki_product_audio.sequence, ciniki_product_audio.name, "
+			. "ciniki_product_audio.date_added "
+		. "";
+	$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
+		array('container'=>'audio', 'fname'=>'id',
+			'fields'=>array('id', 'name', 'sequence', 'webflags', 
+				'mp3_audio_id', 'wav_audio_id', 'ogg_audio_id', 'description')),
+		array('container'=>'formats', 'fname'=>'audio_id',
+			'fields'=>array('id'=>'audio_id', 'uuid'=>'audio_uuid', 'type'=>'audio_type', 
+				'original_filename', 'extension'),
+			'maps'=>array('extension'=>array('20'=>'ogg', '30'=>'wav', '40'=>'mp3')),
+			),
+		));
+	if( $rc['stat'] != 'ok' ) {	
+		return $rc;
+	}
+	if( isset($rc['audio']) ) {
+		$product['audio'] = $rc['audio'];
+	} else {
+		$product['audio'] = array();
+	}
+
+	//
 	// Check if any files are attached to the product
 	//
 	$strsql = "SELECT id, name, extension, permalink, description "

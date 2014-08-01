@@ -7,7 +7,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:			The ID of the business to add the class image to.
+// business_id:			The ID of the business to add the class mage to.
 // name:				The name of the image.  
 //
 // Returns

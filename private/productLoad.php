@@ -359,6 +359,64 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 	}
 
 	//
+	// Get the audio for the product
+	//
+	if( isset($args['audio']) && $args['audio'] == 'yes' ) {
+		$strsql = "SELECT ciniki_product_audio.id, "
+			. "ciniki_product_audio.name, "
+			. "ciniki_product_audio.sequence, "
+			. "ciniki_product_audio.webflags, "
+			. "ciniki_product_audio.mp3_audio_id, "
+			. "ciniki_product_audio.wav_audio_id, "
+			. "ciniki_product_audio.ogg_audio_id, "
+			. "ciniki_audio.id AS audio_id, "
+			. "ciniki_audio.original_filename, "
+			. "ciniki_product_audio.description "
+			. "FROM ciniki_product_audio "
+			. "LEFT JOIN ciniki_audio ON ("
+				. "(ciniki_product_audio.mp3_audio_id = ciniki_audio.id "
+					. "OR ciniki_product_audio.wav_audio_id = ciniki_audio.id "
+					. "OR ciniki_product_audio.ogg_audio_id = ciniki_audio.id "
+					. ") "
+				. "AND ciniki_audio.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+				. ") "
+			. "WHERE ciniki_product_audio.product_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
+			. "AND ciniki_product_audio.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. "ORDER BY ciniki_product_audio.sequence, ciniki_product_audio.name, ciniki_product_audio.date_added "
+			. "";
+		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
+			array('container'=>'audio', 'fname'=>'id', 'name'=>'audio',
+				'fields'=>array('id', 'name', 'sequence', 'webflags', 
+					'mp3_audio_id', 'wav_audio_id', 'ogg_audio_id', 'description')),
+			array('container'=>'files', 'fname'=>'audio_id', 'name'=>'file',
+				'fields'=>array('id'=>'audio_id', 'original_filename')),
+			));
+		if( $rc['stat'] != 'ok' ) {	
+			return $rc;
+		}
+		if( isset($rc['audio']) ) {
+			$product['audio'] = $rc['audio'];
+			foreach($product['audio'] as $aid => $audio) {
+				if( isset($audio['audio']['files']) ) {
+					foreach($audio['audio']['files'] as $fid => $file) {
+						if( $file['file']['id'] == $audio['audio']['mp3_audio_id'] ) {
+							$product['audio'][$aid]['audio']['mp3_audio_id_filename'] = $file['file']['original_filename'];
+						}
+						if( $file['file']['id'] == $audio['audio']['wav_audio_id'] ) {
+							$product['audio'][$aid]['audio']['wav_audio_id_filename'] = $file['file']['original_filename'];
+						}
+						if( $file['file']['id'] == $audio['audio']['ogg_audio_id'] ) {
+							$product['audio'][$aid]['audio']['ogg_audio_id_filename'] = $file['file']['original_filename'];
+						}
+					}
+				}
+			}
+		} else {
+			$product['audio'] = array();
+		}
+	}
+
+	//
 	// Get the files for the product
 	//
 	if( isset($args['files']) && $args['files'] == 'yes' ) {

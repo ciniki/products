@@ -350,7 +350,7 @@ function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $a
 		. "AND ciniki_product_audio.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 		. "AND (ciniki_product_audio.webflags&0x01) = 1 "
 		. "ORDER BY ciniki_product_audio.sequence, ciniki_product_audio.name, "
-			. "ciniki_product_audio.date_added "
+			. "ciniki_product_audio.date_added, ciniki_audio.type DESC "
 		. "";
 	$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
 		array('container'=>'audio', 'fname'=>'id',

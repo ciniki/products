@@ -55,7 +55,11 @@ function ciniki_products_productSearch($ciniki) {
 			. "OR name LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
 			. "OR code LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
 			. "OR code LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
-			. ") "
+			. "";
+	if( is_numeric($args['start_needle']) ) {
+		$strsql .= "OR barcode LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' ";
+	}
+	$strsql .= ") "
 		. "ORDER BY name DESC ";
 	if( isset($args['limit']) && is_numeric($args['limit']) && $args['limit'] > 0 ) {
 		$strsql .= "LIMIT " . ciniki_core_dbQuote($ciniki, $args['limit']) . " ";	// is_numeric verified

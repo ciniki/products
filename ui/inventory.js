@@ -11,7 +11,7 @@ function ciniki_products_inventory() {
 			'ciniki_products_inventory', 'menu',
 			'mc', 'medium', 'sectioned', 'ciniki.products.inventory.menu');
 		this.menu.sections = {
-			'search':{'label':'Search', 'type':'livesearchgrid', 'livesearchcols':1, 
+			'search':{'label':'Search', 'autofocus':'yes', 'type':'livesearchgrid', 'livesearchcols':1, 
 				'headerValues':null,
 				'hint':'product name', 
 				'noData':'No products found',
@@ -146,11 +146,11 @@ function ciniki_products_inventory() {
 //				'cellClasses':['label',''],
 //			},
 			'details':{'label':'', 'fields':{
-				'name':{'label':'', 'hidelabel':'yes', 'type':'noedit'},
+				'name':{'label':'', 'hidelabel':'yes', 'type':'noedit', 'history':'no'},
 			}},
 			'inventory':{'label':'Inventory', 'fields':{
-				'old_inventory_current_num':{'label':'Old', 'type':'noedit'},
-				'inventory_current_num':{'label':'New', 'type':'text', 'autofocus':'yes', 'enterFn':'M.ciniki_products_inventory.saveInventory();', 'size':'small'},
+				'old_inventory_current_num':{'label':'Old', 'type':'noedit', 'history':'no'},
+				'inventory_current_num':{'label':'New', 'type':'number', 'autofocus':'yes', 'enterFn':'M.ciniki_products_inventory.saveInventory();', 'size':'small'},
 			}},
 			'_buttons':{'label':'', 'buttons':{
 				'save':{'label':'Save', 'fn':'M.ciniki_products_inventory.saveInventory();'},
@@ -161,6 +161,10 @@ function ciniki_products_inventory() {
 			if( i == 'inventory_current_num' ) { return ''; }
 			return this.data[i];
 		};
+		this.edit.fieldHistoryArgs = function(s, i) {
+			return {'method':'ciniki.products.productHistory', 'args':{'business_id':M.curBusinessID,
+				'product_id':this.product_id, 'field':i}};
+		}
 		this.edit.addButton('save', 'Save', 'M.ciniki_products_inventory.saveInventory();');
 		this.edit.addClose('Cancel');
 

@@ -39,19 +39,22 @@ function ciniki_products_productSearch($ciniki) {
     $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.productSearch', 0); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
-    }   
+    }
+	$modules = $rc['modules'];
 
 	//
 	// Get the number of products in each status for the business, 
 	// if no rows found, then return empty array
 	//
-	$strsql = "SELECT id, category, name, type, status, "
+	$strsql = "SELECT id, name, code, type, status, "
 		. "IF((inventory_flags&0x01)=1,inventory_current_num,'') AS inventory_current_num "
 		. "FROM ciniki_products "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "AND status = 10 "
 		. "AND (name LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
 			. "OR name LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
+			. "OR code LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
+			. "OR code LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
 			. ") "
 		. "ORDER BY name DESC ";
 	if( isset($args['limit']) && is_numeric($args['limit']) && $args['limit'] > 0 ) {

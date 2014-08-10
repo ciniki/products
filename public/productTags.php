@@ -37,6 +37,8 @@ function ciniki_products_productTags($ciniki) {
     }   
 	$modules = $rc['modules'];
 
+	$rsp = array('stat'=>'ok');
+
 	//
 	// Get the list of categories
 	//
@@ -46,23 +48,31 @@ function ciniki_products_productTags($ciniki) {
 		return $rc;
 	}
 	if( isset($rc['tags']) ) {
-		$categories = $rc['tags'];
+		$rsp['categories'] = $rc['tags'];
 	} else {
-		$categories = array();
+		$rsp['categories'] = array();
 	}
 
 	//
-	// Get the list of subcategories
+	// Check if all subcategories should be returned
 	//
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsList');
-	$rc = ciniki_core_tagsList($ciniki, 'ciniki.products', $args['business_id'], 'ciniki_product_tags', 11);
-	if( $rc['stat'] != 'ok' ) {
-		return $rc;
-	}
-	if( isset($rc['tags']) ) {
-		$subcategories = $rc['tags'];
-	} else {
-		$subcategories = array();
+	$strsql = "SELECT DISTINCT tag_type, tag_name "
+		. "FROM ciniki_product_tags "
+		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+		. "AND tag_type > 10 AND tag_type < 30 "
+		. "ORDER BY tag_type, tag_name "
+		. "";
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
+	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
+		array('container'=>'types', 'fname'=>'tag_type', 'name'=>'type',
+			'fields'=>array('tag_type')),
+		array('container'=>'tags', 'fname'=>'tag_name', 'name'=>'tag', 
+			'fields'=>array('type'=>'tag_type', 'name'=>'tag_name')),
+		));
+	if( isset($rc['types']) ) {
+		foreach($rc['types'] as $type) {
+			$rsp['subcategories-' . $type['type']['tag_type']] = $type['type']['tags'];
+		}
 	}
 
 	//
@@ -74,11 +84,11 @@ function ciniki_products_productTags($ciniki) {
 		return $rc;
 	}
 	if( isset($rc['tags']) ) {
-		$tags = $rc['tags'];
+		$rsp['tags'] = $rc['tags'];
 	} else {
-		$tags = array();
+		$rsp['tags'] = array();
 	}
 
-	return array('stat'=>'ok', 'categories'=>$categories, 'subcategories'=>$subcategories, 'tags'=>$tags);
+	return $rsp;
 }
 ?>

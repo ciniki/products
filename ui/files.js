@@ -2,6 +2,7 @@
 // The products app to manage the products for the business
 //
 function ciniki_products_files() {
+	this.webFlags = {'1':{'name':'Visible'},};
 	this.init = function() {
 		//
 		// The panel to display the add form
@@ -17,6 +18,7 @@ function ciniki_products_files() {
 			}},
 			'info':{'label':'Information', 'type':'simpleform', 'fields':{
 				'name':{'label':'Title', 'type':'text'},
+				'webflags':{'label':'Website', 'type':'flags', 'default':'1', 'flags':this.webFlags},
 			}},
 			'_save':{'label':'', 'buttons':{
 				'save':{'label':'Save', 'fn':'M.ciniki_products_files.addFile();'},
@@ -42,6 +44,7 @@ function ciniki_products_files() {
 		this.edit.sections = {
 			'info':{'label':'Details', 'type':'simpleform', 'fields':{
 				'name':{'label':'Title', 'type':'text'},
+				'webflags':{'label':'Website', 'type':'flags', 'default':'1', 'flags':this.webFlags},
 			}},
 			'_save':{'label':'', 'buttons':{
 				'save':{'label':'Save', 'fn':'M.ciniki_products_files.saveFile();'},

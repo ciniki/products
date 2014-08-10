@@ -279,18 +279,20 @@ function ciniki_products_inventory() {
 					}
 				}
 				if( rsp.products != null && rsp.products.length > 0 ) {
-					p.sections['products'] = {'label':plist_label, 'type':'simplegrid', 'num_cols':1,
-						'headerValues':null, 
-						};
+					if( (M.curBusiness.modules['ciniki.products'].flags&0x04) > 0 ) {
+						p.sections['products'] = {'label':plist_label, 'type':'simplegrid', 'num_cols':2,
+							'headerValues':['Product', 'Inventory'], 
+							};
+					} else {
+						p.sections['products'] = {'label':plist_label, 'type':'simplegrid', 'num_cols':1,
+							'headerValues':null, 
+							};
+					}
 					p.data.products = rsp.products;
 				}
 				p.refresh();
 				p.show(cb);
 		});
-	};
-
-	this.showSubCategory = function(cb, category, subcat) {
-		
 	};
 
 	//

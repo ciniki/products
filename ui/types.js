@@ -305,7 +305,7 @@ function ciniki_products_types() {
 
 	this.saveType = function() {
 		if( this.edit.type_id > 0 ) {
-			var c = this.edit.serializeForm('no');
+			var c = this.edit.serializeForm('yes');
 			M.api.postJSONCb('ciniki.products.typeUpdate', {'business_id':M.curBusinessID,
 				'type_id':this.edit.type_id}, c, function(rsp) {
 					if( rsp.stat != 'ok' ) {

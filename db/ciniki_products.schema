@@ -125,8 +125,9 @@
 # webflags:					Specify if the product should be shown on the website.
 #
 #							0x01 - Visible, display on the website
-#							0x02 - Category Highlight
-#							0x04 - Sell Online
+#							0x02 - Sell Online
+#							0x10 - Category Highlight
+#							0x20 - Sub-Category Highlight
 #
 # date_added:		The date and time the product was added to the database.
 #

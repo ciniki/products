@@ -187,6 +187,8 @@ function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $a
 				. "AND (ciniki_product_prices.webflags&0x01) = 0 "
 				. "AND ((ciniki_product_prices.available_to&$price_flags) > 0 OR (webflags&available_to&0xF0) > 0) "
 				. "";
+			// Check if pricepoints should be restricted to only those available to the customer, or
+			// if we should get all and decide on best one for the customer.
 			if( ($ciniki['session']['customer']['pricepoint']['flags']&0x01) == 0 ) {
 				$strsql .= "AND (ciniki_product_prices.pricepoint_id = '" . ciniki_core_dbQuote($ciniki, $ciniki['session']['customer']['pricepoint']['id']) . "' "
 					. " OR ciniki_product_prices.pricepoint_id = 0 "

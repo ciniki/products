@@ -10,7 +10,7 @@
 // Returns
 // =======
 //
-function ciniki_products_sapos_itemsInventory($ciniki, $business_id, $args) {
+function ciniki_products_sapos_cartItemsInventory($ciniki, $business_id, $args) {
 
 	if( !isset($args['object']) || $args['object'] == '' 
 		|| !isset($args['object_ids']) || $args['object_ids'] == '' ) {

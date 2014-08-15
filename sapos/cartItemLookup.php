@@ -72,7 +72,7 @@ function ciniki_products_sapos_cartItemLookup($ciniki, $business_id, $customer, 
 			if( !isset($customer['pricepoint']['id']) || $customer['pricepoint']['id'] == 0 ) {
 				return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1839', 'msg'=>"I'm sorry, but this product is not available to you."));
 			}
-			if( $product['pricepoint']['id'] != $customer['pricepoint']['id'] ) {
+			if( $product['pricepoint_id'] != $customer['pricepoint']['id'] ) {
 				if( !isset($customer['pricepoint']['sequence']) || $customer['pricepoint']['sequence'] == '' ) {
 					return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1841', 'msg'=>"I'm sorry, but this product is not available to you."));
 				}

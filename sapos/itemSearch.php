@@ -10,9 +10,9 @@
 // Returns
 // =======
 //
-function ciniki_products_sapos_itemSearch($ciniki, $business_id, $start_needle, $limit) {
+function ciniki_products_sapos_itemSearch($ciniki, $business_id, $args) {
 
-	if( $start_needle == '' ) {
+	if( !isset($args['start_needle']) || $args['start_needle'] == '' ) {
 		return array('stat'=>'ok', 'items'=>array());
 	}
 
@@ -46,26 +46,42 @@ function ciniki_products_sapos_itemSearch($ciniki, $business_id, $start_needle, 
 	// Prepare the query
 	//
 	$strsql = "SELECT ciniki_products.id, "
+		. "ciniki_products.code, "
 		. "ciniki_products.name, "
-		. "ciniki_products.price, "
-		. "'' AS price_name, "
+		. "ciniki_products.price AS unit_amount, "
 		. "ciniki_products.unit_discount_amount, "
 		. "ciniki_products.unit_discount_percentage, "
-		. "ciniki_products.taxtype_id "
+		. "ciniki_products.taxtype_id, "
+		. "ciniki_product_prices.id AS price_id, "
+		. "ciniki_product_prices.name AS price_name, "
+		. "ciniki_product_prices.unit_amount AS price_unit_amount, "
+		. "ciniki_product_prices.unit_discount_amount AS price_unit_discount_amount, "
+		. "ciniki_product_prices.unit_discount_percentage AS price_unit_discount_percentage, "
+		. "ciniki_product_prices.taxtype_id AS price_taxtype_id "
 		. "FROM ciniki_products "
+		. "LEFT JOIN ciniki_product_prices ON ("
+			. "ciniki_products.id = ciniki_product_prices.product_id "
+			. "AND ciniki_product_prices.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+			. (isset($args['pricepoint_id'])?"AND ciniki_product_prices.pricepoint_id = '" . ciniki_core_dbQuote($ciniki, $args['pricepoint_id']) . "' ":'')
+			. ") "
 		. "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
-		. "AND (ciniki_products.name LIKE '" . ciniki_core_dbQuote($ciniki, $start_needle) . "%' "
-			. "OR ciniki_products.name LIKE '% " . ciniki_core_dbQuote($ciniki, $start_needle) . "%' "
+		. "AND (ciniki_products.name LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
+			. "OR ciniki_products.name LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
+			. "OR ciniki_products.code LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
+			. "OR ciniki_products.code LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
 			. ") "
 		. "";
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
 	$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
 		array('container'=>'products', 'fname'=>'id',
-			'fields'=>array('id', 'name')),
-		array('container'=>'prices', 'fname'=>'id',
-			'fields'=>array('id', 'name'=>'price_name', 'unit_amount'=>'price', 
-				'unit_discount_amount', 'unit_discount_percentage',
-				'taxtype_id')),
+			'fields'=>array('id', 'code', 'name', 'unit_amount', 
+				'unit_discount_amount', 'unit_discount_percentage', 'taxtype_id')),
+		array('container'=>'prices', 'fname'=>'price_id',
+			'fields'=>array('id'=>'price_id', 'name'=>'price_name', 
+				'unit_amount'=>'price_unit_amount', 
+				'unit_discount_amount'=>'price_unit_discount_amount', 
+				'unit_discount_percentage'=>'price_unit_discount_percentage',
+				'taxtype_id'=>'price_taxtype_id')),
 		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
@@ -78,17 +94,18 @@ function ciniki_products_sapos_itemSearch($ciniki, $business_id, $start_needle, 
 
 	$items = array();
 	foreach($products as $eid => $product) {
-		if( isset($product['prices']) && count($product['prices']) > 1 ) {
+		if( isset($product['prices']) ) {
 			foreach($product['prices'] as $pid => $price) {
 				$details = array(
 					'status'=>0,
 					'object'=>'ciniki.products.product',
 					'object_id'=>$product['id'],
-					'description'=>$product['name'],
+					'description'=>($product['code']!=''?$product['code'].' - ':'') . $product['name'],
 					'quantity'=>1,
 					'unit_amount'=>$price['unit_amount'],
 					'unit_discount_amount'=>$price['unit_discount_amount'],
 					'unit_discount_percentage'=>$price['unit_discount_percentage'],
+					'price_id'=>$price['id'],
 					'taxtype_id'=>$price['taxtype_id'], 
 					'notes'=>'',
 					);
@@ -102,32 +119,15 @@ function ciniki_products_sapos_itemSearch($ciniki, $business_id, $start_needle, 
 				'status'=>0,
 				'object'=>'ciniki.products.product',
 				'object_id'=>$product['id'],
-				'description'=>$product['name'],
+				'description'=>($product['code']!=''?$product['code'].' - ':'') . $product['name'],
 				'quantity'=>1,
-				'unit_amount'=>0,
-				'unit_discount_amount'=>0,
-				'unit_discount_percentage'=>0,
-				'taxtype_id'=>0, 
+				'unit_amount'=>$product['unit_amount'],
+				'unit_discount_amount'=>$product['unit_discount_amount'],
+				'unit_discount_percentage'=>$product['unit_discount_percentage'],
+				'price_id'=>0,
+				'taxtype_id'=>$product['taxtype_id'], 
 				'notes'=>'',
 				);
-			if( isset($product['prices']) && count($product['prices']) == 1 ) {
-				$price = array_pop($product['prices']);
-				if( isset($price['name']) && $price['name'] != '' ) {
-					$details['description'] .= ' - ' . $price['name'];
-				}
-				if( isset($price['unit_amount']) && $price['unit_amount'] != '' ) {
-					$details['unit_amount'] = $price['unit_amount'];
-				}
-				if( isset($price['unit_discount_amount']) && $price['unit_discount_amount'] != '' ) {
-					$details['unit_discount_amount'] = $price['unit_discount_amount'];
-				}
-				if( isset($price['unit_discount_percentage']) && $price['unit_discount_percentage'] != '' ) {
-					$details['unit_discount_percentage'] = $price['unit_discount_percentage'];
-				}
-				if( isset($price['taxtype_id']) && $price['taxtype_id'] != '' ) {
-					$details['taxtype_id'] = $price['taxtype_id'];
-				}
-			}
 			$items[] = array('item'=>$details);
 		}
 	}

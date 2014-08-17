@@ -103,7 +103,6 @@ function ciniki_products_web_searchProducts($ciniki, $settings, $business_id, $a
 	} else {
 		$strsql .= "ORDER BY ciniki_products.name, ciniki_product_prices.name ";
 	}
-	error_log(is_int($args['limit']));
 
 	if( isset($args['limit']) && $args['limit'] != '' && $args['limit'] > 0 && preg_match("/^[0-9]+$/",$args['limit']) ) {
 		$strsql .= "LIMIT " . $args['limit'] . " ";

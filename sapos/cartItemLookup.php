@@ -24,7 +24,7 @@ function ciniki_products_sapos_cartItemLookup($ciniki, $business_id, $customer, 
 	if( $args['object'] == 'ciniki.products.product' && isset($args['price_id']) && $args['price_id'] > 0 ) {
 		$strsql = "SELECT ciniki_products.id, "
 			. "ciniki_products.parent_id, "
-			. "ciniki_products.name, "
+			. "IF(ciniki_products.code<>'',CONCAT_WS(' - ', ciniki_products.code, ciniki_products.name), ciniki_products.name) AS name, "
 			. "ciniki_product_prices.id AS price_id, "
 			. "ciniki_product_prices.name AS price_name, "
 			. "ciniki_product_prices.pricepoint_id, "

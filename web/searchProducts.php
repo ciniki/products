@@ -110,7 +110,6 @@ function ciniki_products_web_searchProducts($ciniki, $settings, $business_id, $a
 	} else {
 		$strsql .= "LIMIT 15";
 	}
-	error_log($strsql);
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
 	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
 		array('container'=>'products', 'fname'=>'id', 'name'=>'product',
@@ -189,6 +188,7 @@ function ciniki_products_web_searchProducts($ciniki, $settings, $business_id, $a
 		if( isset($ciniki['session']['cart']['sapos_id']) && $ciniki['session']['cart']['sapos_id'] > 0 ) {
 			$cur_invoice_id = $ciniki['session']['cart']['sapos_id'];
 		}
+		$product_ids = array_unique($product_ids);
 		ciniki_core_loadMethod($ciniki, 'ciniki', 'sapos', 'private', 'getReservedQuantities');
 		$rc = ciniki_sapos_getReservedQuantities($ciniki, $business_id, 
 			'ciniki.products.product', $product_ids, $cur_invoice_id);

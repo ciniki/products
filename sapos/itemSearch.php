@@ -91,7 +91,7 @@ function ciniki_products_sapos_itemSearch($ciniki, $business_id, $args) {
 		. "LEFT JOIN ciniki_product_prices ON ("
 			. "ciniki_products.id = ciniki_product_prices.product_id "
 			. "AND ciniki_product_prices.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
-			. (isset($args['pricepoint_id'])?"AND ciniki_product_prices.pricepoint_id = '" . ciniki_core_dbQuote($ciniki, $args['pricepoint_id']) . "' ":'')
+			. (isset($args['pricepoint_id'])&&$args['pricepoint_id']>0?"AND ciniki_product_prices.pricepoint_id = '" . ciniki_core_dbQuote($ciniki, $args['pricepoint_id']) . "' ":'')
 			. ") "
 		. "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 		. "AND (ciniki_products.name LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "

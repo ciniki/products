@@ -108,10 +108,10 @@ function ciniki_products_sapos_cartItemLookup($ciniki, $business_id, $customer, 
 		if( ($product['inventory_flags']&0x01) > 0 ) {
 			if( ($product['inventory_flags']&0x02) > 0 ) {
 				$product['limited_units'] = 'no';
-				$product['flags'] = 4;
+				$product['flags'] = 6;	// Inventoried and backorder available
 			} else {
 				$product['limited_units'] = 'yes';
-				$product['flags'] = 0;
+				$product['flags'] = 2;	// Inventoried, update when shipping
 			}
 			$product['units_available'] = $product['inventory_current_num'];
 		} else {

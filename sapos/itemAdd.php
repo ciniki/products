@@ -36,6 +36,15 @@ function ciniki_products_sapos_itemAdd($ciniki, $business_id, $invoice_id, $item
 		}
 		$product = $rc['product'];
 
+		$rsp = array('stat'=>'ok');
+		if( ($product['inventory_flags']&0x01) > 0 ) {
+			if( ($product['inventory_flags']&0x02) > 0 ) {
+				$rsp['flags'] = 6;
+			} else {
+				$rsp['flags'] = 2;
+			}
+		}
+
 		//
 		// Check if inventory needs to be updated
 		//
@@ -79,7 +88,7 @@ function ciniki_products_sapos_itemAdd($ciniki, $business_id, $invoice_id, $item
 //				2, 'ciniki_products', $product['id'], 'inventory_current_num', $product['inventory_current_num']);
 //		}
 
-		return array('stat'=>'ok');
+		return $rsp;
 	}
 
 	return array('stat'=>'ok');

@@ -20,7 +20,7 @@ function ciniki_products_recipes_recipeDelete($ciniki, $business_id, $args) {
 	// Check to make sure the required arguments are passed
 	//
 	if( !isset($args['recipe_id']) ) {
-		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1540', 'msg'=>'Missing hook argument recipe_id'));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1929', 'msg'=>'Missing hook argument recipe_id'));
 	}
 
 	//
@@ -41,7 +41,7 @@ function ciniki_products_recipes_recipeDelete($ciniki, $business_id, $args) {
 			$rc = ciniki_core_objectDelete($ciniki, $business_id, 'ciniki.products.recipe',	
 				$ref['id'], $ref['uuid'], 0x04);
 			if( $rc['stat'] != 'ok' ) {
-				return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1536', 'msg'=>'Unable to remove product recipe reference', 'err'=>$rc['err']));
+				return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1991', 'msg'=>'Unable to remove product recipe reference', 'err'=>$rc['err']));
 			}
 		}
 	}

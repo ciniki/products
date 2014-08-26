@@ -32,7 +32,7 @@ function ciniki_products_sapos_itemAdd($ciniki, $business_id, $invoice_id, $item
 			return $rc;
 		}
 		if( !isset($rc['product']) ) {
-			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1695', 'msg'=>'Unable to find product'));
+			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1957', 'msg'=>'Unable to find product'));
 		}
 		$product = $rc['product'];
 
@@ -76,7 +76,7 @@ function ciniki_products_sapos_itemAdd($ciniki, $business_id, $invoice_id, $item
 //				return $rc;
 //			}
 //			if( !isset($rc['product']) ) {
-//				return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1698', 'msg'=>'Unable to find product'));
+//				return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1958', 'msg'=>'Unable to find product'));
 //			}
 //			$product = $rc['product'];
 		

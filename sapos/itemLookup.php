@@ -14,7 +14,7 @@ function ciniki_products_sapos_itemLookup($ciniki, $business_id, $args) {
 
 	if( !isset($args['object']) || $args['object'] == '' 
 		|| !isset($args['object_id']) || $args['object_id'] == '' ) {
-		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1608', 'msg'=>'No product specified.'));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1960', 'msg'=>'No product specified.'));
 	}
 
 	//
@@ -52,7 +52,7 @@ function ciniki_products_sapos_itemLookup($ciniki, $business_id, $args) {
 			return $rc;
 		}
 		if( !isset($rc['products']) || count($rc['products']) < 1 ) {
-			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1605', 'msg'=>'No product found.'));		
+			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1961', 'msg'=>'No product found.'));		
 		}
 		$product = array_pop($rc['products']);
 		// Check if product has inventory or unlimited
@@ -110,7 +110,7 @@ function ciniki_products_sapos_itemLookup($ciniki, $business_id, $args) {
 			return $rc;
 		}
 		if( !isset($rc['products']) || count($rc['products']) < 1 ) {
-			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1804', 'msg'=>'No product found.'));		
+			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1962', 'msg'=>'No product found.'));		
 		}
 		$product = array_pop($rc['products']);
 
@@ -132,6 +132,6 @@ function ciniki_products_sapos_itemLookup($ciniki, $business_id, $args) {
 		return array('stat'=>'ok', 'item'=>$product);
 	}
 
-	return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1607', 'msg'=>'No product specified.'));		
+	return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1963', 'msg'=>'No product specified.'));		
 }
 ?>

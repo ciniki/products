@@ -14,7 +14,7 @@ function ciniki_products_sapos_cartItemsInventory($ciniki, $business_id, $args) 
 
 	if( !isset($args['object']) || $args['object'] == '' 
 		|| !isset($args['object_ids']) || $args['object_ids'] == '' ) {
-		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1831', 'msg'=>'No product specified.'));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1955', 'msg'=>'No product specified.'));
 	}
 
 	//
@@ -41,6 +41,6 @@ function ciniki_products_sapos_cartItemsInventory($ciniki, $business_id, $args) 
 		return array('stat'=>'ok', 'quantities'=>$rc['quantities']);
 	}
 
-	return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1830', 'msg'=>'No product specified.'));		
+	return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1956', 'msg'=>'No product specified.'));		
 }
 ?>

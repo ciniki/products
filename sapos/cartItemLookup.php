@@ -15,7 +15,7 @@ function ciniki_products_sapos_cartItemLookup($ciniki, $business_id, $customer, 
 
 	if( !isset($args['object']) || $args['object'] == '' 
 		|| !isset($args['object_id']) || $args['object_id'] == '' ) {
-		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1608', 'msg'=>'No product specified.'));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1947', 'msg'=>'No product specified.'));
 	}
 
 	//
@@ -61,7 +61,7 @@ function ciniki_products_sapos_cartItemLookup($ciniki, $business_id, $customer, 
 			return $rc;
 		}
 		if( !isset($rc['products']) || count($rc['products']) < 1 ) {
-			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1804', 'msg'=>'No product found.'));		
+			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1948', 'msg'=>'No product found.'));		
 		}
 		$product = array_pop($rc['products']);
 
@@ -70,11 +70,11 @@ function ciniki_products_sapos_cartItemLookup($ciniki, $business_id, $customer, 
 		//
 		if( $product['pricepoint_id'] > 0 ) {
 			if( !isset($customer['pricepoint']['id']) || $customer['pricepoint']['id'] == 0 ) {
-				return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1839', 'msg'=>"I'm sorry, but this product is not available to you."));
+				return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1949', 'msg'=>"I'm sorry, but this product is not available to you."));
 			}
 			if( $product['pricepoint_id'] != $customer['pricepoint']['id'] ) {
 				if( !isset($customer['pricepoint']['sequence']) || $customer['pricepoint']['sequence'] == '' ) {
-					return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1841', 'msg'=>"I'm sorry, but this product is not available to you."));
+					return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1950', 'msg'=>"I'm sorry, but this product is not available to you."));
 				}
 				// Get the sequence for this pricepoint and see if it's lower than customers pricepoint_sequence
 				$strsql = "SELECT sequence "
@@ -87,10 +87,10 @@ function ciniki_products_sapos_cartItemLookup($ciniki, $business_id, $customer, 
 					return $rc;
 				}
 				if( !isset($rc['pricepoint']) ) {
-					return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1840', 'msg'=>"I'm sorry but we seem to be having difficulty updating your shopping cart.  Please call customer support."));
+					return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1951', 'msg'=>"I'm sorry but we seem to be having difficulty updating your shopping cart.  Please call customer support."));
 				}
 				if( $rc['pricepoint']['sequence'] > $customer['pricepoint']['sequence'] ) {
-					return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1842', 'msg'=>"I'm sorry, but this product is not available to you."));
+					return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1952', 'msg'=>"I'm sorry, but this product is not available to you."));
 				}
 			}
 		}
@@ -100,7 +100,7 @@ function ciniki_products_sapos_cartItemLookup($ciniki, $business_id, $customer, 
 		//
 		if( ($product['available_to']|0xF0) > 0 ) {
 			if( ($product['available_to']&$customer['price_flags']) == 0 ) {
-				return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1843', 'msg'=>"I'm sorry, but this product is not available to you."));
+				return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1953', 'msg'=>"I'm sorry, but this product is not available to you."));
 			}
 		}
 
@@ -122,6 +122,6 @@ function ciniki_products_sapos_cartItemLookup($ciniki, $business_id, $customer, 
 		return array('stat'=>'ok', 'item'=>$product);
 	}
 
-	return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1607', 'msg'=>'No product specified.'));		
+	return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1954', 'msg'=>'No product specified.'));		
 }
 ?>

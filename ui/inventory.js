@@ -226,7 +226,9 @@ function ciniki_products_inventory() {
 			this.list.sections.products.headerValues = null;
 		}
 
-		if( args.search != null && args.search != '' ) {
+		if( args.product_id != null && args.product_id > 0 ) {
+			this.showEdit(cb, args.product_id);
+		} else if( args.search != null && args.search != '' ) {
 			this.showSearch(cb, args.search);
 		} else {
 			this.showMenu(cb);

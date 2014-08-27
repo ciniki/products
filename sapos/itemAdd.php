@@ -39,9 +39,9 @@ function ciniki_products_sapos_itemAdd($ciniki, $business_id, $invoice_id, $item
 		$rsp = array('stat'=>'ok');
 		if( ($product['inventory_flags']&0x01) > 0 ) {
 			if( ($product['inventory_flags']&0x02) > 0 ) {
-				$rsp['flags'] = 6;
+				$rsp['flags'] = 0x46;	// Shipped item and inventory control and backorderable
 			} else {
-				$rsp['flags'] = 2;
+				$rsp['flags'] = 0x42; // shipped item, inventoried but no backorder
 			}
 		}
 

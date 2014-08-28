@@ -50,13 +50,12 @@ function ciniki_products_hooks_inventoryRemove($ciniki, $business_id, $args) {
 				return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1942', 'msg'=>'There is not enough inventory.'));
 			}
 
-
 			//
 			// Reduce the amount in the inventory
 			//
 			$new_quantity = $product['inventory_current_num'] - $args['quantity'];
 			$rc = ciniki_core_objectUpdate($ciniki, $business_id, 'ciniki.products.product', $product['id'], 
-				array('quantity'=>$new_quantity), 0x04);
+				array('inventory_current_num'=>$new_quantity), 0x04);
 			if( $rc['stat'] != 'ok' ) {
 				return $rc;
 			}

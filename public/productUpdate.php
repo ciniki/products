@@ -96,6 +96,7 @@ function ciniki_products_productUpdate(&$ciniki) {
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
+	$modules = $rc['modules'];
 
 	if( isset($args['name']) ) {
 		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'makePermalink');
@@ -141,6 +142,27 @@ function ciniki_products_productUpdate(&$ciniki) {
 		$args['product_id'], $args, 0x04);
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
+	}
+
+	//
+	// Check if the inventory was being updated, and then update orders containing this item
+	//
+	if( isset($args['inventory_current_num']) && $args['inventory_current_num'] != '' ) {
+		foreach($modules as $module => $m) {
+			list($pkg, $mod) = explode('.', $module);
+			$rc = ciniki_core_loadMethod($ciniki, $pkg, $mod, 'hooks', 'inventoryUpdated');
+			if( $rc['stat'] == 'ok' ) {
+				$fn = $rc['function_call'];
+				$rc = $fn($ciniki, $args['business_id'], array(
+					'object'=>'ciniki.products.product',
+					'object_id'=>$args['product_id'],
+					'new_inventory_level'=>$args['inventory_current_num'],
+					));
+				if( $rc['stat'] != 'ok' ) {
+					return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2009', 'msg'=>'Unable to update inventory levels.', 'err'=>$rc['err']));
+				}
+			}
+		}
 	}
 
 	//

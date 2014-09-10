@@ -49,7 +49,9 @@ function ciniki_products_web_searchProducts($ciniki, $settings, $business_id, $a
 	}
 
 	$strsql = "SELECT ciniki_products.id, "
-		. "IF(ciniki_products.code<>'',CONCAT_WS(' - ', ciniki_products.code, ciniki_products.name), ciniki_products.name) AS name, "
+//		. "IF(ciniki_products.code<>'',CONCAT_WS(' - ', ciniki_products.code, ciniki_products.name), ciniki_products.name) AS name, "
+		. "ciniki_products.code, "
+		. "ciniki_products.name, "
 		. "ciniki_products.inventory_flags, "
 		. "ciniki_products.inventory_current_num, "
 		. "ciniki_product_prices.id AS price_id, "
@@ -112,7 +114,7 @@ function ciniki_products_web_searchProducts($ciniki, $settings, $business_id, $a
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
 	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
 		array('container'=>'products', 'fname'=>'id', 'name'=>'product',
-			'fields'=>array('id', 'name', 'inventory_flags', 'inventory_available'=>'inventory_current_num')),
+			'fields'=>array('id', 'code', 'name', 'inventory_flags', 'inventory_available'=>'inventory_current_num')),
 		array('container'=>'prices', 'fname'=>'price_id', 'name'=>'price',
 			'fields'=>array('id'=>'price_id', 'name'=>'price_name', 'pricepoint_id', 'pricepoint_sequence', 'available_to',
 				'unit_amount', 'unit_discount_amount', 'unit_discount_percentage')),

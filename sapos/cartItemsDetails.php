@@ -10,7 +10,7 @@
 // Returns
 // =======
 //
-function ciniki_products_sapos_cartItemsInventory($ciniki, $business_id, $args) {
+function ciniki_products_sapos_cartItemsDetails($ciniki, $business_id, $args) {
 
 	if( !isset($args['object']) || $args['object'] == '' 
 		|| !isset($args['object_ids']) || $args['object_ids'] == '' ) {
@@ -22,23 +22,25 @@ function ciniki_products_sapos_cartItemsInventory($ciniki, $business_id, $args) 
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuoteIDs');
 	if( $args['object'] == 'ciniki.products.product' ) {
-		$strsql = "SELECT ciniki_products.id, inventory_current_num AS quantity "
+		$strsql = "SELECT ciniki_products.id, "
+			. "permalink, "
+			. "inventory_current_num AS quantity "
 			. "FROM ciniki_products "
 			. "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 			. "AND ciniki_products.id IN (" . ciniki_core_dbQuoteIDs($ciniki, $args['object_ids']) . ") "
 			. "";
 		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
 		$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
-			array('container'=>'quantities', 'fname'=>'id',
-				'fields'=>array('object_id'=>'id', 'quantity_inventory'=>'quantity')),
+			array('container'=>'details', 'fname'=>'id',
+				'fields'=>array('object_id'=>'id', 'permalink', 'quantity_inventory'=>'quantity')),
 			));
 		if( $rc['stat'] != 'ok' ) {
 			return $rc;
 		}
-		if( !isset($rc['quantities']) || count($rc['quantities']) < 1 ) {
-			return array('stat'=>'ok', 'quantities'=>array());
+		if( !isset($rc['details']) || count($rc['details']) < 1 ) {
+			return array('stat'=>'ok', 'details'=>array());
 		}
-		return array('stat'=>'ok', 'quantities'=>$rc['quantities']);
+		return array('stat'=>'ok', 'details'=>$rc['details']);
 	}
 
 	return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1956', 'msg'=>'No product specified.'));		

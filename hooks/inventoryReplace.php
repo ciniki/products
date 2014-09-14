@@ -49,6 +49,25 @@ function ciniki_products_hooks_inventoryReplace($ciniki, $business_id, $args) {
 			if( $rc['stat'] != 'ok' ) {
 				return $rc;
 			}
+
+			//
+			// Hook into other modules and update for backordered quantities
+			//
+			foreach($ciniki['business']['modules'] as $module => $m) {
+				list($pkg, $mod) = explode('.', $module);
+				$rc = ciniki_core_loadMethod($ciniki, $pkg, $mod, 'hooks', 'inventoryUpdated');
+				if( $rc['stat'] == 'ok' ) {
+					$fn = $rc['function_call'];
+					$rc = $fn($ciniki, $business_id, array(
+						'object'=>'ciniki.products.product',
+						'object_id'=>$product['id'],
+						'new_inventory_level'=>$new_quantity,
+						));
+					if( $rc['stat'] != 'ok' ) {
+						return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2004', 'msg'=>'Unable to update inventory levels.', 'err'=>$rc['err']));
+					}
+				}
+			}
 		}
 		
 		return $rsp;

@@ -159,7 +159,7 @@ function ciniki_products_productUpdate(&$ciniki) {
 					'new_inventory_level'=>$args['inventory_current_num'],
 					));
 				if( $rc['stat'] != 'ok' ) {
-					return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2009', 'msg'=>'Unable to update inventory levels.', 'err'=>$rc['err']));
+					return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2001', 'msg'=>'Unable to update inventory levels.', 'err'=>$rc['err']));
 				}
 			}
 		}

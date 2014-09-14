@@ -116,6 +116,9 @@ function ciniki_products_sapos_cartItemLookup($ciniki, $business_id, $customer, 
 				$product['flags'] = 0x42;	// Inventoried, update when shipping
 			}
 			$product['units_available'] = $product['inventory_current_num'];
+			if( $product['inventory_current_num'] <= 0 && ($product['flags']&0x46) == 0x46 ) {
+				$product['flags'] |= 0x0100;
+			}
 		} else {
 			$product['limited_units'] = 'no';
 			$product['units_available'] = 0;

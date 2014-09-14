@@ -126,6 +126,9 @@ function ciniki_products_sapos_itemLookup($ciniki, $business_id, $args) {
 				$product['flags'] = 0x42;	// Inventoried, no backorder
 			}
 			$product['units_available'] = $product['inventory_current_num'];
+			if( $product['inventory_current_num'] <= 0 && $product['flags'] == 0x46 ) {
+				$product['flags'] |= 0x0100;
+			}
 		} else {
 			$product['limited_units'] = 'no';
 			$product['units_available'] = 0;

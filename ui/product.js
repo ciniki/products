@@ -110,7 +110,10 @@ function ciniki_products_product() {
 		};
 		this.product.sectionData = function(s) {
 			if( s == 'info' || s == 'supplier' ) { return this.sections[s].list; }
-			if( s == 'short_description' || s == 'long_description' ) { return this.data[s].replace(/\n/g, '<br/>'); }
+			if( s == 'short_description' || s == 'long_description' ) { 
+				if( this.data[s] == null ) { return ''; }
+				return this.data[s].replace(/\n/g, '<br/>'); 
+			}
 			return this.data[s];
 		};
 		this.product.addDropImageRefresh = function() {

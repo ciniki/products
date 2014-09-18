@@ -7,6 +7,7 @@ function ciniki_products_types() {
 
 	this.cb = null;
 	this.fieldOptions = {'off':'Off', 'on':'On'};
+	this.fieldHiddenOptions = {'off':'Off', 'hidden':'Hidden', 'on':'On'};
 	this.statusOptions = {'10':'Active', '60':'Inactive'};
 	this.subscriptionOptions = {'off':'Unsubscribed', 'on':'Subscribed'};
 
@@ -139,7 +140,8 @@ function ciniki_products_types() {
 			'parent_pricing':{'label':'Parent Pricing', 'aside':'yes', 'fields':{
 				'parent_price_name':{'label':'Name', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'parent_price_pricepoint_id':{'label':'Price Point', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
-				'parent_price_available_to':{'label':'Available To', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
+				'parent_price_available_to':{'label':'Available To', 'type':'toggle', 'default':'off', 'toggles':this.fieldHiddenOptions},
+				'parent_price_available_to-default':{'label':'Available To Default', 'type':'text'},
 				'parent_price_min_quantity':{'label':'Min Quantity', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'parent_price_unit_amount':{'label':'Amount', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'parent_price_unit_discount_amount':{'label':'Discount Amount', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},

@@ -88,7 +88,14 @@ function ciniki_products_typeGet($ciniki) {
 	}
 	if( isset($object_def['parent']['prices']) ) {
 		foreach($object_def['parent']['prices'] as $field => $fdetails) {
-			$type['parent_price_' . $field] = 'on';
+			if( isset($fdetails['ui-hide']) && $fdetails['ui-hide'] == 'yes' ) {
+				$type['parent_price_' . $field] = 'hidden';
+			} else {
+				$type['parent_price_' . $field] = 'on';
+			}
+			if( isset($fdetails['default']) && $fdetails['default'] != '' ) {
+				$type['parent_price_' . $field . '-default'] = $fdetails['default'];
+			}
 		}
 	}
 	if( isset($object_def['parent']['categories']) ) { $type['parent_categories'] = 'on'; }

@@ -141,6 +141,11 @@ function ciniki_products_product() {
 			if( s == 'prices' ) {
 				if( j == 0 ) {
 					var txt = '';
+					var atxt = d.price.available_to_text;
+					if( this.object_def.prices != null && this.object_def.prices.available_to != null
+						&& (this.object_def.prices.available_to['ui_hide'] == null || this.object_def.prices.available_to['ui-hide'] != 'yes' ) ) {
+						atxt = '';
+					}
 					if( M.curBusiness.modules['ciniki.customers'] != null 
 						&& (M.curBusiness.modules['ciniki.customers'].flags&0x1000) ) {
 						if( d.price.pricepoint_id == 0 ) {
@@ -151,12 +156,12 @@ function ciniki_products_product() {
 					}
 					if( d.price.name != '' ) {
 						if( txt != '' ) {
-							txt += ' <span class="subdue">' + d.price.name + ' [' + d.price.available_to_text + ']</span>';
-						} else {
+							txt += ' <span class="subdue">' + d.price.name + (atxt!=''?' [' + d.price.available_to_text + ']':'') + '</span>';
+						} else if( atxt != '' ) {
 							txt += d.price.name + ' <span class="subdue">' + d.price.available_to_text + '</span>';
 							
 						}
-					} else {
+					} else if( atxt != '' ) {
 						if( txt != '' ) {
 							txt += ' <span class="subdue">' + d.price.available_to_text + '</span>';
 						} else {
@@ -281,6 +286,7 @@ function ciniki_products_product() {
 				p.data = rsp.product;
 				var object_def = eval('(' + rsp.product.object_def + ')');
 				var pc_object_def = (rsp.product.parent_id==0?object_def.parent:object_def.child);
+				p.object_def = pc_object_def;
 				// Setup the visible fields
 				for(i in p.sections.info.list) {
 					if( pc_object_def.products[i] != null ) {

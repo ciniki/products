@@ -24,7 +24,7 @@
 #
 # available_to:		The flags that control who has access to this pricing.  
 #
-#					0x01 - Public (unregistered customer OR customer/members/dealers/distributors)
+#					0x01 - Public (unregistered customer and/or customer/members/dealers/distributors)
 #					0x02 - Private (internal use only)
 #					0x04
 #					0x08
@@ -48,7 +48,7 @@
 # webflags:				The website flags for the price.
 #
 #						0x01 - Hidden, do not show price on the website.
-#						0x10 - Show Members price to public
+#						0x10 - Show Customers price to public
 #						0x20 - Show Members price to public
 #						0x40 - Show Dealers price to public
 #						0x80 - Show Distributors price to public

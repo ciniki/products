@@ -75,20 +75,6 @@ function ciniki_products_typeObjectDefUpdate($ciniki, $object_def, $args) {
 		'detail08',
 		'detail09',
 		);
-	$price_fields = array(
-		'name',
-		'pricepoint_id',
-		'available_to',
-		'min_quantity',
-		'unit_amount',
-		'unit_discount_amount',
-		'unit_discount_percentage',
-		'taxtype_id',
-		'start_date',
-		'end_date',
-		'webflags',
-		);
-
 	foreach($product_fields as $field) {
 		if( isset($args['parent_product_' . $field]) ) {
 			if( $args['parent_product_' . $field] == 'on' ) {
@@ -122,14 +108,38 @@ function ciniki_products_typeObjectDefUpdate($ciniki, $object_def, $args) {
 			}
 		}
 	}
+
+	$price_fields = array(
+		'name',
+		'pricepoint_id',
+		'available_to',
+		'min_quantity',
+		'unit_amount',
+		'unit_discount_amount',
+		'unit_discount_percentage',
+		'taxtype_id',
+		'start_date',
+		'end_date',
+		'webflags',
+		);
+
 	foreach($price_fields as $field) {
 		if( isset($args['parent_price_' . $field]) ) {
 			if( $args['parent_price_' . $field] == 'on' ) {
 				if( !isset($object_def['parent']['prices']) ) { $object_def['parent']['prices'] = array(); }
 				$object_def['parent']['prices'][$field] = array();
+			} elseif( $args['parent_price_' . $field] == 'hidden' ) {
+				if( !isset($object_def['parent']['prices']) ) { $object_def['parent']['prices'] = array(); }
+				$object_def['parent']['prices'][$field] = array('ui-hide'=>'yes');
 			} elseif( $args['parent_price_' . $field] == 'off' 
 				&& isset($object_def['parent']['prices'][$field]) ) {
 				unset($object_def['parent']['prices'][$field]);
+			}
+			if( $args['parent_price_' . $field] != 'off' ) {
+				if( isset($args['parent_price_' . $field . '-default']) 
+					&& $args['parent_price_' . $field . '-default'] != '' ) {
+					$object_def['parent']['prices'][$field]['default'] = $args['parent_price_' . $field . '-default'];
+				}
 			}
 		}
 		if( isset($args['child_price_' . $field]) ) {

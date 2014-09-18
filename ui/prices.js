@@ -27,7 +27,7 @@ function ciniki_products_prices() {
 			'price':{'label':'Price', 'fields':{
 				'name':{'label':'Name', 'type':'text'},
 				'pricepoint_id':{'label':'Price Point', 'type':'select', 'options':{}},
-				'available_to':{'label':'Availablity', 'type':'flags', 'default':'1', 'flags':{}},
+				'available_to':{'label':'Availablity', 'type':'flags', 'default':1, 'flags':{}},
 				'min_quantity':{'label':'Minimum Quantity', 'type':'text', 'size':'small'},
 				'unit_amount':{'label':'Unit Amount', 'type':'text', 'size':'small'},
 				'unit_discount_amount':{'label':'Discount Amount', 'type':'text', 'size':'small'},
@@ -103,6 +103,15 @@ function ciniki_products_prices() {
 			for(i in this.edit.sections.price.fields) {
 				if( ptype.parent.prices[i] != null ) {
 					this.edit.sections.price.fields[i].active = 'yes';
+					if( ptype.parent.prices[i]['ui-hide'] != null 
+						&& ptype.parent.prices[i]['ui-hide'] == 'yes') {
+						this.edit.sections.price.fields[i].visible = 'no';
+					} else {
+						this.edit.sections.price.fields[i].visible = 'yes';
+					}
+					if( ptype.parent.prices[i].default != null ) {
+						this.edit.sections.price.fields[i].default = ptype.parent.prices[i].default;
+					}
 				} else {
 					this.edit.sections.price.fields[i].active = 'no';
 				}
@@ -132,11 +141,11 @@ function ciniki_products_prices() {
 		this.edit.sections.price.fields.available_to.flags = {};
 		if( (M.curBusiness.modules['ciniki.customers'].flags&0x0112) > 0 ) {
 			this.edit.sections.price.fields.available_to.flags['1'] = {'name':'Public'};
-			this.edit.sections.price.fields.available_to.visible = 'yes';
+//			this.edit.sections.price.fields.available_to.visible = 'yes';
 			this.edit.sections.price.fields.available_to.flags['5'] = {'name':'Customers'};
-			this.edit.sections.price.fields.available_to.visible = 'yes';
+//			this.edit.sections.price.fields.available_to.visible = 'yes';
 		} else {
-			this.edit.sections.price.fields.available_to.visible = 'no';
+//			this.edit.sections.price.fields.available_to.visible = 'no';
 		}
 		if( (M.curBusiness.modules['ciniki.customers'].flags&0x02) > 0 ) {
 			this.edit.sections.price.fields.available_to.flags['6'] = {'name':'Members'};
@@ -179,7 +188,7 @@ function ciniki_products_prices() {
 				});
 		} else {
 			this.edit.sections._buttons.buttons.delete.visible = 'no';
-			this.edit.data = {'available_to':1};
+			this.edit.data = {'available_to':this.edit.sections.price.fields.available_to.default};
 			this.edit.refresh();
 			this.edit.show(cb);
 		}

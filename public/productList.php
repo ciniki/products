@@ -25,6 +25,7 @@ function ciniki_products_productList($ciniki) {
 		'subcategory'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Sub-Category'),
 		'tag'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Tag'),
 		'supplier_id'=>array('required'=>'no', 'name'=>'Supplier'),
+		'type_id'=>array('required'=>'no', 'name'=>'type'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -143,6 +144,30 @@ function ciniki_products_productList($ciniki) {
 			. "FROM ciniki_products "
 			. "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 			. "AND supplier_id = '" . ciniki_core_dbQuote($ciniki, $args['supplier_id']) . "' "
+			. "ORDER BY name "
+			. "";
+		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
+			array('container'=>'products', 'fname'=>'id', 'name'=>'product',
+				'fields'=>array('id', 'code', 'name')),
+			));
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		if( !isset($rc['products']) ) {
+			return array('stat'=>'ok', 'products'=>array());
+		}
+		return array('stat'=>'ok', 'products'=>$rc['products']);
+	}
+
+	elseif( isset($args['type_id']) && $args['type_id'] != '' ) {
+		$strsql = "SELECT ciniki_products.id, "
+			. "ciniki_products.category, "
+			. "ciniki_products.code, "
+			. "ciniki_products.name, "
+			. "IF((inventory_flags&0x01)=1,inventory_current_num,'') AS inventory_current_num "
+			. "FROM ciniki_products "
+			. "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. "AND type_id = '" . ciniki_core_dbQuote($ciniki, $args['type_id']) . "' "
 			. "ORDER BY name "
 			. "";
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(

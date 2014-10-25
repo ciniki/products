@@ -25,6 +25,7 @@ function ciniki_products_productSearch($ciniki) {
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
         'start_needle'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Search String'), 
         'limit'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Limit'), 
+        'reserved'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Reserved Quantities'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -68,7 +69,45 @@ function ciniki_products_productSearch($ciniki) {
 		$strsql .= "LIMIT 25 ";
 	}
 
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbRspQuery');
-	return ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.products', 'products', 'product', array('stat'=>'ok', 'products'=>array()));
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
+	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
+		array('container'=>'products', 'fname'=>'id', 'name'=>'product',
+			'fields'=>array('id', 'code', 'name', 'inventory_current_num')),
+		));
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+	if( !isset($rc['products']) ) {
+		return array('stat'=>'ok', 'products'=>array());
+	}
+	$products = $rc['products'];
+
+	//
+	// Get the reserved quantities for each product
+	//
+	if( isset($args['reserved']) && $args['reserved'] == 'yes' ) {
+		$product_ids = array();
+		foreach($products as $pid => $product) {
+			$product_ids[] = $product['product']['id'];
+			$products[$pid]['product']['inventory_reserved'] = 0;
+		}
+		$product_ids = array_unique($product_ids);
+		if( isset($ciniki['business']['modules']['ciniki.sapos']) ) {
+			ciniki_core_loadMethod($ciniki, 'ciniki', 'sapos', 'private', 'getReservedQuantities');
+			$rc = ciniki_sapos_getReservedQuantities($ciniki, $args['business_id'], 
+				'ciniki.products.product', $product_ids, 0);
+			if( $rc['stat'] != 'ok' ) {
+				return $rc;
+			}
+			$quantities = $rc['quantities'];
+			foreach($products as $pid => $product) {
+				if( isset($quantities[$product['product']['id']]) ) {
+					$products[$pid]['product']['inventory_reserved'] = (float)$quantities[$product['product']['id']]['quantity_reserved'];
+				}
+			}
+		}
+	}
+
+	return array('stat'=>'ok', 'products'=>$products);
 }
 ?>

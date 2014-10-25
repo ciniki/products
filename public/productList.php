@@ -25,7 +25,8 @@ function ciniki_products_productList($ciniki) {
 		'subcategory'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Sub-Category'),
 		'tag'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Tag'),
 		'supplier_id'=>array('required'=>'no', 'name'=>'Supplier'),
-		'type_id'=>array('required'=>'no', 'name'=>'type'),
+		'type_id'=>array('required'=>'no', 'name'=>'Type'),
+		'reserved'=>array('required'=>'no', 'name'=>'Reserved Quantities'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -79,9 +80,7 @@ function ciniki_products_productList($ciniki) {
 		if( !isset($rc['products']) ) {
 			return array('stat'=>'ok', 'products'=>array());
 		}
-		return array('stat'=>'ok', 'products'=>$rc['products']);
-		
-
+		$products = $rc['products'];
 	}
 	elseif( isset($args['category']) && $args['category'] == '' ) {
 		$strsql = "SELECT ciniki_products.id, ciniki_products.code, ciniki_products.name, "
@@ -105,7 +104,7 @@ function ciniki_products_productList($ciniki) {
 		if( !isset($rc['products']) ) {
 			return array('stat'=>'ok', 'products'=>array());
 		}
-		return array('stat'=>'ok', 'products'=>$rc['products']);
+		$products = $rc['products'];
 	}
 
 	elseif( isset($args['category']) ) {
@@ -132,7 +131,7 @@ function ciniki_products_productList($ciniki) {
 		if( !isset($rc['products']) ) {
 			return array('stat'=>'ok', 'products'=>array());
 		}
-		return array('stat'=>'ok', 'products'=>$rc['products']);
+		$products = $rc['products'];
 	}
 
 	elseif( isset($args['supplier_id']) ) {
@@ -156,7 +155,7 @@ function ciniki_products_productList($ciniki) {
 		if( !isset($rc['products']) ) {
 			return array('stat'=>'ok', 'products'=>array());
 		}
-		return array('stat'=>'ok', 'products'=>$rc['products']);
+		$products = $rc['products'];
 	}
 
 	elseif( isset($args['type_id']) && $args['type_id'] != '' ) {
@@ -180,11 +179,37 @@ function ciniki_products_productList($ciniki) {
 		if( !isset($rc['products']) ) {
 			return array('stat'=>'ok', 'products'=>array());
 		}
-		return array('stat'=>'ok', 'products'=>$rc['products']);
+		$products = $rc['products'];
 	} else {
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1843', 'msg'=>'Unable to find products'));
 	}
 
-	return $rc;
+	//
+	// Get the reserved quantities for the products
+	//
+	if( isset($args['reserved']) && $args['reserved'] == 'yes' && count($products) > 0 ) {
+		$product_ids = array();
+		foreach($products as $pid => $product) {
+			$product_ids[] = $product['product']['id'];
+			$products[$pid]['product']['inventory_reserved'] = 0;
+		}
+		$product_ids = array_unique($product_ids);
+		if( isset($ciniki['business']['modules']['ciniki.sapos']) ) {
+			ciniki_core_loadMethod($ciniki, 'ciniki', 'sapos', 'private', 'getReservedQuantities');
+			$rc = ciniki_sapos_getReservedQuantities($ciniki, $args['business_id'], 
+				'ciniki.products.product', $product_ids, 0);
+			if( $rc['stat'] != 'ok' ) {
+				return $rc;
+			}
+			$quantities = $rc['quantities'];
+			foreach($products as $pid => $product) {
+				if( isset($quantities[$product['product']['id']]) ) {
+					$products[$pid]['product']['inventory_reserved'] = (float)$quantities[$product['product']['id']]['quantity_reserved'];
+				}
+			}
+		}
+	}
+	
+	return array('stat'=>'ok', 'products'=>$products);
 }
 ?>

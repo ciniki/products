@@ -177,6 +177,7 @@ function ciniki_products_main() {
 			switch(j) {
 //				case 0: return d.product.category!=''?d.product.category:'Uncategorized';
 				case 0: return (d.product.code!=''?d.product.code + ' - ':'') + d.product.name;
+				case 1: return d.product.inventory_current_num + (d.product.inventory_reserved!=null?' <span class="subdue">[' + d.product.inventory_reserved + ']</span>':'');
 			}
 		};
 		this.search.rowFn = function(s, i, d) {
@@ -227,6 +228,8 @@ function ciniki_products_main() {
 			this.menu.sections.search.headerValues = ['Product', 'Inv [Rsv]'];
 			this.list.sections.products.num_cols = 2;
 			this.list.sections.products.headerValues = ['Product', 'Inv [Rsv]'];
+			this.search.sections.products.num_cols = 2;
+			this.search.sections.products.headerValues = ['Product', 'Inv [Rsv]'];
 		} else {
 			this.menu.sections.search.livesearchcols = 1;
 			this.menu.sections.search.headerValues = null;

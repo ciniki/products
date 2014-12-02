@@ -25,6 +25,7 @@ function ciniki_products_productSearch($ciniki) {
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
         'start_needle'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Search String'), 
         'limit'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Limit'), 
+        'inventoried'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Inventoried Products Only'), 
         'reserved'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Reserved Quantities'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
@@ -52,8 +53,11 @@ function ciniki_products_productSearch($ciniki) {
 		. "IF((inventory_flags&0x01)=1,inventory_current_num,'') AS inventory_current_num "
 		. "FROM ciniki_products "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-		. "AND status = 10 "
-		. "AND (name LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
+		. "AND status = 10 ";
+	if( isset($args['inventoried']) && $args['inventoried'] == 'yes' ) {
+		$strsql .= "AND (inventory_flags&0x01) = 0x01 ";
+	}
+	$strsql .= "AND (name LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
 			. "OR name LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
 			. "OR code LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
 			. "OR code LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "

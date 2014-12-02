@@ -47,7 +47,8 @@ function ciniki_products_main() {
 				switch(j) {
 //					case 0: return (d.product.category!=''?d.product.category:'Uncategorized') + ' - ' + d.product.name;
 					case 0: return d.product.name;
-					case 1: return d.product.inventory_current_num + (d.product.inventory_reserved!=null?' <span class="subdue">[' + d.product.inventory_reserved + ']</span>':'');
+					//case 1: return (d.product.inventory_current_num!=''?d.product.inventory_current_num + (d.product.inventory_reserved!=null&&d.product.inventory_current_num>=0?' <span class="subdue">[' + d.product.inventory_reserved + ']</span>':''):'');
+					case 1: return d.product.inventory_current_num + ((d.product.inventory_reserved!=null&&parseFloat(d.product.inventory_current_num)>=0)?' <span class="subdue">[' + d.product.inventory_reserved + ']</span>':'');
 				}
 			}
 			return ''; 

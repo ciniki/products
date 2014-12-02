@@ -36,7 +36,7 @@ function ciniki_products_main() {
 		this.menu.liveSearchCb = function(s, i, value) {
 			if( s == 'search' && value != '' ) { 
 				M.api.getJSONBgCb('ciniki.products.productSearch', {'business_id':M.curBusinessID, 
-					'start_needle':value, 'status':10, 'limit':'10'}, function(rsp) { 
+					'start_needle':value, 'status':10, 'limit':'10', 'reserved':'yes'}, function(rsp) { 
 						M.ciniki_products_main.menu.liveSearchShow('search', null, M.gE(M.ciniki_products_main.menu.panelUID + '_' + s), rsp.products); 
 				}); 
 			return true;
@@ -47,7 +47,7 @@ function ciniki_products_main() {
 				switch(j) {
 //					case 0: return (d.product.category!=''?d.product.category:'Uncategorized') + ' - ' + d.product.name;
 					case 0: return d.product.name;
-					case 1: return d.product.inventory_current_num;
+					case 1: return d.product.inventory_current_num + (d.product.inventory_reserved!=null?' <span class="subdue">[' + d.product.inventory_reserved + ']</span>':'');
 				}
 			}
 			return ''; 
@@ -224,9 +224,9 @@ function ciniki_products_main() {
 		// Check if inventory enabled
 		if( (M.curBusiness.modules['ciniki.products'].flags&0x04) > 0 ) {
 			this.menu.sections.search.livesearchcols = 2;
-			this.menu.sections.search.headerValues = ['Product', 'Inventory'];
+			this.menu.sections.search.headerValues = ['Product', 'Inv [Rsv]'];
 			this.list.sections.products.num_cols = 2;
-			this.list.sections.products.headerValues = ['Product', 'Inventory'];
+			this.list.sections.products.headerValues = ['Product', 'Inv [Rsv]'];
 		} else {
 			this.menu.sections.search.livesearchcols = 1;
 			this.menu.sections.search.headerValues = null;
@@ -370,7 +370,7 @@ function ciniki_products_main() {
 	this.showSearch = function(cb, search_str) {
 		if( search_str != null ) { this.search.search_str = search_str; }
 		M.api.getJSONCb('ciniki.products.productSearch', {'business_id':M.curBusinessID, 
-			'start_needle':this.search.search_str, 'limit':'101'}, function(rsp) { 
+			'start_needle':this.search.search_str, 'limit':'101', 'reserved':'yes'}, function(rsp) { 
 				if( rsp.stat != 'ok' ) {
 					M.api.err(rsp);
 					return false;

@@ -219,21 +219,6 @@ function ciniki_products_product() {
 				return 'M.startApp(\'ciniki.products.recipes\',null,\'M.ciniki_products_product.showProduct();\',\'mc\',{\'product_id\':M.ciniki_products_product.product.product_id,\'ref_id\':\'' + d.recipe.ref_id + '\'});';
 			}
 		};
-		this.product.thumbSrc = function(s, i, d) {
-			if( d.image.image_data != null && d.image.image_data != '' ) {
-				return d.image.image_data;
-			} else {
-				return '/ciniki-mods/core/ui/themes/default/img/noimage_75.jpg';
-			}
-		};
-		this.product.thumbTitle = function(s, i, d) {
-			if( d.image.name != null ) { return d.image.name; }
-			return '';
-		};
-		this.product.thumbID = function(s, i, d) {
-			if( d.image.id != null ) { return d.image.id; }
-			return 0;
-		};
 		this.product.thumbFn = function(s, i, d) {
 			return 'M.startApp(\'ciniki.products.images\',null,\'M.ciniki_products_product.showProduct();\',\'mc\',{\'product_image_id\':\'' + d.image.id + '\'});';
 		};

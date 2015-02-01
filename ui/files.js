@@ -171,6 +171,6 @@ function ciniki_products_files() {
 	};
 
 	this.downloadFile = function(fid) {
-		window.open(M.api.getUploadURL('ciniki.products.fileDownload', {'business_id':M.curBusinessID, 'file_id':fid}));
+		M.api.openFile('ciniki.products.fileDownload', {'business_id':M.curBusinessID, 'file_id':fid});
 	};
 }

@@ -93,7 +93,8 @@ function ciniki_products_productSearch($ciniki) {
 		$product_ids = array();
 		foreach($products as $pid => $product) {
 			$product_ids[] = $product['product']['id'];
-			$products[$pid]['product']['inventory_reserved'] = 0;
+			$products[$pid]['product']['rsv'] = 0;
+			$products[$pid]['product']['bo'] = '';
 		}
 		$product_ids = array_unique($product_ids);
 		if( isset($ciniki['business']['modules']['ciniki.sapos']) ) {
@@ -106,7 +107,11 @@ function ciniki_products_productSearch($ciniki) {
 			$quantities = $rc['quantities'];
 			foreach($products as $pid => $product) {
 				if( isset($quantities[$product['product']['id']]) ) {
-					$products[$pid]['product']['inventory_reserved'] = (float)$quantities[$product['product']['id']]['quantity_reserved'];
+					$products[$pid]['product']['rsv'] = (float)$quantities[$product['product']['id']]['quantity_reserved'];
+					$bo = $products[$pid]['product']['rsv'] - $product['product']['inventory_current_num'];
+					if( $bo > 0 ) {
+						$products[$pid]['product']['bo'] = $bo;
+					}
 				}
 			}
 		}

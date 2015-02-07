@@ -195,7 +195,7 @@ function ciniki_products_main() {
 		this.tools.data = {};
 		this.tools.sections = {
 			'inventory':{'label':'Inventory', 'list':{
-				'duplicates_exact':{'label':'Manage Inventory Levels', 'fn':'M.startApp(\'ciniki.products.inventory\', null, \'M.ciniki_products_main.tools.show();\');'},
+				'inventory':{'label':'Inventory', 'fn':'M.startApp(\'ciniki.products.inventory\', null, \'M.ciniki_products_main.tools.show();\');'},
 			}},
 			'tools':{'label':'Cleanup', 'list':{
 				'duplicates_exact':{'label':'Find Exact Duplicates', 'fn':'M.startApp(\'ciniki.products.duplicates\', null, \'M.ciniki_products_main.tools.show();\',\'mc\',{\'type\':\'exact\'});'},
@@ -242,7 +242,7 @@ function ciniki_products_main() {
 		this.menu.sections.tools.visible = 'no';
 		if( (M.curBusiness.modules['ciniki.products'].flags&0x04) > 0 ) {
 			this.menu.sections.tools.visible = 'yes';
-			this.menu.data.tools['duplicates_exact'] = {'label':'Manage Inventory Levels', 'fn':'M.startApp(\'ciniki.products.inventory\', null, \'M.ciniki_products_main.showMenu();\');'};
+			this.menu.data.tools['duplicates_exact'] = {'label':'Inventory', 'fn':'M.startApp(\'ciniki.products.inventory\', null, \'M.ciniki_products_main.showMenu();\');'};
 		}
 
 		if( args.search != null && args.search != '' ) {

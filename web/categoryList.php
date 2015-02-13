@@ -18,7 +18,7 @@
 //		...
 // </categories>
 //
-function ciniki_products_web_categories($ciniki, $settings, $business_id) {
+function ciniki_products_web_categoryList($ciniki, $settings, $business_id) {
 
 	$strsql = "SELECT ciniki_product_tags.tag_name AS name, "
 		. "IFNULL(ciniki_product_categories.name, '') AS cat_name, "
@@ -53,7 +53,9 @@ function ciniki_products_web_categories($ciniki, $settings, $business_id) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
 	$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
 		array('container'=>'categories', 'fname'=>'name', 
-			'fields'=>array('name', 'cat_name', 'title'=>'cat_name', 'permalink', 'image_id'=>'primary_image_id', 'num_products', 'synopsis', 'is_details')),
+			'fields'=>array('name', 'cat_name', 'permalink', 'image_id'=>'primary_image_id', 'num_products', 'description'=>'synopsis', 'is_details')),
+		array('container'=>'list', 'fname'=>'name', 
+			'fields'=>array('name', 'title'=>'name', 'cat_name', 'permalink', 'image_id'=>'primary_image_id', 'num_products', 'description'=>'synopsis', 'is_details')),
 		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
@@ -67,6 +69,11 @@ function ciniki_products_web_categories($ciniki, $settings, $business_id) {
 	// Load highlight images
 	//
 	foreach($categories as $cnum => $cat) {
+		if( $cat['cat_name'] == '' ) { 
+			$categories[$cnum]['title'] = $cat['name'];
+		} else {
+			$categories[$cnum]['title'] = $cat['cat_name'];
+		}
 		//
 		// Remove empty categories
 		//

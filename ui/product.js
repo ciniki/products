@@ -96,7 +96,7 @@ function ciniki_products_product() {
 				'addFn':'M.startApp(\'ciniki.products.recipes\',null,\'M.ciniki_products_product.showProduct();\',\'mc\',{\'product_id\':M.ciniki_products_product.product.product_id});',
 				},
 			'_buttons':{'label':'', 'buttons':{
-				'edit':{'label':'Edit', 'fn':'M.startApp(\'ciniki.products.edit\',null,\'M.ciniki_products_product.showProduct();\',\'mc\',{\'product_id\':M.ciniki_products_product.product.product_id});'},
+				'edit':{'label':'Edit', 'fn':'M.startApp(\'ciniki.products.edit\',null,\'M.ciniki_products_product.showProduct();\',\'mc\',{\'product_id\':M.ciniki_products_product.product.product_id,\'list\':M.ciniki_products_product.product.prevnext.list});'},
 				}},
 		};
 		this.product.addDropImage = function(iid) {
@@ -234,7 +234,7 @@ function ciniki_products_product() {
 			}
 			return null;
 		};
-		this.product.addButton('edit', 'Edit', 'M.startApp(\'ciniki.products.edit\',null,\'M.ciniki_products_product.showProduct();\',\'mc\',{\'product_id\':M.ciniki_products_product.product.product_id});');
+		this.product.addButton('edit', 'Edit', 'M.startApp(\'ciniki.products.edit\',null,\'M.ciniki_products_product.showProduct();\',\'mc\',{\'product_id\':M.ciniki_products_product.product.product_id,\'list\':M.ciniki_products_product.product.prevnext.list});');
 		this.product.addButton('next', 'Next');
 		this.product.addClose('Back');
 		this.product.addLeftButton('prev', 'Prev');

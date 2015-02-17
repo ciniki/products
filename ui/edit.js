@@ -65,6 +65,7 @@ function ciniki_products_edit() {
 		this.edit.default_formtab = 0;
 		this.edit.forms = {};
 		this.edit.sections = {};
+		this.edit.prevnext = {'prev_id':-1, 'next_id':-1, 'list':[]};
 		this.edit.tags = {'categories':[], 
 			'subcategories-11':[], 
 			'subcategories-12':[], 
@@ -127,8 +128,22 @@ function ciniki_products_edit() {
 			this.setFieldValue(fid, 0, null, null);
 			return true;
 		};
+		this.edit.prevButtonFn = function() {
+			if( this.prevnext.prev_id > -1 ) {
+				return 'M.ciniki_products_edit.saveProduct(\'' + this.prevnext.prev_id + '\');';
+			}
+			return null;
+		};
+		this.edit.nextButtonFn = function() {
+			if( this.prevnext.next_id > -1 ) {
+				return 'M.ciniki_products_edit.saveProduct(\'' + this.prevnext.next_id + '\');';
+			}
+			return null;
+		};
 		this.edit.addButton('save', 'Save', 'M.ciniki_products_edit.saveProduct();');
+		this.edit.addButton('next', 'Next');
 		this.edit.addClose('Cancel');
+		this.edit.addLeftButton('prev', 'Prev');
 	};
 
 	this.start = function(cb, aP, aG) {
@@ -158,7 +173,7 @@ function ciniki_products_edit() {
 			}
 		}
 
-		this.showEdit(cb, args.product_id, args.category, args.supplier_id, args.supplier_name);
+		this.showEdit(cb, args.product_id, args.category, args.supplier_id, args.supplier_name, args.list);
 	}
 
 	this.setupForm = function(type, pc) {
@@ -282,14 +297,15 @@ function ciniki_products_edit() {
 			'save':{'label':'Save', 'fn':'M.ciniki_products_edit.saveProduct();'},
 			'delete':{'label':'Delete', 'fn':'M.ciniki_products_edit.deleteProduct();'},
 			}};
-form;
 
 		return form;
 	}
 
-	this.showEdit = function(cb, pid, category, supplier_id, supplier_name) {
+	this.showEdit = function(cb, pid, category, supplier_id, supplier_name, list) {
 		this.edit.reset();
 		if( pid != null ) { this.edit.product_id = pid; }
+		console.log(list);
+		if( list != null ) { this.edit.prevnext.list = list; }
 		// Check if inventory enabled
 //		if( (M.curBusiness.modules['ciniki.products'].flags&0x04) > 0 ) {
 //			this.edit.forms.generic.inventory.active = 'yes';
@@ -342,6 +358,21 @@ form;
 //							p.tags.push(rsp.categories[i].tag.name);
 //						}
 //					}
+					// Setup prev/next buttons
+					p.prevnext.prev_id = -1;
+					p.prevnext.next_id = -1;
+					if( p.prevnext.list != null ) {
+						for(i in p.prevnext.list) {
+							if( p.prevnext.next_id == -2 ) {
+								p.prevnext.next_id = p.prevnext.list[i].product.id;
+								break;
+							} else if( p.prevnext.list[i].product.id == p.product_id ) {
+								p.prevnext.next_id = -2;
+							} else {
+								p.prevnext.prev_id = p.prevnext.list[i].product.id;
+							}
+						}
+					}
 					p.refresh();
 					p.show(cb);
 				});
@@ -388,13 +419,15 @@ form;
 //						p.tags.push(rsp.categories[i].tag.name);
 //					}
 //				}
+				p.prevnext.prev_id = -1;
+				p.prevnext.next_id = 0;
 				p.refresh();
 				p.show(cb);
 				});
 		}
 	};
 
-	this.saveProduct = function() {
+	this.saveProduct = function(prevnext_id) {
 		if( this.edit.sections.supplier == null ) {
 			return this.saveProductFinish();
 		}
@@ -409,14 +442,14 @@ form;
 						return false;
 					}
 					M.gE(M.ciniki_products_edit.edit.panelUID + '_supplier_id').value = rsp.id;
-					M.ciniki_products_edit.saveProductFinish();
+					M.ciniki_products_edit.saveProductFinish(prevnext_id);
 				});
 		} else {
-			this.saveProductFinish();
+			this.saveProductFinish(prevnext_id);
 		}
 	};
 
-	this.saveProductFinish = function() {
+	this.saveProductFinish = function(prevnext_id) {
 		if( this.edit.product_id > 0 ) {
 			var c = this.edit.serializeForm('no');
 			if( c != '' ) {
@@ -426,10 +459,18 @@ form;
 							M.api.err(rsp);
 							return false;
 						}
-						M.ciniki_products_edit.edit.close();
+						if( prevnext_id != null && prevnext_id > -1 ) {
+							M.ciniki_products_edit.showEdit(null, prevnext_id);
+						} else {
+							M.ciniki_products_edit.edit.close();
+						}
 					});
 			} else {
-				this.edit.close();
+				if( prevnext_id != null && prevnext_id > -1 ) {
+					M.ciniki_products_edit.showEdit(null, prevnext_id);
+				} else {
+					this.edit.close();
+				}
 			}
 		} else {
 			var c = this.edit.serializeForm('yes');
@@ -444,7 +485,11 @@ form;
 //						M.ciniki_products_edit.edit.close();
 //						M.ciniki_products_product.showProduct(cb, rsp.id);
 //					} else {
+					if( prevnext_id != null && prevnext_id > -1 ) {
+						M.ciniki_products_edit.showEdit(null, prevnext_id);
+					} else {
 						M.ciniki_products_edit.edit.close();
+					}
 //					}
 				});
 		}

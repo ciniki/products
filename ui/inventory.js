@@ -44,7 +44,13 @@ function ciniki_products_inventory() {
 			return ''; 
 		}   
 		this.menu.liveSearchResultRowFn = function(s, f, i, j, d) { 
-			return 'M.ciniki_products_inventory.showEdit(\'M.ciniki_products_inventory.showMenu();\',\'' + d.product.id + '\');';
+			if( M.curBusiness.permissions.owners != null 
+				|| M.curBusiness.permissions.employees != null 
+				|| (M.userPerms&0x01) == 1 
+				) {
+				return 'M.ciniki_products_inventory.showEdit(\'M.ciniki_products_inventory.showMenu();\',\'' + d.product.id + '\');';
+			}
+			return '';
 		};  
 		this.menu.liveSearchSubmitFn = function(s, search_str) {
 			// FIXME: Check if one entry returned, and display inventory edit.
@@ -142,9 +148,14 @@ function ciniki_products_inventory() {
 			}
 		};
 		this.list.rowFn = function(s, i, d) {
-			return 'M.ciniki_products_inventory.showEdit(\'M.ciniki_products_inventory.showList();\',\'' + d.product.id + '\');';
+			if( M.curBusiness.permissions.owners != null 
+				|| M.curBusiness.permissions.employees != null 
+				|| (M.userPerms&0x01) == 1 
+				) {
+				return 'M.ciniki_products_inventory.showEdit(\'M.ciniki_products_inventory.showList();\',\'' + d.product.id + '\');';
+			}
+			return '';
 		};
-		this.list.addButton('download', 'Export', 'M.ciniki_products_inventory.downloadList();');
 		this.list.addClose('Back');
 
 		//
@@ -240,8 +251,19 @@ function ciniki_products_inventory() {
 			this.list.sections.products.num_cols = 1;
 			this.list.sections.products.headerValues = null;
 		}
+	
+		var perms = M.curBusiness.permissions;
+	
+		if( perms.owners != null || perms.employees != null || (M.userPerms&0x01) == 1 ) {
+			this.list.addButton('download', 'Export', 'M.ciniki_products_inventory.downloadList();');
+		} else {
+			this.list.delButton('download');
+		}
+		
 
-		if( args.product_id != null && args.product_id > 0 ) {
+		if( args.product_id != null && args.product_id > 0 
+			// Check owner, employee or sysadmin
+			&& (perms.owners != null || perms.employees != null || (M.userPerms&0x01)==1) ) {
 			this.showEdit(cb, args.product_id);
 		} else if( args.search != null && args.search != '' ) {
 			this.showSearch(cb, args.search);

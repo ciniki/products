@@ -43,6 +43,16 @@ function ciniki_products_checkAccess(&$ciniki, $business_id, $method, $product_i
 	}
 
 	//
+	// Check if the business is active and the module is enabled
+	//
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'getUserPermissions');
+	$rc = ciniki_businesses_getUserPermissions($ciniki, $business_id);
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+	$perms = $rc['perms'];
+
+	//
 	// Check the session user is a business owner
 	//
 	if( $business_id <= 0 ) {
@@ -50,6 +60,33 @@ function ciniki_products_checkAccess(&$ciniki, $business_id, $method, $product_i
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'400', 'msg'=>'Access denied'));
 	}
 
+	// 
+	// Owners and Employees have access to everything
+	//
+	if( ($ciniki['business']['user']['perms']&0x03) > 0 ) {
+		return array('stat'=>'ok', 'modules'=>$modules, 'perms'=>$perms);
+	}
+
+	//
+	// If the user is part of the salesreps, ensure they have access to request method
+	//
+	$salesreps_methods = array(
+		'ciniki.products.productSearch',
+		'ciniki.products.productStats',
+		'ciniki.products.productList',
+		'ciniki.products.categoryDetails',
+		);
+	if( in_array($method, $salesreps_methods) && ($perms&0x04) == 0x04 ) {
+		return array('stat'=>'ok', 'modules'=>$modules, 'perms'=>$perms);
+	}
+
+	//
+	// By default, deny access
+	//
+	return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2258', 'msg'=>'Access denied'));
+	
+/* OLD CODE
+	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
 	//
 	// Find any users which are owners of the requested business_id
@@ -104,6 +141,6 @@ function ciniki_products_checkAccess(&$ciniki, $business_id, $method, $product_i
 	//
 	// All checks passed, return ok
 	//
-	return array('stat'=>'ok', 'modules'=>$modules);
+	return array('stat'=>'ok', 'modules'=>$modules); */
 }
 ?>

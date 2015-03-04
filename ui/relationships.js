@@ -24,7 +24,7 @@ function ciniki_products_relationships() {
 				'related_id':{'label':'Product', 'hidelabel':'no', 'hint':'Search for product', 'active':'no', 'type':'fkid', 'livesearch':'yes'},
 				}},
 			'_type':{'label':'', 'fields':{
-				'relationship_type':{'label':'Type', 'type':'toggle', 'toggles':this.relationshipOptions},
+				'relationship_type':{'label':'Type', 'type':'toggle', 'default':'10', 'toggles':this.relationshipOptions},
 				}},
 			'_notes':{'label':'Notes', 'fields':{
 				'notes':{'label':'', 'hidelabel':'yes', 'type':'textarea'},

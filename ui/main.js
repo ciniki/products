@@ -29,6 +29,11 @@ function ciniki_products_main() {
 				'addTxt':'Add',
 				'addFn':'M.startApp(\'ciniki.products.edit\',null,\'M.ciniki_products_main.showMenu();\',\'mc\',{\'product_id\':\'0\'});',
 				},
+			'products':{'label':'Products', 'type':'simplegrid', 'num_cols':1,
+				'headerValues':null,
+				'addTxt':'Add',
+				'addFn':'M.startApp(\'ciniki.products.edit\',null,\'M.ciniki_products_main.showMenu();\',\'mc\',{\'product_id\':\'0\'});',
+				},
 			'suppliers':{'label':'Suppliers', 'visible':'no', 'type':'simplegrid', 'num_cols':1,
 				'headerValues':null,
 				},
@@ -65,6 +70,10 @@ function ciniki_products_main() {
 				switch(j) {
 					case 0: return ((d.category.name!='')?d.category.name:'*Uncategorized') + ' <span class="count">' + d.category.product_count + '</span>';
 					}
+			} else if( s == 'products' ) {
+				switch(j) {
+					case 0: return (d.product.code!=''?d.product.code+' - ':'') + d.product.name;
+				}
 			} else if( s == 'suppliers' ) {
 				switch(j) {
 					case 0: return ((d.supplier.name!='')?d.supplier.name:'*No Supplier') + ' <span class="count">' + d.supplier.product_count + '</span>';
@@ -80,6 +89,8 @@ function ciniki_products_main() {
 				} else {
 					return 'M.ciniki_products_main.showCategory(\'M.ciniki_products_main.showMenu();\',\'' + d.category.permalink + '\');';
 				}
+			} else if( s == 'products' ) {
+				return 'M.startApp(\'ciniki.products.product\',null,\'M.ciniki_products_main.showMenu();\',\'mc\',{\'product_id\':\'' + d.product.id + '\',\'list\':M.ciniki_products_main.menu.data[\'' + s + '\']});';
 			} else if( s == 'suppliers' ) {
 				return 'M.ciniki_products_main.showList(\'M.ciniki_products_main.showMenu();\',\'supplier_id\',\'' + d.supplier.id + '\',\'' + escape(d.supplier.name) + '\');';
 			} else if( s == 'tools' ) {
@@ -225,6 +236,8 @@ function ciniki_products_main() {
 
 		// Check if inventory enabled
 		if( (M.curBusiness.modules['ciniki.products'].flags&0x04) > 0 ) {
+			this.menu.sections.products.num_cols = 2;
+			this.menu.sections.products.headerValues = ['Product', 'Inv [Rsv]'];
 			this.menu.sections.search.livesearchcols = 2;
 			this.menu.sections.search.headerValues = ['Product', 'Inv [Rsv]'];
 			this.list.sections.products.num_cols = 2;
@@ -232,12 +245,14 @@ function ciniki_products_main() {
 			this.search.sections.products.num_cols = 2;
 			this.search.sections.products.headerValues = ['Product', 'Inv [Rsv]'];
 		} else {
+			this.menu.sections.products.num_cols = 1;
+			this.menu.sections.products.headerValues = null;
 			this.menu.sections.search.livesearchcols = 1;
 			this.menu.sections.search.headerValues = null;
 			this.list.sections.products.num_cols = 1;
 			this.list.sections.products.headerValues = null;
 		}
-		
+
 		this.menu.data.tools = {};
 		this.menu.sections.tools.visible = 'no';
 		if( (M.curBusiness.modules['ciniki.products'].flags&0x04) > 0 ) {
@@ -264,7 +279,18 @@ function ciniki_products_main() {
 					return false;
 				}
 				var p = M.ciniki_products_main.menu;
-				p.data.categories = rsp.categories
+				if( rsp.products != null ) {
+					p.data.products = rsp.products;
+					p.data.categories = {};
+					p.sections.search.visible = 'no';
+					p.sections.categories.visible = 'no';
+					p.sections.products.visible = 'yes';
+				} else {
+					p.data.categories = rsp.categories
+					p.sections.search.visible = 'yes';
+					p.sections.categories.visible = 'yes';
+					p.sections.products.visible = 'no';
+				}
 				p.data.suppliers = rsp.suppliers;
 				p.refresh();
 				p.show(cb);

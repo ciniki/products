@@ -20,6 +20,10 @@
 //
 function ciniki_products_web_categories($ciniki, $settings, $business_id) {
 
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
+
+	$rsp = array('stat'=>'ok');
+
 	$strsql = "SELECT ciniki_product_tags.tag_name AS name, "
 		. "IFNULL(ciniki_product_categories.name, '') AS cat_name, "
 		. "IFNULL(ciniki_product_categories.primary_image_id, 0) AS primary_image_id, "
@@ -50,7 +54,6 @@ function ciniki_products_web_categories($ciniki, $settings, $business_id) {
 		. "GROUP BY ciniki_product_tags.tag_name "
 		. "ORDER BY IFNULL(ciniki_product_categories.sequence, 99), ciniki_product_tags.tag_name "
 		. "";
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
 	$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
 		array('container'=>'categories', 'fname'=>'name', 
 			'fields'=>array('name', 'cat_name', 'title'=>'cat_name', 'permalink', 'image_id'=>'primary_image_id', 'num_products', 'synopsis', 'is_details')),
@@ -58,60 +61,99 @@ function ciniki_products_web_categories($ciniki, $settings, $business_id) {
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}
-	if( !isset($rc['categories']) ) {
-		return array('stat'=>'ok');
+	if( isset($rc['categories']) && count($rc['categories']) > 0 ) {
+		$rsp['categories'] = $rc['categories'];
+
+		//
+		// Load highlight images
+		//
+		foreach($rsp['categories'] as $cnum => $cat) {
+			//
+			// Remove empty categories
+			//
+			if( $cat['num_products'] < 1 ) {
+				unset($rsp['categories'][$cnum]);
+				continue;
+			}
+
+			if( $cat['cat_name'] != '' ) {
+				$rsp['categories'][$cnum]['name'] = $cat['cat_name'];
+			}
+			unset($rsp['categories'][$cnum]['cat_name']);
+
+			//
+			// Look for the highlight image, or the most recently added image
+			//
+			if( $cat['image_id'] == 0 ) {
+				$strsql = "SELECT ciniki_products.primary_image_id, ciniki_images.image "
+					. "FROM ciniki_product_tags, ciniki_products, ciniki_images "
+					. "WHERE ciniki_product_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+					. "AND ciniki_product_tags.permalink = '" . ciniki_core_dbQuote($ciniki, $cat['permalink']) . "' "
+					. "AND ciniki_product_tags.product_id = ciniki_products.id "
+					. "AND ciniki_products.parent_id = 0 "
+					. "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+					. "AND ciniki_products.start_date < UTC_TIMESTAMP() "
+					. "AND (ciniki_products.end_date = '0000-00-00 00:00:00' "
+						. "OR ciniki_products.end_date > UTC_TIMESTAMP()"
+						. ") "
+					. "AND ciniki_products.primary_image_id = ciniki_images.id "
+					. "AND (ciniki_products.webflags&0x01) > 0 "
+					. "ORDER BY (ciniki_products.webflags&0x10) DESC, "
+					. "ciniki_products.date_added DESC "
+					. "LIMIT 1";
+				$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'image');
+				if( $rc['stat'] != 'ok' ) {
+					return $rc;
+				}
+				if( isset($rc['image']) ) {
+					$rsp['categories'][$cnum]['image_id'] = $rc['image']['primary_image_id'];
+				} else {
+					$rsp['categories'][$cnum]['image_id'] = 0;
+				}
+			}
+		}
 	}
-	$categories = $rc['categories'];
-
 	//
-	// Load highlight images
+	// If there were no categories, get the product list
 	//
-	foreach($categories as $cnum => $cat) {
-		//
-		// Remove empty categories
-		//
-		if( $cat['num_products'] < 1 ) {
-			unset($categories[$cnum]);
-			continue;
-		}
-
-		if( $cat['cat_name'] != '' ) {
-			$categories[$cnum]['name'] = $cat['cat_name'];
-		}
-		unset($categories[$cnum]['cat_name']);
-
-		//
-		// Look for the highlight image, or the most recently added image
-		//
-		if( $cat['image_id'] == 0 ) {
-			$strsql = "SELECT ciniki_products.primary_image_id, ciniki_images.image "
-				. "FROM ciniki_product_tags, ciniki_products, ciniki_images "
-				. "WHERE ciniki_product_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
-				. "AND ciniki_product_tags.permalink = '" . ciniki_core_dbQuote($ciniki, $cat['permalink']) . "' "
-				. "AND ciniki_product_tags.product_id = ciniki_products.id "
+	else {
+		$strsql = "SELECT ciniki_products.id, "
+			. "ciniki_products.name AS title, "
+			. "ciniki_products.permalink, "
+			. "ciniki_products.primary_image_id AS image_id, "
+			. "ciniki_products.price, "
+			. "ciniki_products.short_description AS description, "
+			. "'yes' AS is_details, "
+			. "IF(ciniki_images.last_updated > ciniki_products.last_updated, "
+				. "UNIX_TIMESTAMP(ciniki_images.last_updated), "
+				. "UNIX_TIMESTAMP(ciniki_products.last_updated)) AS last_updated "
+			. "FROM ciniki_products "
+			. "LEFT JOIN ciniki_images ON ("
+				. "ciniki_products.primary_image_id = ciniki_images.id "
+				. "AND ciniki_images.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+				. ") "
+			. "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 				. "AND ciniki_products.parent_id = 0 "
-				. "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 				. "AND ciniki_products.start_date < UTC_TIMESTAMP() "
-				. "AND (ciniki_products.end_date = '0000-00-00 00:00:00' "
-					. "OR ciniki_products.end_date > UTC_TIMESTAMP()"
-					. ") "
-				. "AND ciniki_products.primary_image_id = ciniki_images.id "
-				. "AND (ciniki_products.webflags&0x01) > 0 "
-				. "ORDER BY (ciniki_products.webflags&0x10) DESC, "
-				. "ciniki_products.date_added DESC "
-				. "LIMIT 1";
-			$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'image');
-			if( $rc['stat'] != 'ok' ) {
-				return $rc;
-			}
-			if( isset($rc['image']) ) {
-				$categories[$cnum]['image_id'] = $rc['image']['primary_image_id'];
-			} else {
-				$categories[$cnum]['image_id'] = 0;
-			}
+				. "AND (ciniki_products.end_date = '0000-00-00 00:00:00' OR ciniki_products.end_date > UTC_TIMESTAMP()) "
+				. "AND (ciniki_products.webflags&0x01) = 0x01 "
+			. "ORDER BY ciniki_products.name ASC "
+			. "";
+		$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
+			array('container'=>'products', 'fname'=>'title', 
+				'fields'=>array('title', 'permalink', 'image_id', 'description', 
+					'is_details', 'last_updated')),
+			));
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		if( isset($rc['products']) ) {
+			$rsp['products'] = $rc['products'];
+		} else {
+			$rsp['products'] = array();
 		}
 	}
 
-	return array('stat'=>'ok', 'categories'=>$categories);	
+	return $rsp;
 }
 ?>

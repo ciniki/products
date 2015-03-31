@@ -117,9 +117,9 @@ function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $a
 		$product['prices'] = array();
 
 		//
-		// Check if the product is sold online
+		// Check if the price is visible or product is sold online
 		//
-		if( ($product['webflags']&0x02) == 0 || ($product['webflags']&0x02) > 0 ) {
+		if( ($product['webflags']&0x04) == 0 || ($product['webflags']&0x02) > 0 ) {
 			$product['prices']['1'] = array(
 				'id'=>0,
 				'object'=>'ciniki.products.product',

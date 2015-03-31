@@ -73,6 +73,7 @@ function ciniki_products_main() {
 			} else if( s == 'products' ) {
 				switch(j) {
 					case 0: return (d.product.code!=''?d.product.code+' - ':'') + d.product.name;
+					case 1: return d.product.inventory_current_num + (d.product.inventory_reserved!=null?' <span class="subdue">[' + d.product.inventory_reserved + ']</span>':'');
 				}
 			} else if( s == 'suppliers' ) {
 				switch(j) {
@@ -273,7 +274,7 @@ function ciniki_products_main() {
 	this.showMenu = function(cb) {
 		this.menu.sections.suppliers.visible=((M.curBusiness.modules['ciniki.products'].flags&0x08)>0)?'yes':'no';
 		M.api.getJSONCb('ciniki.products.productStats', 
-			{'business_id':M.curBusinessID, 'status':10}, function(rsp) {
+			{'business_id':M.curBusinessID, 'status':10, 'reserved':'yes'}, function(rsp) {
 				if( rsp.stat != 'ok' ) {
 					M.api.err(rsp);
 					return false;

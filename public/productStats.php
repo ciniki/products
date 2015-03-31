@@ -113,6 +113,37 @@ function ciniki_products_productStats($ciniki) {
 		} else {
 			$rsp['products'] = $rc['products'];
 		}
+		//
+		// Get the reserved quantities for the products
+		//
+		if( isset($args['reserved']) && $args['reserved'] == 'yes' && count($rsp['products']) > 0 ) {
+			$product_ids = array();
+			foreach($rsp['products'] as $pid => $product) {
+				$product_ids[] = $product['product']['id'];
+				$rsp['products'][$pid]['product']['rsv'] = 0;
+				$rsp['products'][$pid]['product']['bo'] = '';
+			}
+			$product_ids = array_unique($product_ids);
+			if( isset($ciniki['business']['modules']['ciniki.sapos']) ) {
+				ciniki_core_loadMethod($ciniki, 'ciniki', 'sapos', 'private', 'getReservedQuantities');
+				$rc = ciniki_sapos_getReservedQuantities($ciniki, $args['business_id'], 
+					'ciniki.products.product', $product_ids, 0);
+				if( $rc['stat'] != 'ok' ) {
+					return $rc;
+				}
+				$quantities = $rc['quantities'];
+				foreach($rsp['products'] as $pid => $product) {
+					if( isset($quantities[$product['product']['id']]) ) {
+						$rsp['products'][$pid]['product']['rsv'] = (float)$quantities[$product['product']['id']]['quantity_reserved'];
+						$bo = $rsp['products'][$pid]['product']['rsv'] - $product['product']['inventory_current_num'];
+						if( $bo > 0 ) {
+							$rsp['products'][$pid]['product']['bo'] = $bo;
+						}
+					}
+				}
+			}
+		}
+
 	} 
 	else {
 		//

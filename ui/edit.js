@@ -202,6 +202,7 @@ function ciniki_products_edit() {
 			'category':{'label':'Category', 'type':'text', 'livesearch':'yes', 'livesearchempty':'yes',
 				'active':(fields.category!=null?'yes':'no')},
 			'price':{'label':'Price', 'type':'text', 'active':(fields.price!=null?'yes':'no')},
+			'taxtype_id':{'label':'Taxes', 'active':(fields.taxtype_id!=null?'yes':'no'), 'type':'select', 'options':{}},
 			'cost':{'label':'Cost', 'type':'text', 'active':(fields.cost!=null?'yes':'no')},
 			'msrp':{'label':'MSRP', 'type':'text', 'active':(fields.msrp!=null?'yes':'no')},
 			'sell_unit':{'label':'Sell Unit', 'type':'text', 'active':(fields.sell_unit!=null?'yes':'no')},
@@ -212,6 +213,19 @@ function ciniki_products_edit() {
 			'webflags':{'label':'Options', 'hint':'Product Name', 'type':'flags', 'flags':webFlags,
 				'active':(fields.webflags!=null?'yes':'no')},
 		}};
+		//
+		// Setup the tax types
+		//
+		if( M.curBusiness.modules['ciniki.taxes'] != null ) {
+			form['info'].fields.taxtype_id.options = {'0':'No Taxes'};
+			if( M.curBusiness.taxes != null && M.curBusiness.taxes.settings.types != null ) {
+				for(i in M.curBusiness.taxes.settings.types) {
+					form['info'].fields.taxtype_id.options[M.curBusiness.taxes.settings.types[i].type.id] = M.curBusiness.taxes.settings.types[i].type.name;
+				}
+			}
+		} else {
+			form['info'].fields.taxtype_id.options = {'0':'No Taxes'};
+		}
 
 		if( type[pc].categories != null ) {
 			form['_categories'] = {'label':'Categories', 'aside':'yes', 'fields':{

@@ -45,6 +45,7 @@ function ciniki_products_productUpdate(&$ciniki) {
         'price'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'currency', 'name'=>'Price'), 
         'cost'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'currency', 'name'=>'Cost'), 
         'msrp'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'currency', 'name'=>'MSRP'), 
+        'taxtype_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Tax Type'), 
         'sell_unit'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Sell Unit'),
         'shipping_flags'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Shipping Options'), 
         'shipping_weight'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Shipping Weight'), 

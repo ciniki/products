@@ -12,7 +12,6 @@
 //
 function ciniki_products_sapos_itemLookup($ciniki, $business_id, $args) {
 
-	error_log(print_r($args, true));
 	if( !isset($args['object']) || $args['object'] == '' 
 		|| !isset($args['object_id']) || $args['object_id'] == '' ) {
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1960', 'msg'=>'No product specified.'));
@@ -93,7 +92,6 @@ function ciniki_products_sapos_itemLookup($ciniki, $business_id, $args) {
 		&& isset($args['object_id']) && $args['object_id'] > 0
 		&& isset($args['pricepoint_id']) && $args['pricepoint_id'] > 0 
 		) {
-		error_log('test');
 		$strsql = "SELECT ciniki_products.id, "
 			. "ciniki_products.parent_id, "
 			. "ciniki_products.code, "
@@ -218,7 +216,6 @@ function ciniki_products_sapos_itemLookup($ciniki, $business_id, $args) {
 			$product['limited_units'] = 'no';
 			$product['units_available'] = 0;
 		}
-		error_log(print_r($product, true));
 		return array('stat'=>'ok', 'item'=>$product);
 	} 
 

@@ -37,6 +37,7 @@ function ciniki_products_product() {
 				'sell_unit':{'label':'Sell Unit', 'visible':'no'},
 				'start_date':{'label':'Start', 'visible':'no'},
 				'end_date':{'label':'End', 'visible':'no'},
+				'flags_text':{'label':'Options', 'visible':'no'},
 				'webflags_text':{'label':'Web', 'visible':'yes'},
 				'manufacture_times':{'label':'Manufacture Time', 'visible':'no'},
 				'inventory_current_num':{'label':'Inventory', 'visible':'no'},
@@ -304,6 +305,9 @@ function ciniki_products_product() {
 				}
 				if( pc_object_def.products['webflags'] != null ) {
 					p.sections.info.list['webflags_text'].visible = 'yes';
+				}
+				if( pc_object_def.products['flags'] != null ) {
+					p.sections.info.list['flags_text'].visible = 'yes';
 				}
 				if( pc_object_def.products['shipping_weight'] != null ) {
 					p.sections.info.list['shipping_package'].visible = 'yes';

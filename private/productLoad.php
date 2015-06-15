@@ -51,6 +51,7 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 		. "ciniki_product_types.object_def, "
 //		. "type, type AS type_text, "
 		. "ciniki_products.category, "
+		. "ciniki_products.flags, "
 		. "ciniki_products.status, ciniki_products.status AS status_text, "
 		. "ciniki_products.barcode, "
 		. "ciniki_products.supplier_id, "
@@ -106,7 +107,7 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
 		array('container'=>'products', 'fname'=>'id', 'name'=>'product',
 			'fields'=>array('id', 'parent_id', 'name', 'code', 'type_id', 'type_text', 'object_def',
-				'category', 'status', 'status_text',
+				'category', 'flags', 'status', 'status_text',
 				'supplier_id', 'supplier_item_number', 
 				'supplier_minimum_order', 'supplier_order_multiple',
 				'manufacture_min_time', 'manufacture_max_time', 
@@ -180,6 +181,10 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 	//
 	// Format the webflags_text string
 	//
+	$product['flags_text'] = '';
+	if( ($product['flags']&0x04) > 0 ) {
+		$product['flags_text'] .= ($product['flags_text']!=''?', ':'') . 'Promotional Item';
+	}
 	$product['webflags_text'] = '';
 	$product['webflags_text'] .= ($product['webflags_text']!=''?', ':'') . (($product['webflags']&0x01)==1)?'Visible':'Hidden';
 	if( ($product['webflags']&0x02) > 0 ) {

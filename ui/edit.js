@@ -185,8 +185,16 @@ function ciniki_products_edit() {
 			'5':{'name':'Category Highlight', 'active':'no'},
 			'6':{'name':'Sub-Category Highlight', 'active':'no'},
 			};
+		var flags = {
+			'3':{'name':'Promotional Item', 'active':'no'},
+			};
+		var flags_visible = 'no';
 		if( M.curBusiness.modules['ciniki.sapos'] != null && (M.curBusiness.modules['ciniki.sapos'].flags&0x08) > 0 ) {
 			webFlags['2'].active = 'yes';
+		}
+		if( M.curBusiness.modules['ciniki.products'] != null && (M.curBusiness.modules['ciniki.products'].flags&0x10) > 0 && fields.flags != null ) {
+			flags_visible = 'yes';
+			flags['3'].active = 'yes';
 		}
 		if( type[pc].categories != null ) {
 			webFlags['5'].active = 'yes';
@@ -210,7 +218,8 @@ function ciniki_products_edit() {
 				'active':(fields.status!=null?'yes':'no')},
 			'start_date':{'label':'Start Date', 'type':'date', 'active':(fields.start_date!=null?'yes':'no')},
 			'end_date':{'label':'End Date', 'type':'date', 'active':(fields.end_date!=null?'yes':'no')},
-			'webflags':{'label':'Options', 'hint':'Product Name', 'type':'flags', 'flags':webFlags,
+			'flags':{'label':'Options', 'hint':'', 'type':'flags', 'flags':flags, 'active':flags_visible},
+			'webflags':{'label':'Website', 'hint':'', 'type':'flags', 'flags':webFlags,
 				'active':(fields.webflags!=null?'yes':'no')},
 		}};
 		//

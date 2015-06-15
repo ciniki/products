@@ -20,7 +20,7 @@ function ciniki_products_flags($ciniki, $modules) {
 	$flags[] = array('flag'=>array('bit'=>'3', 'name'=>'Inventory'));
 	$flags[] = array('flag'=>array('bit'=>'4', 'name'=>'Suppliers'));
 	// 0x02
-//	$flags[] = array('flag'=>array('bit'=>'5', 'name'=>''));
+	$flags[] = array('flag'=>array('bit'=>'5', 'name'=>'Promotional Products'));
 //	$flags[] = array('flag'=>array('bit'=>'6', 'name'=>''));
 //	$flags[] = array('flag'=>array('bit'=>'7', 'name'=>''));
 //	$flags[] = array('flag'=>array('bit'=>'8', 'name'=>''));

@@ -51,7 +51,7 @@
 # flags:			0 - nothing
 #					0x01 - backordered
 #					0x02 - 
-#					0x04 - 
+#					0x04 - Promotional Item
 #					0x08 - 
 #					0x10 - 
 #					0x20 -
@@ -126,8 +126,12 @@
 #
 #							0x01 - Visible, display on the website
 #							0x02 - Sell Online
+#							0x04 - 
+#							0x08 - 
 #							0x10 - Category Highlight
 #							0x20 - Sub-Category Highlight
+#							0x40 - 
+#							0x80 - 
 #
 # date_added:		The date and time the product was added to the database.
 #

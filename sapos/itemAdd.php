@@ -21,6 +21,7 @@ function ciniki_products_sapos_itemAdd($ciniki, $business_id, $invoice_id, $item
 		// Check the product exists
 		//
 		$strsql = "SELECT id, name, "
+			. "ciniki_products.flags AS product_flags, "
 			. "inventory_flags, "
 			. "inventory_current_num "
 			. "FROM ciniki_products "
@@ -46,6 +47,11 @@ function ciniki_products_sapos_itemAdd($ciniki, $business_id, $invoice_id, $item
 			} else {
 				$rsp['flags'] = 0x42; // shipped item, inventoried but no backorder
 			}
+		}
+
+		// Check if product is a promotional item
+		if( ($product['product_flags']&0x04) > 0 ) {
+			$rsp['flags'] |= 0x4000;
 		}
 
 		//

@@ -27,6 +27,7 @@ function ciniki_products_sapos_cartItemLookup($ciniki, $business_id, $customer, 
 //			. "IF(ciniki_products.code<>'',CONCAT_WS(' - ', ciniki_products.code, ciniki_products.name), ciniki_products.name) AS name, "
 			. "ciniki_products.code, "
 			. "ciniki_products.name, "
+			. "ciniki_products.flags AS product_flags, "
 			. "ciniki_product_prices.id AS price_id, "
 			. "ciniki_product_prices.name AS price_name, "
 			. "ciniki_product_prices.pricepoint_id, "
@@ -53,7 +54,7 @@ function ciniki_products_sapos_cartItemLookup($ciniki, $business_id, $customer, 
 		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
 		$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
 			array('container'=>'products', 'fname'=>'id',
-				'fields'=>array('id', 'price_id', 'parent_id', 'code', 'description'=>'name',
+				'fields'=>array('id', 'price_id', 'parent_id', 'code', 'description'=>'name', 'product_flags',
 					'pricepoint_id', 'available_to',
 					'unit_amount', 'unit_discount_amount', 'unit_discount_percentage',
 					'inventory_flags', 'inventory_current_num', 
@@ -122,6 +123,11 @@ function ciniki_products_sapos_cartItemLookup($ciniki, $business_id, $customer, 
 		} else {
 			$product['limited_units'] = 'no';
 			$product['units_available'] = 0;
+		}
+
+		// Check if product is a promotional item
+		if( ($product['product_flags']&0x04) > 0 ) {
+			$product['flags'] |= 0x4000;
 		}
 
 		return array('stat'=>'ok', 'item'=>$product);

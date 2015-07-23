@@ -213,6 +213,9 @@ function ciniki_products_main() {
 				'duplicates_exact':{'label':'Find Exact Duplicates', 'fn':'M.startApp(\'ciniki.products.duplicates\', null, \'M.ciniki_products_main.tools.show();\',\'mc\',{\'type\':\'exact\'});'},
 				'duplicates_soundex':{'label':'Find Similar Duplicates', 'fn':'M.startApp(\'ciniki.products.duplicates\', null, \'M.ciniki_products_main.tools.show();\',\'mc\',{\'type\':\'soundex\'});'},
 			}},
+			'download':{'label':'Export (Advanced)', 'list':{
+				'export':{'label':'Export to Excel', 'fn':'M.ciniki_products_main.downloadExcel();'},
+			}},
 			};
 		this.tools.addClose('Back');
 	}
@@ -411,6 +414,10 @@ function ciniki_products_main() {
 				p.refresh();
 				p.show(cb);
 			});
+	};
+
+	this.downloadExcel = function() {
+		M.api.openFile('ciniki.products.productExportExcel', {'business_id':M.curBusinessID});
 	};
 
 }

@@ -111,6 +111,7 @@ function ciniki_products_productUpdate(&$ciniki) {
 			. "FROM ciniki_products "
 			. "WHERE permalink = '" . ciniki_core_dbQuote($ciniki, $args['permalink']) . "' "
 			. "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. "AND id <> '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
 			. "";
 		$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'product');
 		if( $rc['stat'] != 'ok' ) {

@@ -250,6 +250,8 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 			. "ciniki_product_prices.available_to, "
 			. "ciniki_product_prices.available_to AS available_to_text, "
 			. "ciniki_product_prices.unit_amount, "
+			. "ciniki_product_prices.unit_discount_amount, "
+			. "ciniki_product_prices.unit_discount_percentage, "
 			. "pricepoint_id, IFNULL(ciniki_customer_pricepoints.name, '') AS pricepoint_id_text "
 			. "FROM ciniki_product_prices "
 			. "LEFT JOIN ciniki_customer_pricepoints ON ("
@@ -262,7 +264,7 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 			. "";
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
 			array('container'=>'prices', 'fname'=>'id', 'name'=>'price',
-				'fields'=>array('id', 'name', 'available_to', 'available_to_text', 'unit_amount',
+				'fields'=>array('id', 'name', 'available_to', 'available_to_text', 'unit_amount', 'unit_discount_amount', 'unit_discount_percentage',
 					'pricepoint_id', 'pricepoint_id_text'),
 				'flags'=>array('available_to_text'=>$maps['price']['available_to'])),
 			));

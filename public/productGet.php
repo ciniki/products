@@ -44,6 +44,9 @@ function ciniki_products_productGet($ciniki) {
     }   
 	$modules = $rc['modules'];
 
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuoteList');
+
 	//
 	// Load the product
 	//
@@ -77,14 +80,25 @@ function ciniki_products_productGet($ciniki) {
 	//
 	if( isset($args['subcategories']) && $args['subcategories'] == 'yes' ) {
 		//
-		// Get the available tags
+		// Get the available tags, but only for the subcategories of the categories the product is part of.
 		//
-		$strsql = "SELECT DISTINCT tag_type, tag_name "
+		$strsql = "SELECT DISTINCT t2.tag_type, t2.tag_name "
+			. "FROM ciniki_product_tags AS t1, ciniki_product_tags AS t2 "
+			. "WHERE t1.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. "AND t1.tag_type = 10 "
+			. "AND t1.tag_name IN (" . ciniki_core_dbQuoteList($ciniki, explode('::', $rsp['product']['categories'])) . ") "
+			. "AND t1.product_id = t2.product_id "
+			. "AND t2.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. "AND t2.tag_type > 10 AND t2.tag_type < 30 "
+			. "ORDER BY t2.tag_type, t2.tag_name "
+			. "";
+		
+/*		$strsql = "SELECT DISTINCT tag_type, tag_name "
 			. "FROM ciniki_product_tags "
 			. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 			. "AND tag_type > 10 AND tag_type < 30 "
 			. "ORDER BY tag_type, tag_name "
-			. "";
+			. ""; */
 		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
 			array('container'=>'types', 'fname'=>'tag_type', 'name'=>'type',

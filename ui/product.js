@@ -14,7 +14,7 @@ function ciniki_products_product() {
 		this.product.type_id = 0;
 		this.product.prevnext = {'prev_id':0, 'next_id':0, 'list':[]};
 		this.product.sections = {
-			'_image':{'label':'', 'aside':'yes', 'fields':{
+			'_image':{'label':'', 'aside':'yes', 'type':'imageform', 'fields':{
 				'primary_image_id':{'label':'', 'type':'image_id', 'hidelabel':'yes', 'history':'no'},
 				}},
 			'info':{'label':'', 'aside':'yes', 'list':{

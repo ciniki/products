@@ -13,7 +13,7 @@ function ciniki_products_category() {
 		this.edit.category_permalink = '';
 		this.edit.subcategory_permalink = '';
 		this.edit.sections = {
-			'_image':{'label':'', 'aside':'yes', 'fields':{
+			'_image':{'label':'', 'aside':'yes', 'type':'imageform', 'fields':{
 				'primary_image_id':{'label':'', 'type':'image_id', 'hidelabel':'yes', 
 					'controls':'all', 'history':'no'},
 			}},

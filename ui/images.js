@@ -17,7 +17,7 @@ function ciniki_products_images() {
 		this.edit.product_id = 0;
 		this.edit.product_image_id = 0;
 		this.edit.sections = {
-			'_image':{'label':'Photo', 'fields':{
+			'_image':{'label':'Photo', 'type':'imageform', 'fields':{
 				'image_id':{'label':'', 'type':'image_id', 'hidelabel':'yes', 'controls':'all', 'history':'no'},
 			}},
 			'info':{'label':'Information', 'type':'simpleform', 'fields':{

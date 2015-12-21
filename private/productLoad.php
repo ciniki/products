@@ -256,10 +256,10 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 			. "FROM ciniki_product_prices "
 			. "LEFT JOIN ciniki_customer_pricepoints ON ("
 				. "ciniki_product_prices.pricepoint_id = ciniki_customer_pricepoints.id "
-				. "AND ciniki_customer_pricepoints.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+				. "AND ciniki_customer_pricepoints.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 				. ") "
-			. "WHERE ciniki_product_prices.product_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
-			. "AND ciniki_product_prices.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. "WHERE ciniki_product_prices.product_id = '" . ciniki_core_dbQuote($ciniki, $product_id) . "' "
+			. "AND ciniki_product_prices.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 			. "ORDER BY ciniki_customer_pricepoints.sequence, ciniki_product_prices.name "
 			. "";
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
@@ -295,8 +295,8 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 		) {
 		$strsql = "SELECT tag_type, tag_name AS lists "
 			. "FROM ciniki_product_tags "
-			. "WHERE product_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
-			. "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. "WHERE product_id = '" . ciniki_core_dbQuote($ciniki, $product_id) . "' "
+			. "AND business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 			. "ORDER BY tag_type, tag_name "
 			. "";
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
@@ -339,8 +339,8 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 			. "ciniki_product_images.webflags, "
 			. "ciniki_product_images.description "
 			. "FROM ciniki_product_images "
-			. "WHERE ciniki_product_images.product_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
-			. "AND ciniki_product_images.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. "WHERE ciniki_product_images.product_id = '" . ciniki_core_dbQuote($ciniki, $product_id) . "' "
+			. "AND ciniki_product_images.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 			. "ORDER BY ciniki_product_images.sequence, ciniki_product_images.date_added, ciniki_product_images.name "
 			. "";
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
@@ -354,7 +354,7 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 			$product['images'] = $rc['images'];
 			foreach($product['images'] as $img_id => $img) {
 				if( isset($img['image']['image_id']) && $img['image']['image_id'] > 0 ) {
-					$rc = ciniki_images_loadCacheThumbnail($ciniki, $args['business_id'], $img['image']['image_id'], 75);
+					$rc = ciniki_images_loadCacheThumbnail($ciniki, $business_id, $img['image']['image_id'], 75);
 					if( $rc['stat'] != 'ok' ) {
 						return $rc;
 					}
@@ -386,10 +386,10 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 					. "OR ciniki_product_audio.wav_audio_id = ciniki_audio.id "
 					. "OR ciniki_product_audio.ogg_audio_id = ciniki_audio.id "
 					. ") "
-				. "AND ciniki_audio.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+				. "AND ciniki_audio.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 				. ") "
-			. "WHERE ciniki_product_audio.product_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
-			. "AND ciniki_product_audio.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. "WHERE ciniki_product_audio.product_id = '" . ciniki_core_dbQuote($ciniki, $product_id) . "' "
+			. "AND ciniki_product_audio.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 			. "ORDER BY ciniki_product_audio.sequence, ciniki_product_audio.name, ciniki_product_audio.date_added "
 			. "";
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
@@ -430,8 +430,8 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 	if( isset($args['files']) && $args['files'] == 'yes' ) {
 		$strsql = "SELECT id, name, extension, permalink "
 			. "FROM ciniki_product_files "
-			. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-			. "AND ciniki_product_files.product_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
+			. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+			. "AND ciniki_product_files.product_id = '" . ciniki_core_dbQuote($ciniki, $product_id) . "' "
 			. "";
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
 			array('container'=>'files', 'fname'=>'id', 'name'=>'file',
@@ -458,14 +458,14 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 			. "FROM ciniki_product_relationships "
 			. "LEFT JOIN ciniki_products ON ((ciniki_product_relationships.product_id = ciniki_products.id "
 					. "OR ciniki_product_relationships.related_id = ciniki_products.id) "
-				. "AND ciniki_products.id <> '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
-				. "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+				. "AND ciniki_products.id <> '" . ciniki_core_dbQuote($ciniki, $product_id) . "' "
+				. "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 				. ") "
-			. "WHERE (ciniki_product_relationships.product_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
-				. "OR (ciniki_product_relationships.related_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
+			. "WHERE (ciniki_product_relationships.product_id = '" . ciniki_core_dbQuote($ciniki, $product_id) . "' "
+				. "OR (ciniki_product_relationships.related_id = '" . ciniki_core_dbQuote($ciniki, $product_id) . "' "
 					. "AND ciniki_product_relationships.relationship_type = 10) "
 				. ") "
-			. "AND ciniki_product_relationships.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. "AND ciniki_product_relationships.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 			. ""; 
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
 			array('container'=>'products', 'fname'=>'id', 'name'=>'product',
@@ -487,11 +487,11 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 			. "ciniki_recipes.name "
 			. "FROM ciniki_product_refs "
 			. "LEFT JOIN ciniki_recipes ON (ciniki_product_refs.object_id = ciniki_recipes.id "
-				. "AND ciniki_recipes.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+				. "AND ciniki_recipes.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 				. ") "
-			. "WHERE ciniki_product_refs.product_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
+			. "WHERE ciniki_product_refs.product_id = '" . ciniki_core_dbQuote($ciniki, $product_id) . "' "
 			. "AND ciniki_product_refs.object = 'ciniki.recipes.recipe' "
-			. "AND ciniki_product_refs.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. "AND ciniki_product_refs.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 			. ""; 
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
 			array('container'=>'recipes', 'fname'=>'id', 'name'=>'recipe',

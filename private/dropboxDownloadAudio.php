@@ -95,7 +95,7 @@ function ciniki_products_dropboxDownloadAudio(&$ciniki, $business_id, $client, $
         curl_setopt($ch, CURLOPT_SSLVERSION, 1);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $client->getAccessToken()));
         if( $file['path'][0] != '/' ) { $file['path'] = '/' . $file['path']; }
-        curl_setopt($ch, CURLOPT_URL, "https://api-content.dropbox.com/1/files/auto" . urlencode($file['path']));
+        curl_setopt($ch, CURLOPT_URL, "https://api-content.dropbox.com/1/files/auto" . rawurlencode($file['path']));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
         curl_setopt($ch, CURLOPT_BINARYTRANSFER, TRUE);
         curl_setopt($ch, CURLOPT_FILE, $fp);

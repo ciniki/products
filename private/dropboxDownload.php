@@ -95,7 +95,7 @@ function ciniki_products_dropboxDownload(&$ciniki, $business_id) {
     //
     // Get the latest changes from Dropbox
     //
-    $rc = $client->getDelta($dropbox_cursor, $products . '/bliss');
+    $rc = $client->getDelta($dropbox_cursor, $products);
     if( !isset($rc['entries']) ) {
         // Nothing to update, return
         return array('stat'=>'ok');
@@ -103,7 +103,7 @@ function ciniki_products_dropboxDownload(&$ciniki, $business_id) {
     // If there is more
     $dropbox_cursor = $rc['cursor'];
     if( count($rc['entries']) == 0 && $rc['has_more'] == 1 ) {
-        $rc = $client->getDelta($dropbox_cursor, $products . '/bliss');
+        $rc = $client->getDelta($dropbox_cursor, $products);
         if( !isset($rc['entries']) ) {
             // Nothing to update, return
             return array('stat'=>'ok');

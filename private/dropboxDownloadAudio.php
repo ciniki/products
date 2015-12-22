@@ -153,7 +153,7 @@ function ciniki_products_dropboxDownloadAudio(&$ciniki, $business_id, $client, $
                 return $rc;
             }
         } elseif( count($update_args) > 0 ) {
-            $rc = ciniki_core_objectAdd($ciniki, $business_id, 'ciniki.products.audio', $update_args, $audio_id, 0x04);
+            $rc = ciniki_core_objectUpdate($ciniki, $business_id, 'ciniki.products.audio', $update_args, $audio_id, 0x04);
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
             }

@@ -95,7 +95,7 @@ function ciniki_products_dropboxDownload(&$ciniki, $business_id) {
     //
     // Get the latest changes from Dropbox
     //
-    $rc = $client->getDelta($dropbox_cursor, $products);
+    $rc = $client->getDelta($dropbox_cursor, $products . '/bliss');
     if( !isset($rc['entries']) ) {
         // Nothing to update, return
         return array('stat'=>'ok');
@@ -103,8 +103,7 @@ function ciniki_products_dropboxDownload(&$ciniki, $business_id) {
     // If there is more
     $dropbox_cursor = $rc['cursor'];
     if( count($rc['entries']) == 0 && $rc['has_more'] == 1 ) {
-        error_log('delta again');
-        $rc = $client->getDelta($dropbox_cursor, $products);
+        $rc = $client->getDelta($dropbox_cursor, $products . '/bliss');
         if( !isset($rc['entries']) ) {
             // Nothing to update, return
             return array('stat'=>'ok');
@@ -148,6 +147,7 @@ function ciniki_products_dropboxDownload(&$ciniki, $business_id) {
                         if( $entry[1]['mime_type'] == 'audio/wav' || $entry[1]['mime_type'] == 'audio/x-wav' ) {
                             $updates[$product_code][$matches[5]]['audio'] = array(
                                 'path'=>$entry[1]['path'], 
+                                'rev'=>$entry[1]['rev'], 
                                 'modified'=>$entry[1]['modified'], 
                                 'mime_type'=>$entry[1]['mime_type'],
                                 ); 
@@ -162,8 +162,6 @@ function ciniki_products_dropboxDownload(&$ciniki, $business_id) {
     // Update Ciniki
     //
     foreach($updates as $product_code => $product) {
-        error_log("Updating: " . $product_code);
-
         //  
         // Turn off autocommit
         //  

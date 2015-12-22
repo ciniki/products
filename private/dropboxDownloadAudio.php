@@ -22,6 +22,7 @@ function ciniki_products_dropboxDownloadAudio(&$ciniki, $business_id, $client, $
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'makePermalink');
     ciniki_core_loadMethod($ciniki, 'ciniki', 'audio', 'hooks', 'insertFromFile');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'audio', 'hooks', 'dropboxFileRevs');
 
     if( !isset($ciniki['config']['ciniki.core']['sox']) ) {
         return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2923', 'msg'=>'Missing audio converter'));
@@ -29,13 +30,25 @@ function ciniki_products_dropboxDownloadAudio(&$ciniki, $business_id, $client, $
     $sox = $ciniki['config']['ciniki.core']['sox'];
 
     foreach($details as $file) {
+        //
+        // Load the existing audio to see if there is new versions
+        //
+        $rc = ciniki_audio_hooks_dropboxFileRevs($ciniki, $business_id, array('path'=>$file['path']));
+        if( $rc['stat'] != 'ok' ) {
+            return $rc;
+        }
+        if( isset($rc['files']) ) {
+            $file_revs = $rc['files'];
+        } else {
+            $file_revs = array();
+        }
+
+        //
+        // Setup the filename
+        //
         $filename = preg_replace("/^.*\/([^\/]+)$/", "$1", $file['path']);
         $name = preg_replace("/^([^\/]+)\.([^\/\.]+)$/", "$1", $filename);
         $extension = preg_replace("/^.*\.([^\.]+)$/", "$1", $filename);
-
-        print "filename: $filename\n";
-        print "name: $name\n";
-        print "extension: $extension\n";
 
         if( $extension != 'wav' ) {
             return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2924', 'msg'=>'Incorrect file format'));
@@ -54,6 +67,24 @@ function ciniki_products_dropboxDownloadAudio(&$ciniki, $business_id, $client, $
         $tmp_filename .= '/ORG-' . $filename;
 
         //
+        // Check the revisions before downloading
+        //
+        $updates = 'no';
+        if( !isset($file_revs[$name . '.wav']) || $file_revs[$name . '.wav']['dropbox_rev'] != $file['rev'] ) {
+            $updates = 'yes';
+        }
+        if( !isset($file_revs[$name . '.mp3']) || $file_revs[$name . '.mp3']['dropbox_rev'] != $file['rev'] ) {
+            $updates = 'yes';
+        }
+        if( !isset($file_revs[$name . '.ogg']) || $file_revs[$name . '.ogg']['dropbox_rev'] != $file['rev'] ) {
+            $updates = 'yes';
+        }
+
+        if( $updates == 'no' ) {
+            return array('stat'=>'ok');
+        }
+
+        //
         // Get the file from dropbox
         //
         $ch = curl_init();
@@ -64,7 +95,7 @@ function ciniki_products_dropboxDownloadAudio(&$ciniki, $business_id, $client, $
         curl_setopt($ch, CURLOPT_SSLVERSION, 1);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $client->getAccessToken()));
         if( $file['path'][0] != '/' ) { $file['path'] = '/' . $file['path']; }
-        curl_setopt($ch, CURLOPT_URL, "https://api-content.dropbox.com/1/files/auto" . $file['path']);
+        curl_setopt($ch, CURLOPT_URL, "https://api-content.dropbox.com/1/files/auto" . urlencode($file['path']));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
         curl_setopt($ch, CURLOPT_BINARYTRANSFER, TRUE);
         curl_setopt($ch, CURLOPT_FILE, $fp);
@@ -74,11 +105,16 @@ function ciniki_products_dropboxDownloadAudio(&$ciniki, $business_id, $client, $
         fclose($fp);
 
         //
+        // Use the checksum from the main file as checksum will be different each time a file is transcoded to mp3/ogg/wav
+        //
+        $checksum = crc32($tmp_filename);
+
+        //
         // Convert
         //
-        $output = exec("$sox $tmp_filename -r 44.1k -b 16 $wav_filename gain -n -1");
-        $output = exec("$sox $tmp_filename -r 44.1k -C 0.2 $mp3_filename gain -n -1");
-        $output = exec("$sox $tmp_filename -r 44.1k -C 10 $ogg_filename gain -n -1");
+        $output = exec("$sox '$tmp_filename' -r 44.1k -b 16 '$wav_filename' gain -n -1");
+        $output = exec("$sox '$tmp_filename' -r 44.1k -C 0.2 '$mp3_filename' gain -n -1");
+        $output = exec("$sox '$tmp_filename' -r 44.1k -C 10 '$ogg_filename' gain -n -1");
 
         //
         // Insert the files
@@ -86,7 +122,10 @@ function ciniki_products_dropboxDownloadAudio(&$ciniki, $business_id, $client, $
         $rc = ciniki_audio_hooks_insertFromFile($ciniki, $business_id, array(
             'filename'=>$wav_filename,
             'name'=>$name,
+            'checksum'=>$checksum,
             'original_filename'=>$name . '.wav',
+            'dropbox_path'=>$file['path'],
+            'dropbox_rev'=>$file['rev'],
             ));
         if( $rc['stat'] != 'ok' && $rc['stat'] != 'exists' ) {
             return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2925', 'msg'=>'Unable to add file', 'err'=>$rc['err']));
@@ -96,7 +135,10 @@ function ciniki_products_dropboxDownloadAudio(&$ciniki, $business_id, $client, $
         $rc = ciniki_audio_hooks_insertFromFile($ciniki, $business_id, array(
             'filename'=>$mp3_filename,
             'name'=>$name,
+            'checksum'=>$checksum,
             'original_filename'=>$name . '.mp3',
+            'dropbox_path'=>$file['path'],
+            'dropbox_rev'=>$file['rev'],
             ));
         if( $rc['stat'] != 'ok' && $rc['stat'] != 'exists' ) {
             return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2926', 'msg'=>'Unable to add file', 'err'=>$rc['err']));
@@ -106,7 +148,10 @@ function ciniki_products_dropboxDownloadAudio(&$ciniki, $business_id, $client, $
         $rc = ciniki_audio_hooks_insertFromFile($ciniki, $business_id, array(
             'filename'=>$ogg_filename,
             'name'=>$name,
+            'checksum'=>$checksum,
             'original_filename'=>$name . '.ogg',
+            'dropbox_path'=>$file['path'],
+            'dropbox_rev'=>$file['rev'],
             ));
         if( $rc['stat'] != 'ok' && $rc['stat'] != 'exists' ) {
             return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2927', 'msg'=>'Unable to add file', 'err'=>$rc['err']));
@@ -158,6 +203,11 @@ function ciniki_products_dropboxDownloadAudio(&$ciniki, $business_id, $client, $
                 return $rc;
             }
         }
+
+        unlink($tmp_filename);
+        unlink($ogg_filename);
+        unlink($mp3_filename);
+        unlink($wav_filename);
     }
 
     return array('stat'=>'ok');

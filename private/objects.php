@@ -214,6 +214,12 @@ function ciniki_products_objects($ciniki) {
 			),
 		'history_table'=>'ciniki_product_history',
 		);
+	$objects['setting'] = array(
+		'type'=>'settings',
+		'name'=>'Product Settings',
+		'table'=>'ciniki_products_settings',
+		'history_table'=>'ciniki_product_history',
+		);
 	
 	return array('stat'=>'ok', 'objects'=>$objects);
 }

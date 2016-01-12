@@ -1,0 +1,5 @@
+#
+# This file will upgrade the database table wineproductions to version 1.02.
+#
+CREATE INDEX permalink ON ciniki_product_tags(permalink);
+ALTER TABLE ciniki_product_tags COMMENT='v1.02';

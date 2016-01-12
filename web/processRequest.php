@@ -471,7 +471,6 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
 		//
 		// Get the details for a category
 		//
-error_log('test008');
 		$rc = ciniki_products_web_categoryDetails($ciniki, $settings, $ciniki['request']['business_id'],
 			array('category_permalink'=>$category_permalink));
 		if( $rc['stat'] != 'ok' ) {
@@ -492,7 +491,6 @@ error_log('test008');
 		} else {
 			$article_title = $page_title;
 		}
-error_log('test009');
 		//
 		// if there's any content or an image for the category, display it
 		//

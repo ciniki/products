@@ -46,5 +46,6 @@ create table ciniki_product_tags (
 	last_updated datetime not null,
 	primary key (id),
 	unique index (product_id, tag_type, tag_name),
+    index (permalink),
 	index sync (business_id, uuid, last_updated)
-) ENGINE='InnoDB', COMMENT='v1.01', CHARACTER SET latin1, COLLATE latin1_swedish_ci;
+) ENGINE='InnoDB', COMMENT='v1.02';

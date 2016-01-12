@@ -26,6 +26,7 @@ function ciniki_products_web_categoryDetails($ciniki, $settings, $business_id, $
 	//
 	// Get the details for the category
 	//
+    error_log('test-001');
 	$strsql = "SELECT ciniki_product_tags.tag_name, "
 		. "IFNULL(ciniki_product_categories.name, '') AS name, "
 		. "IFNULL(ciniki_product_categories.sequence, 0) AS sequence, "
@@ -43,6 +44,7 @@ function ciniki_products_web_categoryDetails($ciniki, $settings, $business_id, $
 		. "AND ciniki_product_tags.tag_type = 10 "
 		. "LIMIT 1 "
 		. "";
+    error_log('test-002');
 	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'tag');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
@@ -64,6 +66,7 @@ function ciniki_products_web_categoryDetails($ciniki, $settings, $business_id, $
 	//
 	// Check for subcategories
 	//
+    error_log('test-003');
 	$strsql = "SELECT t2.tag_type, t2.tag_name AS name, "
 		. "t2.permalink, "
 		. "IFNULL(ciniki_product_categories.name, '') AS cat_name, "
@@ -107,6 +110,7 @@ function ciniki_products_web_categoryDetails($ciniki, $settings, $business_id, $
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}
+    error_log('test-004');
 	if( isset($rc['product_types']) && count($rc['product_types']) > 0 ) {
 		$product_types = $rc['product_types'];
 		//
@@ -165,6 +169,7 @@ function ciniki_products_web_categoryDetails($ciniki, $settings, $business_id, $
 			}
 		}
 
+    error_log('test-005');
 		//
 		// Check if there's more than one sub-category type
 		//
@@ -186,7 +191,8 @@ function ciniki_products_web_categoryDetails($ciniki, $settings, $business_id, $
 				//
 				// Look for the highlight image, or the most recently added image
 				//
-				$strsql = "SELECT ciniki_products.primary_image_id, ciniki_images.image "
+				//$strsql = "SELECT ciniki_products.primary_image_id, ciniki_images.image "
+				$strsql = "SELECT ciniki_products.primary_image_id "
 					. "FROM ciniki_product_tags, ciniki_products, ciniki_images "
 					. "WHERE ciniki_product_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 					. "AND ciniki_product_tags.permalink = '" . ciniki_core_dbQuote($ciniki, $cat['permalink']) . "' "
@@ -206,6 +212,7 @@ function ciniki_products_web_categoryDetails($ciniki, $settings, $business_id, $
 					. "ORDER BY (ciniki_products.webflags&0x20) DESC, (ciniki_products.webflags&0x10) DESC, "
 					. "ciniki_products.date_added DESC "
 					. "LIMIT 1";
+                error_log($strsql);
 				$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'image');
 				if( $rc['stat'] != 'ok' ) {
 					return $rc;
@@ -218,6 +225,7 @@ function ciniki_products_web_categoryDetails($ciniki, $settings, $business_id, $
 			}
 			$rsp['subcategorytypes'][] = $type;
 		}
+    error_log('test-006');
 	} else {
 		$rsp['subcategories'] = array();
 	}
@@ -334,6 +342,7 @@ function ciniki_products_web_categoryDetails($ciniki, $settings, $business_id, $
 	}
 */
 	
+    error_log('test-007');
 	//
 	// Check for any products that are not in a sub category
 	//
@@ -387,6 +396,7 @@ function ciniki_products_web_categoryDetails($ciniki, $settings, $business_id, $
 	} else {
 		$rsp['products'] = array();
 	}
+    error_log('test-008');
 
 	return $rsp;
 }

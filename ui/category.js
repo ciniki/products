@@ -23,6 +23,20 @@ function ciniki_products_category() {
 			'_name':{'label':'', 'aside':'yes', 'fields':{
 				'name':{'label':'Name', 'type':'text'},
 				'sequence':{'label':'Sequence', 'type':'text', 'size':'small'},
+                'subcategory':{'label':'Sub Category', 'type':'select', 
+                    'visible':function() { return M.ciniki_products_category.edit.subcategory_permalink==''?'yes':'no'; },
+                    'options':{'':'All'},
+                    },
+             }},
+             '_formats':{'label':'Display Formats', 
+                'active':function() { return M.ciniki_products_category.edit.subcategory_permalink==''?'yes':'no'; },
+                'aside':'yes', 'fields':{
+                    'format':{'label':'Category', 'type':'select', 
+                        'options':{'':'Default'},
+                        },
+                    'subformat':{'label':'Sub Category', 'type':'select', 
+                        'options':{'':'Default'},
+                        },
 			}},
 			'_synopsis':{'label':'Synopsis', 'fields':{
 				'synopsis':{'label':'', 'type':'textarea', 'size':'small', 'hidelabel':'yes'},

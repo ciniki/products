@@ -86,7 +86,7 @@ function ciniki_products_productGet($ciniki) {
 			. "FROM ciniki_product_tags AS t1, ciniki_product_tags AS t2 "
 			. "WHERE t1.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 			. "AND t1.tag_type = 10 "
-			. "AND t1.tag_name IN (" . ciniki_core_dbQuoteList($ciniki, explode('::', $rsp['product']['categories'])) . ") "
+			. "AND t1.tag_name IN (" . ciniki_core_dbQuoteList($ciniki, explode('::', (isset($rsp['product']['categories'])?$rsp['product']['categories']:''))) . ") "
 			. "AND t1.product_id = t2.product_id "
 			. "AND t2.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 			. "AND t2.tag_type > 10 AND t2.tag_type < 30 "

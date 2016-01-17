@@ -260,22 +260,33 @@ function ciniki_products_dropboxDownload(&$ciniki, $business_id) {
             elseif( ($field == 'synopsis' || $field == 'description' ) && $details['mime_type'] == 'application/rtf' ) {
                 $rc = ciniki_core_dropboxParseRTFToText($ciniki, $business_id, $client, $details['path']);
                 if( $rc['stat'] != 'ok' ) {
-                    ciniki_core_dbTransactionRollback($ciniki, 'ciniki.artistprofiles');
+                    ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
                     return $rc;
                 }
-                if( $rc['content'] != $ciniki_artist[$field] ) {
+                if( $rc['content'] != $ciniki_product[$field] ) {
                     $update_args[$field] = $rc['content'];
                 }
             }
             elseif( ($field == 'synopsis' || $field == 'description' ) && $details['mime_type'] == 'text/plain' ) {
                 $rc = ciniki_core_dropboxOpenTXT($ciniki, $business_id, $client, $details['path']);
                 if( $rc['stat'] != 'ok' ) {
-                    ciniki_core_dbTransactionRollback($ciniki, 'ciniki.artistprofiles');
+                    ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
                     return $rc;
                 }
-                if( $rc['content'] != $ciniki_artist[$field] ) {
+                if( $rc['content'] != $ciniki_product[$field] ) {
                     $update_args[$field] = $rc['content'];
                 }
+            }
+        }
+
+        //
+        // Update the product
+        //
+        if( count($update_args) > 0 ) {
+            $rc = ciniki_core_objectUpdate($ciniki, $business_id, 'ciniki.products.product', $product_id, $update_args, 0x04);
+            if( $rc['stat'] != 'ok' ) {
+                ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
+                return $rc;
             }
         }
 

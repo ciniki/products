@@ -136,13 +136,39 @@ function ciniki_products_dropboxDownload(&$ciniki, $business_id) {
         //
         // Check for a match in the specified directory and path matches valid path list information
         //
-        if( preg_match("#^($products)/([^/]+)/([^/]+)/((audio)/(.*))$#i", $entry[0], $matches) ) {
+//        if( preg_match("#^($artistprofiles)/([^/]+)/([^/]+)/(info.rtf|info.txt|(primary_image|synopsis|description|audio|images|links)/(.*))$#", $entry[0], $matches) ) {
+        if( preg_match("#^($products)/([^/]+)/([^/]+)/(info.rtf|info.txt|(primary_image|synopsis|description|audio)/(.*))$#i", $entry[0], $matches) ) {
             $product_code = $matches[3];
             if( !isset($updates[$product_code]) ) {
                 $updates[$product_code] = array('audio'=>array());
             }
             if( isset($matches[5]) ) {
                 switch($matches[5]) {
+                    case 'primary_image': 
+                        if( $entry[1]['mime_type'] == 'image/jpeg' ) {
+                            $updates[$product_code][$matches[5]] = array(
+                                'path'=>$entry[1]['path'], 
+                                'modified'=>$entry[1]['modified'], 
+                                'mime_type'=>$entry[1]['mime_type'],
+                                ); 
+                            break;
+                        }
+                        elseif( $entry[1]['mime_type'] == 'text/plain' ) {
+                            $updates[$product_code][$matches[5] . '_caption'] = array(
+                                'path'=>$entry[1]['path'], 
+                                'modified'=>$entry[1]['modified'], 
+                                'mime_type'=>$entry[1]['mime_type'],
+                                ); 
+                            break;
+                        }
+                    case 'synopsis': 
+                    case 'description': 
+                        $updates[$product_code][$matches[5]] = array(
+                            'path'=>$entry[1]['path'], 
+                            'modified'=>$entry[1]['modified'], 
+                            'mime_type'=>$entry[1]['mime_type'],
+                            ); 
+                        break;
                     case 'audio': 
                         if( $entry[1]['mime_type'] == 'audio/wav' || $entry[1]['mime_type'] == 'audio/x-wav' ) {
                             $updates[$product_code][$matches[5]]['audio'] = array(
@@ -152,8 +178,14 @@ function ciniki_products_dropboxDownload(&$ciniki, $business_id) {
                                 'mime_type'=>$entry[1]['mime_type'],
                                 ); 
                             break;
-                        }
+                        } 
                 }
+            } elseif( isset($matches[4]) && $matches[4] == 'info.txt' ) {
+                $updates[$product_code]['info'] = array(
+                    'path'=>$entry[1]['path'], 
+                    'modified'=>$entry[1]['modified'], 
+                    'mime_type'=>$entry[1]['mime_type'],
+                    ); 
             }
         }
     }
@@ -212,6 +244,37 @@ function ciniki_products_dropboxDownload(&$ciniki, $business_id) {
                 if( $rc['stat'] != 'ok' ) {
                     ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
                     return $rc;
+                }
+            }
+            elseif( $field == 'primary_image' && $details['mime_type'] == 'image/jpeg' ) {
+                print "image: " . $details['path'] . "\n";
+                $rc = ciniki_images_insertFromDropbox($ciniki, $business_id, $ciniki['session']['user']['id'], $client, $details['path'], 1, '', '', 'no');
+                if( $rc['stat'] != 'ok' && $rc['stat'] != 'exists' ) {
+                    ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
+                    return $rc;
+                }
+                if( $rc['id'] != $ciniki_product['primary_image_id'] ) {
+                    $update_args['primary_image_id'] = $rc['id'];
+                }
+            }
+            elseif( ($field == 'synopsis' || $field == 'description' ) && $details['mime_type'] == 'application/rtf' ) {
+                $rc = ciniki_core_dropboxParseRTFToText($ciniki, $business_id, $client, $details['path']);
+                if( $rc['stat'] != 'ok' ) {
+                    ciniki_core_dbTransactionRollback($ciniki, 'ciniki.artistprofiles');
+                    return $rc;
+                }
+                if( $rc['content'] != $ciniki_artist[$field] ) {
+                    $update_args[$field] = $rc['content'];
+                }
+            }
+            elseif( ($field == 'synopsis' || $field == 'description' ) && $details['mime_type'] == 'text/plain' ) {
+                $rc = ciniki_core_dropboxOpenTXT($ciniki, $business_id, $client, $details['path']);
+                if( $rc['stat'] != 'ok' ) {
+                    ciniki_core_dbTransactionRollback($ciniki, 'ciniki.artistprofiles');
+                    return $rc;
+                }
+                if( $rc['content'] != $ciniki_artist[$field] ) {
+                    $update_args[$field] = $rc['content'];
                 }
             }
         }

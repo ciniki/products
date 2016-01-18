@@ -1,0 +1,9 @@
+#
+# This file will add the uuid to ciniki_products
+# which is required for the sync to work.
+#
+ALTER TABLE ciniki_product_categories ADD COLUMN tag_type int not null AFTER sequence;
+ALTER TABLE ciniki_product_categories ADD COLUMN display varchar(250) not null AFTER tag_type;
+ALTER TABLE ciniki_product_categories ADD COLUMN subcategorydisplay varchar(250) not null AFTER display;
+ALTER TABLE ciniki_product_categories ADD COLUMN productdisplay varchar(250) not null AFTER subcategorydisplay;
+ALTER TABLE ciniki_product_categories COMMENT='v1.02';

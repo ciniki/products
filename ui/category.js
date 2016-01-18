@@ -23,7 +23,7 @@ function ciniki_products_category() {
 			'_name':{'label':'', 'aside':'yes', 'fields':{
 				'name':{'label':'Name', 'type':'text'},
 				'sequence':{'label':'Sequence', 'type':'text', 'size':'small'},
-                'subcategory':{'label':'Sub Category', 'type':'select', 
+                'tag_type':{'label':'Sub Category', 'type':'select', 
                     'visible':function() { return M.ciniki_products_category.edit.subcategory_permalink==''?'yes':'no'; },
                     'options':{'':'All'},
                     },
@@ -31,11 +31,22 @@ function ciniki_products_category() {
              '_formats':{'label':'Display Formats', 
                 'active':function() { return M.ciniki_products_category.edit.subcategory_permalink==''?'yes':'no'; },
                 'aside':'yes', 'fields':{
-                    'format':{'label':'Category', 'type':'select', 
-                        'options':{'':'Default'},
+                    'display':{'label':'Category', 'type':'select', 
+                        'options':{
+                            'default':'Default', 
+                            'tradingcards':'Trading Cards'},
                         },
-                    'subformat':{'label':'Sub Category', 'type':'select', 
-                        'options':{'':'Default'},
+                    'subcategorydisplay':{'label':'Sub Category', 'type':'select', 
+                        'options':{
+                            'default':'Default', 
+                            'image-description-audiopricelist':'Image, Description, Products/Audio/Prices',
+                            'image-description-audio-prices':'Image, Description, Audio, Prices',
+                            },
+                        },
+                    'productdisplay':{'label':'Product', 'type':'select', 
+                        'options':{
+                            'default':'Default', 
+                            'image-audio-description-subcategorylist':'Image, Audio, Description, Sub Category Products'},
                         },
 			}},
 			'_synopsis':{'label':'Synopsis', 'fields':{
@@ -101,6 +112,12 @@ function ciniki_products_category() {
 				var p = M.ciniki_products_category.edit;
 				p.data = rsp.category;
 				p.category_id = rsp.category.id;
+                p.sections._name.fields.tag_type.options = {'0':'All'};
+                if( rsp.tag_types != null ) {
+                    for(var i in rsp.tag_types) {
+                        p.sections._name.fields.tag_type.options[i] = rsp.tag_types[i];
+                    }
+                }
 				p.refresh();
 				p.show(cb);
 			});

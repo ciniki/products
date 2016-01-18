@@ -42,7 +42,7 @@ function ciniki_products_categoryGet($ciniki) {
 	//
 	// Build the query to get the details about a category
 	//
-	$strsql = "SELECT id, name, sequence, primary_image_id, "
+	$strsql = "SELECT id, name, sequence, tag_type, display, subcategorydisplay, productdisplay, primary_image_id, "
 		. "synopsis, description "
 		. "FROM ciniki_product_categories "
 		. "WHERE category = '" . ciniki_core_dbQuote($ciniki, $args['category']) . "' "
@@ -61,6 +61,10 @@ function ciniki_products_categoryGet($ciniki) {
 		$category = array('id'=>0,
 			'name'=>'',
 			'sequence'=>'',
+            'tag_type'=>'0',
+            'display'=>'',
+            'subcategorydisplay'=>'',
+            'productdisplay'=>'',
 			'primary_image_id'=>'0',
 			'synopsis'=>'',
 			'description'=>'',
@@ -69,6 +73,90 @@ function ciniki_products_categoryGet($ciniki) {
 		$category = $rc['category'];
 	}
 
-	return array('stat'=>'ok', 'category'=>$category);
+    //
+    // Load the product type definitions
+    //
+    $strsql = "SELECT id, name_s, name_p, object_def "
+        . "FROM ciniki_product_types "
+        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "ORDER BY id "
+        . "";
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
+    $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
+        array('container'=>'types', 'fname'=>'id',
+            'fields'=>array('id', 'name_s', 'name_p', 'object_def')),
+        ));
+    $types = isset($rc['types'])?$rc['types']:array();
+    $object_defs = array();
+    // Prep the object defs
+    foreach($types as $type_id => $type) {
+        $object_defs[$type_id] = unserialize($type['object_def']);
+    }
+
+    //
+    // Get the list of tag types available
+    //
+    $strsql = "SELECT t2.tag_type, t2.tag_name AS name, "
+        . "t2.permalink, "
+        . "IFNULL(ciniki_product_categories.name, '') AS cat_name, "
+        . "IFNULL(ciniki_product_categories.primary_image_id, 0) AS image_id, "
+        . "IFNULL(ciniki_product_categories.synopsis, '') AS synopsis, "
+        . "ciniki_products.type_id, "
+        . "COUNT(ciniki_products.id) AS num_products "
+        . "FROM ciniki_product_tags AS t1 "
+        . "LEFT JOIN ciniki_product_tags AS t2 ON ("
+            . "t1.product_id = t2.product_id "
+            . "AND t2.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "AND t2.tag_type > 10 AND t2.tag_type < 30 "
+        . ") "
+        . "LEFT JOIN ciniki_product_categories ON ("
+            . "t1.permalink = ciniki_product_categories.category "
+            . "AND t2.permalink = ciniki_product_categories.subcategory "
+            . "AND ciniki_product_categories.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . ") "
+        . "LEFT JOIN ciniki_products ON ("
+            . "t2.product_id = ciniki_products.id "
+            . "AND ciniki_products.parent_id = 0 "
+            . "AND (ciniki_products.webflags&0x01) > 0 "
+            . "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . ") "
+        . "WHERE t1.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "AND t1.permalink = '" . ciniki_core_dbQuote($ciniki, $args['category']) . "' "
+        . "AND t1.tag_type = 10 "
+        . "GROUP BY type_id, t2.tag_type, t2.tag_name "
+        . "ORDER BY type_id, t2.tag_type, IFNULL(ciniki_product_categories.sequence, 999), t2.tag_name "
+        . "";
+    $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
+        array('container'=>'product_types', 'fname'=>'type_id', 'name'=>'product_type',
+            'fields'=>array('id'=>'type_id')),
+        array('container'=>'types', 'fname'=>'tag_type', 'name'=>'type',
+            'fields'=>array('tag_type', 'name')),
+        array('container'=>'categories', 'fname'=>'name', 'name'=>'category',
+            'fields'=>array('name', 'cat_name', 'permalink', 'image_id', 'synopsis', 'num_products')),
+        ));
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    $tag_types = array();
+    if( isset($rc['product_types']) ) {
+        $product_types = $rc['product_types'];
+        foreach($product_types as $ptid => $ptype) {
+            // Check of the product type exists
+            if( isset($object_defs[$ptype['id']]) ) {
+                $odef = $object_defs[$ptype['id']]['parent'];
+                foreach($ptype['types'] as $tid => $type) {
+                    if( isset($odef['subcategories-' . $type['tag_type']]['pname']) ) {
+                        $sub_cat_name = $odef['subcategories-' . $type['tag_type']]['pname'];
+                    } else {
+                        $sub_cat_name = 'Sub-Categories';
+                    }
+                    $tag_types[$tid] = $sub_cat_name;
+                }
+            }
+        }
+    }
+    
+
+	return array('stat'=>'ok', 'category'=>$category, 'tag_types'=>$tag_types);
 }
 ?>

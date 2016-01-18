@@ -24,6 +24,10 @@ function ciniki_products_categoryUpdate($ciniki) {
 		'category_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Category'),
 		'name'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Name'),
 		'sequence'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Sequence'),
+		'tag_type'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Tag Type'),
+		'display'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Category Format'),
+		'subcategorydisplay'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Sub Category Format'),
+		'productdisplay'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Product Format'),
 		'primary_image_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Image'),
 		'synopsis'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Synopsis'),
 		'description'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Description'),
@@ -48,7 +52,8 @@ function ciniki_products_categoryUpdate($ciniki) {
 	// Update the category
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
-	return ciniki_core_objectUpdate($ciniki, $args['business_id'], 'ciniki.products.category', 
+	$rc = ciniki_core_objectUpdate($ciniki, $args['business_id'], 'ciniki.products.category', 
 		$args['category_id'], $args);
+    return $rc;
 }
 ?>

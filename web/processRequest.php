@@ -135,7 +135,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
             //
             // Get any details about the category from settings
             //
-            $strsql = "SELECT id, name, sequence, "
+            $strsql = "SELECT id, name, subname, sequence, "
                 . "tag_type, display, subcategorydisplay, productdisplay, "
                 . "primary_image_id, synopsis, description "
                 . "FROM ciniki_product_categories "
@@ -163,6 +163,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                 $category = array(
                     'id'=>0,
                     'name'=>$page['title'],
+                    'subname'=>'',
                     'sequence'=>1,
                     'tag_type'=>0,
                     'primary_image_id'=>0,
@@ -205,7 +206,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                 //
                 // Get any details about the category from settings
                 //
-                $strsql = "SELECT id, name, sequence, "
+                $strsql = "SELECT id, name, subname, sequence, "
                     . "tag_type, display, subcategorydisplay, productdisplay, "
                     . "primary_image_id, synopsis, description "
                     . "FROM ciniki_product_categories "
@@ -270,7 +271,8 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
         //
         $strsql = "SELECT t2.tag_type, t2.tag_name AS name, "
             . "t2.permalink, "
-            . "IFNULL(ciniki_product_categories.name, '') AS cat_name, "
+            . "IFNULL(ciniki_product_categories.name, t2.tag_name) AS cat_name, "
+            . "IFNULL(ciniki_product_categories.subname, '') AS cat_subname, "
             . "IFNULL(ciniki_product_categories.primary_image_id, 0) AS image_id, "
             . "IFNULL(ciniki_product_categories.synopsis, '') AS synopsis, "
             . "ciniki_products.type_id, "
@@ -309,7 +311,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
             array('container'=>'types', 'fname'=>'tag_type', 'name'=>'type',
                 'fields'=>array('tag_type', 'name')),
             array('container'=>'categories', 'fname'=>'name', 'name'=>'category',
-                'fields'=>array('name', 'cat_name', 'permalink', 'image_id', 'synopsis', 'num_products')),
+                'fields'=>array('name'=>'cat_name', 'cat_name', 'subname'=>'cat_subname', 'permalink', 'image_id', 'synopsis', 'num_products')),
             ));
         if( $rc['stat'] != 'ok' ) {
             return $rc;

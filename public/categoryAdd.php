@@ -24,6 +24,7 @@ function ciniki_products_categoryAdd($ciniki) {
 		'category'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Category'),
 		'subcategory'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Sub-Category'),
 		'name'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'', 'name'=>'Name'),
+		'subname'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'', 'name'=>'Sub Name'),
 		'sequence'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'', 'name'=>'Sequence'),
 		'tag_type'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Tag Type'),
 		'display'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Category Format'),

@@ -51,6 +51,7 @@ create table ciniki_product_categories (
 	category varchar(150) not null,
 	subcategory varchar(150) not null,
 	name varchar(150) not null,
+	subname varchar(150) not null,
 	sequence tinyint unsigned not null,
     tag_type int not null,
     display varchar(250) not null,
@@ -65,4 +66,4 @@ create table ciniki_product_categories (
 	primary key (id),
 	unique index (business_id, category, subcategory),
 	index sync (business_id, uuid, last_updated)
-) ENGINE='InnoDB', COMMENT='v1.02';
+) ENGINE='InnoDB', COMMENT='v1.03';

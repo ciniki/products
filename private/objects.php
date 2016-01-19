@@ -91,7 +91,8 @@ function ciniki_products_objects($ciniki) {
 		'fields'=>array(
 			'category'=>array(),
 			'subcategory'=>array(),
-			'name'=>array(),
+			'name'=>array('name'=>'Sub Name', 'default'=>''),
+			'subname'=>array(),
 			'sequence'=>array(),
             'tag_type'=>array('name'=>'Tag Type', 'default'=>'0'),
             'display'=>array('name'=>'Category Format', 'default'=>''),

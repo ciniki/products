@@ -1,0 +1,6 @@
+#
+# This file will add the uuid to ciniki_products
+# which is required for the sync to work.
+#
+ALTER TABLE ciniki_product_categories ADD COLUMN subname varchar(150) not null AFTER name;
+ALTER TABLE ciniki_product_categories COMMENT='v1.03';

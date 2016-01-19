@@ -22,6 +22,7 @@ function ciniki_products_category() {
 //			}},
 			'_name':{'label':'', 'aside':'yes', 'fields':{
 				'name':{'label':'Name', 'type':'text'},
+				'subname':{'label':'Sub Name', 'type':'text'},
 				'sequence':{'label':'Sequence', 'type':'text', 'size':'small'},
                 'tag_type':{'label':'Sub Category', 'type':'select', 
                     'visible':function() { return M.ciniki_products_category.edit.subcategory_permalink==''?'yes':'no'; },

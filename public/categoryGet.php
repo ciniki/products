@@ -42,7 +42,7 @@ function ciniki_products_categoryGet($ciniki) {
 	//
 	// Build the query to get the details about a category
 	//
-	$strsql = "SELECT id, name, sequence, tag_type, display, subcategorydisplay, productdisplay, primary_image_id, "
+	$strsql = "SELECT id, name, subname, sequence, tag_type, display, subcategorydisplay, productdisplay, primary_image_id, "
 		. "synopsis, description "
 		. "FROM ciniki_product_categories "
 		. "WHERE category = '" . ciniki_core_dbQuote($ciniki, $args['category']) . "' "
@@ -60,6 +60,7 @@ function ciniki_products_categoryGet($ciniki) {
 		//
 		$category = array('id'=>0,
 			'name'=>'',
+			'subname'=>'',
 			'sequence'=>'',
             'tag_type'=>'0',
             'display'=>'',

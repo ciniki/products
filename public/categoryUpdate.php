@@ -23,6 +23,7 @@ function ciniki_products_categoryUpdate($ciniki) {
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
 		'category_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Category'),
 		'name'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Name'),
+		'subname'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Sub Name'),
 		'sequence'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Sequence'),
 		'tag_type'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Tag Type'),
 		'display'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Category Format'),

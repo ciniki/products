@@ -107,7 +107,7 @@ function ciniki_products_dropboxDownloadAudio(&$ciniki, $business_id, $client, $
         //
         // Use the checksum from the main file as checksum will be different each time a file is transcoded to mp3/ogg/wav
         //
-        $checksum = crc32($tmp_filename);
+        $checksum = hash_file('md5', $tmp_filename);
 
         //
         // Convert

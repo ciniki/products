@@ -40,6 +40,7 @@ function ciniki_products_category() {
                         'options':{
                             'default':'Default', 
                             'image-description-audiopricelist':'Image, Description, Products/Audio/Prices',
+                            'image-description-productaudio-prices':'Image, Description, Products/Audio, Prices',
                             'image-description-audio-prices':'Image, Description, Audio, Prices',
                             },
                         },

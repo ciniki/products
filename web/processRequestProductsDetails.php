@@ -356,8 +356,9 @@ function ciniki_products_web_processRequestProductsDetails(&$ciniki, $settings, 
                         $products[$pid]['prices'][$price_id]['limited_units'] = 'yes';
                     }
                     $products[$pid]['prices'][$price_id]['units_inventory'] = $products[$pid]['inventory_current_num'];
+                    $products[$pid]['prices'][$price_id]['units_available'] = $products[$pid]['inventory_current_num'];
                     if( isset($reserved_quantities[$pid]['quantity_reserved']) && $reserved_quantities[$pid]['quantity_reserved'] > 0 ) {
-                        $products[$pid]['prices']['1']['units_available'] -= $reserved_quantities[$pid]['quantity_reserved'];
+                        $products[$pid]['prices'][$price_id]['units_available'] -= $reserved_quantities[$pid]['quantity_reserved'];
                     }
 //                    $products[$pid]['prices'][$price_id]['unit_amount_display'] = numfmt_format_currency($intl_currency_fmt, $price['unit_amount'], $intl_currency);
                 }

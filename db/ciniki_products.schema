@@ -126,12 +126,16 @@
 #
 #							0x01 - Visible, display on the website
 #							0x02 - Sell Online
-#							0x04 - 
+#							0x04 - Hide Price
 #							0x08 - 
 #							0x10 - Category Highlight
 #							0x20 - Sub-Category Highlight
 #							0x40 - 
 #							0x80 - 
+#							0x0100 - Visible to logged in customers
+#                           0x0200 - Visible to logged in members
+#                           0x0400 - Visible to logged in dealers
+#                           0x0800 - Visible to logged in distributors
 #
 # date_added:		The date and time the product was added to the database.
 #
@@ -182,7 +186,7 @@ create table ciniki_products (
 	long_description varchar(20000) not null,
 	start_date datetime not null,
 	end_date datetime not null,
-	webflags tinyint unsigned not null,
+	webflags int unsigned not null,
 	detail01 varchar(100) not null,
 	detail02 varchar(100) not null,
 	detail03 varchar(100) not null,
@@ -200,4 +204,4 @@ create table ciniki_products (
 	index (business_id, uuid, last_updated),
 	index supplier (supplier_id, supplier_item_number),
 	unique index permalink (business_id, permalink)
-) ENGINE='InnoDB', COMMENT='v1.12';
+) ENGINE='InnoDB', COMMENT='v1.13';

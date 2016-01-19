@@ -184,6 +184,7 @@ function ciniki_products_edit() {
 			'3':{'name':'Hide Price', 'active':'yes'},
 			'5':{'name':'Category Highlight', 'active':'no'},
 			'6':{'name':'Sub-Category Highlight', 'active':'no'},
+            '11':{'name':'Visible to dealers', 'active':'no'},
 			};
 		var flags = {
 			'3':{'name':'Promotional Item', 'active':'no'},
@@ -202,6 +203,9 @@ function ciniki_products_edit() {
 		if( type[pc]['subcategories-11'] != null ) {
 			webFlags['6'].active = 'yes';
 		}
+        if( (M.curBusiness.modules['ciniki.customers'].flags&0x10) > 0 ) {
+            webFlags['11'].active = 'yes';
+        }
 		form['info'] = {'label':'', 'aside':'yes', 'fields':{
 			'name':{'label':'Name', 'hint':'Product Name', 'type':'text', 
 				'active':(fields.name!=null?'yes':'no')},

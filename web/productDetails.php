@@ -72,7 +72,7 @@ function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $a
 	$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.artclub', array(
 		array('container'=>'products', 'fname'=>'id', 
 			'fields'=>array('id', 'name', 'permalink', 'image_id'=>'primary_image_id', 
-			'short_description', 'long_description', 'webflags',
+			'synopsis'=>'short_description', 'short_description', 'description'=>'long_description', 'webflags',
 			'price', 'unit_discount_amount', 'unit_discount_percentage', 'taxtype_id',
 			'inventory_flags', 'inventory_current_num', 'object_def')),
 //		array('container'=>'images', 'fname'=>'image_id', 

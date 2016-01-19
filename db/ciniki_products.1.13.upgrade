@@ -1,0 +1,5 @@
+#
+# This file will upgrade the database table products to version 1.11.
+#
+ALTER TABLE ciniki_products MODIFY webflags int not null;
+ALTER TABLE ciniki_products COMMENT='v1.13';

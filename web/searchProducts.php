@@ -48,6 +48,20 @@ function ciniki_products_web_searchProducts($ciniki, $settings, $business_id, $a
 		$pricepoint = 'no';
 	}
 
+    $webflags = 0x01;
+    if( isset($ciniki['session']['customer']['id']) && $ciniki['session']['customer']['id'] > 0 ) {
+        $webflags |= 0x0100;
+    }
+    if( isset($ciniki['session']['customer']['member_status']) && $ciniki['session']['customer']['member_status'] == 10 ) {
+        $webflags |= 0x0200;
+    }
+    if( isset($ciniki['session']['customer']['dealer_status']) && $ciniki['session']['customer']['dealer_status'] == 10 ) {
+        $webflags |= 0x0400;
+    }
+    if( isset($ciniki['session']['customer']['distributor_status']) && $ciniki['session']['customer']['distributor_status'] == 10 ) {
+        $webflags |= 0x0800;
+    }
+
 	$strsql = "SELECT ciniki_products.id, "
 //		. "IF(ciniki_products.code<>'',CONCAT_WS(' - ', ciniki_products.code, ciniki_products.name), ciniki_products.name) AS name, "
 		. "ciniki_products.code, "
@@ -87,7 +101,8 @@ function ciniki_products_web_searchProducts($ciniki, $settings, $business_id, $a
 		. "AND ciniki_products.start_date < UTC_TIMESTAMP() "
 		. "AND (ciniki_products.end_date = '0000-00-00 00:00:00' OR ciniki_products.end_date > UTC_TIMESTAMP()) "
 		// Make sure product is visible and for sale online
-		. "AND (ciniki_products.webflags&0x03) = 3 "
+		. "AND (ciniki_products.webflags&$webflags) > 0 "
+		. "AND (ciniki_products.webflags&0x02) = 2 "
 		. "AND (ciniki_products.name LIKE '" . ciniki_core_dbQuote($ciniki, $args['search_str']) . "%' "
 			. "OR ciniki_products.name LIKE '% " . ciniki_core_dbQuote($ciniki, $args['search_str']) . "%' "
 			. "OR ciniki_products.code LIKE '" . ciniki_core_dbQuote($ciniki, $args['search_str']) . "%' "

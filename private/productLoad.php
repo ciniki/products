@@ -186,7 +186,24 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 		$product['flags_text'] .= ($product['flags_text']!=''?', ':'') . 'Promotional Item';
 	}
 	$product['webflags_text'] = '';
-	$product['webflags_text'] .= ($product['webflags_text']!=''?', ':'') . (($product['webflags']&0x01)==1)?'Visible':'Hidden';
+    if( ($product['webflags']&0x01) > 0 ) { 
+        $product['webflags_text'] .= 'Visible';
+    } elseif( ($product['webflags']&0x0f00) == 0 ) { 
+        $product['webflags_text'] .= 'Hidden';
+    } else {
+        if( ($product['webflags']&0x0100) > 0 ) { 
+            $product['webflags_text'] .= 'Visible to customers';
+        }
+        if( ($product['webflags']&0x0200) > 0 ) { 
+            $product['webflags_text'] .= 'Visible to members';
+        }
+        if( ($product['webflags']&0x0400) > 0 ) { 
+            $product['webflags_text'] .= 'Visible to dealers';
+        }
+        if( ($product['webflags']&0x0800) > 0 ) { 
+            $product['webflags_text'] .= 'Visible to distributors';
+        }
+    }
 	if( ($product['webflags']&0x02) > 0 ) {
 		$product['webflags_text'] .= ($product['webflags_text']!=''?', ':'') . 'Sold Online';
 	}

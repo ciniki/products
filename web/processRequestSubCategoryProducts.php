@@ -14,6 +14,20 @@
 //
 function ciniki_products_web_processRequestSubCategoryProducts(&$ciniki, $settings, $business_id, $category, $subcategory) {
 
+    $webflags = 0x01;
+    if( isset($ciniki['session']['customer']['id']) && $ciniki['session']['customer']['id'] > 0 ) {
+        $webflags |= 0x0100;
+    }
+    if( isset($ciniki['session']['customer']['member_status']) && $ciniki['session']['customer']['member_status'] == 10 ) {
+        $webflags |= 0x0200;
+    }
+    if( isset($ciniki['session']['customer']['dealer_status']) && $ciniki['session']['customer']['dealer_status'] == 10 ) {
+        $webflags |= 0x0400;
+    }
+    if( isset($ciniki['session']['customer']['distributor_status']) && $ciniki['session']['customer']['distributor_status'] == 10 ) {
+        $webflags |= 0x0800;
+    }
+
     $strsql = "SELECT ciniki_products.id, "
         . "ciniki_products.name AS title, "
         . "ciniki_products.type_id, "
@@ -37,7 +51,7 @@ function ciniki_products_web_processRequestSubCategoryProducts(&$ciniki, $settin
             . "AND (ciniki_products.end_date = '0000-00-00 00:00:00' "
                 . "OR ciniki_products.end_date > UTC_TIMESTAMP()"
                 . ") "
-            . "AND (ciniki_products.webflags&0x01) > 0 "
+            . "AND (ciniki_products.webflags&$webflags) > 0 "
             . ") "
         . "INNER JOIN ciniki_product_tags AS t2 ON ("
             . "ciniki_products.id = t2.product_id "

@@ -211,8 +211,8 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                     . "primary_image_id, synopsis, description "
                     . "FROM ciniki_product_categories "
                     . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
-                    . "AND category = '" . ciniki_core_dbQuote($ciniki, $category['name']) . "' "
-                    . "AND subcategory = '" . ciniki_core_dbQuote($ciniki, $page['title']) . "' "
+                    . "AND category = '" . ciniki_core_dbQuote($ciniki, $category_permalink) . "' "
+                    . "AND subcategory = '" . ciniki_core_dbQuote($ciniki, $subcategory_permalink) . "' "
                     . "";
                 $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'subcategory');
                 if( $rc['stat'] != 'ok' ) {

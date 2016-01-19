@@ -463,10 +463,17 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
         } elseif( $display == 'products' ) {
             $page['blocks'][] = array('type'=>'content', 'content'=>"We're sorry but we don't have any products available yet");
         }
+        
+        //
+        // Sort the products
+        //
+        uasort($products, function($a, $b) {
+            return strnatcmp($a['title'], $b['title']);
+        });
 
-            //
-            // Decide how to display the information
-            //
+        //
+        // Decide how to display the information
+        //
         if( $display == 'subcategoryproducts' ) {
             if( $subcategory_display == 'image-description-audiopricelist' ) {
                 if( isset($subcategory['primary_image_id']) && $subcategory['primary_image_id'] > 0 ) {
@@ -487,7 +494,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                 if( $rc['stat'] != 'ok' ) {
                     return $rc;
                 }
-                $page['blocks'][] = array('type'=>'audiopricelist', 'section'=>'products', 'title'=>'Products', 'products'=>$rc['products']);
+                $page['blocks'][] = array('type'=>'audiopricelist', 'section'=>'products', 'title'=>'Products', 'list'=>$rc['products']);
                 
             } elseif( $subcategory_display == 'image-description-audio-prices' ) {
                 if( isset($subcategory['primary_image_id']) && $subcategory['primary_image_id'] > 0 ) {
@@ -500,7 +507,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                     $page['blocks'][] = array('type'=>'content', 'section'=>'content', 'content'=>$subcategory['synopsis']);
                 }
                 //
-                // Get the list of audio samples from products
+                // Get the list of audio samples from products, remove any products that don't have audio
                 //
                 ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'web', 'processRequestProductsDetails');
                 $rc = ciniki_products_web_processRequestProductsDetails($ciniki, $settings, $business_id, $products, 
@@ -512,22 +519,27 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                     $audio = array();
                     foreach($rc['products'] as $product) {
                         if( isset($product['audio']) ) {
+                            foreach($product['audio'] as $aid => $a) {
+                                $product['audio'][$aid]['name'] = $product['title'];
+                            }
                             $audio = array_merge($audio, $product['audio']);
                         }
                     }
-                    $page['blocks'][] = array('type'=>'audiolist', 'section'=>'audio', 'title'=>'Samples', 'audio'=>$audio);
+                    if( count($audio) > 0 ) {
+                        $page['blocks'][] = array('type'=>'audiolist', 'section'=>'audio', 'title'=>'Samples', 'audio'=>$audio);
+                    }
                 }
                 
                 //
                 // Get the list of products and their prices
                 //
                 $rc = ciniki_products_web_processRequestProductsDetails($ciniki, $settings, $business_id, $products, 
-                    array('prices'=>'yes', 'object_defs'=>$object_defs));
+                    array('prices'=>'required', 'object_defs'=>$object_defs));
                 if( $rc['stat'] != 'ok' ) {
                     return $rc;
                 }
                 if( isset($rc['products']) && count($rc['products']) > 0 ) {
-                    $page['blocks'][] = array('type'=>'pricelist', 'section'=>'products', 'title'=>'Products', 'products'=>$rc['products']);
+                    $page['blocks'][] = array('type'=>'pricelist', 'section'=>'products', 'title'=>'Products', 'prices'=>$rc['products']);
                 }
                 
             } else {

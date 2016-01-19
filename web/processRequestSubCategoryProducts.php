@@ -52,7 +52,7 @@ function ciniki_products_web_processRequestSubCategoryProducts(&$ciniki, $settin
         . "WHERE t1.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
         . "AND t1.tag_type = 10 "
         . "AND t1.permalink = '" . ciniki_core_dbQuote($ciniki, $category['permalink']) . "' "
-        . "ORDER BY ciniki_products.name ASC "
+        . "ORDER BY ciniki_products.name COLLATE latin1_general_cs ASC "
         . "";
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
         array('container'=>'products', 'fname'=>'id', 

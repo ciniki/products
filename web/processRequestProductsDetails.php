@@ -37,6 +37,8 @@ function ciniki_products_web_processRequestProductsDetails(&$ciniki, $settings, 
         foreach($types as $type_id => $type) {
             $object_defs[$type_id] = unserialize($type['object_def']);
         }
+    } else {
+        $object_defs = $args['object_defs'];
     }
 
     //
@@ -128,7 +130,7 @@ function ciniki_products_web_processRequestProductsDetails(&$ciniki, $settings, 
     //
     // Get the list of prices
     //
-    if( isset($args['prices']) && $args['prices'] == 'yes' ) {
+    if( isset($args['prices']) && ($args['prices'] == 'yes' || $args['prices'] == 'required') ) {
         //
         // Load currency and timezone settings
         //
@@ -262,6 +264,7 @@ function ciniki_products_web_processRequestProductsDetails(&$ciniki, $settings, 
         foreach($products as $pid => $product) {
             $products[$pid]['prices'] = array();
 
+//            print "<pre>" . print_r($object_defs[$product['type_id']], true) . "</pre>";
             // Simple pricing
             if( !isset($object_defs[$product['type_id']]['parent']['prices']['unit_amount']) ) {
                 //
@@ -359,10 +362,15 @@ function ciniki_products_web_processRequestProductsDetails(&$ciniki, $settings, 
 //                    $products[$pid]['prices'][$price_id]['unit_amount_display'] = numfmt_format_currency($intl_currency_fmt, $price['unit_amount'], $intl_currency);
                 }
             }
-            else {
+            elseif( $args['prices'] != 'required' ) {
                 $products[$pid]['prices'] = array();
             }
+
+            if( $args['prices'] == 'required' && count($products[$pid]['prices']) == 0 ) {
+                unset($products[$pid]);
+            }
         }
+//        print "<pre>" . print_r($products, true) . "</pre>";
     }
 
     return array('stat'=>'ok', 'products'=>$products);

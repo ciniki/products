@@ -141,7 +141,7 @@ function ciniki_products_productAdd(&$ciniki) {
 
 	if( !isset($args['permalink']) || $args['permalink'] == '' ) {
 		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'makePermalink');
-		$args['permalink'] = ciniki_core_makePermalink($ciniki, $args['name']);
+		$args['permalink'] = ciniki_core_makePermalink($ciniki, preg_replace('/#/', '-', $args['name']));
 	}
 
 	//

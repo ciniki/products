@@ -211,6 +211,7 @@ function ciniki_products_edit() {
 				'active':(fields.name!=null?'yes':'no')},
 			'code':{'label':'Code', 'hint':'Product Code', 'type':'text', 
 				'active':(fields.code!=null?'yes':'no')},
+			'sequence':{'label':'Order', 'type':'text', 'size':'small', 'active':(fields.sequence!=null?'yes':'no')},
 			'category':{'label':'Category', 'type':'text', 'livesearch':'yes', 'livesearchempty':'yes',
 				'active':(fields.category!=null?'yes':'no')},
 			'price':{'label':'Price', 'type':'text', 'active':(fields.price!=null?'yes':'no')},

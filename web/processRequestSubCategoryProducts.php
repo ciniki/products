@@ -32,6 +32,7 @@ function ciniki_products_web_processRequestSubCategoryProducts(&$ciniki, $settin
         . "ciniki_products.name AS title, "
         . "ciniki_products.type_id, "
         . "ciniki_products.permalink, "
+        . "ciniki_products.sequence, "
         . "ciniki_products.primary_image_id AS image_id, "
         . "ciniki_products.price, "
         . "ciniki_products.unit_discount_amount, "
@@ -66,11 +67,11 @@ function ciniki_products_web_processRequestSubCategoryProducts(&$ciniki, $settin
         . "WHERE t1.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
         . "AND t1.tag_type = 10 "
         . "AND t1.permalink = '" . ciniki_core_dbQuote($ciniki, $category['permalink']) . "' "
-        . "ORDER BY ciniki_products.name COLLATE latin1_general_cs ASC "
+        . "ORDER BY ciniki_products.sequence, ciniki_products.name COLLATE latin1_general_cs ASC "
         . "";
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
         array('container'=>'products', 'fname'=>'id', 
-            'fields'=>array('id', 'type_id', 'title', 'permalink', 'image_id', 'description', 'is_details',
+            'fields'=>array('id', 'type_id', 'title', 'permalink', 'sequence', 'image_id', 'description', 'is_details',
                 'price', 'unit_discount_amount', 'unit_discount_percentage', 'taxtype_id', 'inventory_flags', 'inventory_current_num', 'webflags',
             )),
         ));

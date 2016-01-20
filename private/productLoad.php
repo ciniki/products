@@ -46,6 +46,7 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
 		. "ciniki_products.parent_id, "
 		. "ciniki_products.name, "
 		. "ciniki_products.code, "
+		. "ciniki_products.sequence, "
 		. "ciniki_products.type_id, "
 		. "ciniki_product_types.name_s AS type_text, "
 		. "ciniki_product_types.object_def, "

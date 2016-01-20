@@ -470,7 +470,10 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
         // Sort the products
         //
         uasort($products, function($a, $b) {
-            return strnatcmp($a['title'], $b['title']);
+            if( $a['sequence'] == $b['sequence'] ) {
+                return strnatcmp($a['title'], $b['title']);
+            } 
+            return ($a['sequence'] < $b['sequence'])?-1:1;
         });
 
         //

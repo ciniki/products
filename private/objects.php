@@ -24,6 +24,7 @@ function ciniki_products_objects($ciniki) {
 //			'type'=>array(),
 			'category'=>array(),
 			'permalink'=>array(),
+			'sequence'=>array('name'=>'Sequence', 'default'=>'1'),
 			'source'=>array(),
 			'flags'=>array(),
 			'status'=>array(),

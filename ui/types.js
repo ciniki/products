@@ -55,6 +55,7 @@ function ciniki_products_types() {
 			'parent_products':{'label':'Parent', 'aside':'yes', 'fields':{
 				'parent_product_name':{'label':'Name', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'parent_product_code':{'label':'Code', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
+				'parent_product_sequence':{'label':'Sequence', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'parent_product_category':{'label':'Category', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'parent_product_source':{'label':'Source', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 				'parent_product_flags':{'label':'Flags', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},

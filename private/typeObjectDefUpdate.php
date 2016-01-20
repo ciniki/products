@@ -27,6 +27,7 @@ function ciniki_products_typeObjectDefUpdate($ciniki, $object_def, $args) {
 	$product_fields = array(
 		'name',
 		'code',
+		'sequence',
 		'category',
 		'source',
 		'flags',

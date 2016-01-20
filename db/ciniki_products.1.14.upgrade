@@ -1,0 +1,6 @@
+#
+# This file will upgrade the database table products to version 1.11.
+#
+ALTER TABLE ciniki_products ADD COLUMN sequence tinyint unsigned not null AFTER permalink;
+UPDATE ciniki_products SET sequence = 1;
+ALTER TABLE ciniki_products COMMENT='v1.14';

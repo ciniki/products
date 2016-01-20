@@ -27,6 +27,8 @@
 # permalink:		The simplified name of the product for use in the url to the product
 #					on the business website.
 #
+# sequence:         The sequence to display this product in.
+#
 # type_id:			The ID of the product type, which is defined in ciniki_product_types.
 #
 # type:				 Depricated, do not use anymore.
@@ -152,6 +154,7 @@ create table ciniki_products (
 	type tinyint unsigned not null,	
 	category varchar(150) not null,
 	permalink varchar(150) not null,
+    sequence tinyint unsigned not null,
 	source tinyint unsigned not null,
 	flags tinyint unsigned not null,
 	status tinyint unsigned not null,
@@ -204,4 +207,4 @@ create table ciniki_products (
 	index (business_id, uuid, last_updated),
 	index supplier (supplier_id, supplier_item_number),
 	unique index permalink (business_id, permalink)
-) ENGINE='InnoDB', COMMENT='v1.13';
+) ENGINE='InnoDB', COMMENT='v1.14';

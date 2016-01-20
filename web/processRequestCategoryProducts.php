@@ -32,6 +32,7 @@ function ciniki_products_web_processRequestCategoryProducts(&$ciniki, $settings,
         . "ciniki_products.name AS title, "
         . "ciniki_products.type_id, "
         . "ciniki_products.permalink, "
+        . "ciniki_products.sequence, "
         . "ciniki_products.primary_image_id AS image_id, "
         . "ciniki_products.price, "
         . "ciniki_products.unit_discount_amount, "
@@ -70,11 +71,11 @@ function ciniki_products_web_processRequestCategoryProducts(&$ciniki, $settings,
     if( $subcategory == null ) {
         $strsql .= "AND ISNULL(t2.tag_name) ";
     }
-    $strsql .= "ORDER BY ciniki_products.name ASC "
+    $strsql .= "ORDER BY ciniki_products.sequence, ciniki_products.name ASC "
         . "";
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
         array('container'=>'products', 'fname'=>'id', 
-            'fields'=>array('id', 'type_id', 'title', 'permalink', 'image_id', 'description', 'is_details',
+            'fields'=>array('id', 'type_id', 'title', 'permalink', 'sequence', 'image_id', 'description', 'is_details',
                 'price', 'unit_discount_amount', 'unit_discount_percentage', 'taxtype_id', 'inventory_flags', 'inventory_current_num', 'webflags',
                 )),
         ));

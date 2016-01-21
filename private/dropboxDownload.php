@@ -263,10 +263,12 @@ function ciniki_products_dropboxDownload(&$ciniki, $business_id) {
                     ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
                     return $rc;
                 }
-                if( $rc['content'] != $ciniki_product[$field] ) {
-                    if( $field == 'synopsis' ) {
+                if( $field == 'synopsis' ) {
+                    if( $rc['content'] != $ciniki_product['short_description'] ) {
                         $update_args['short_description'] = $rc['content'];
-                    } elseif( $field == 'description' ) {
+                    }
+                } elseif( $field == 'description' ) {
+                    if( $rc['content'] != $ciniki_product['long_description'] ) {
                         $update_args['long_description'] = $rc['content'];
                     }
                 }
@@ -277,10 +279,12 @@ function ciniki_products_dropboxDownload(&$ciniki, $business_id) {
                     ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
                     return $rc;
                 }
-                if( $rc['content'] != $ciniki_product[$field] ) {
-                    if( $field == 'synopsis' ) {
+                if( $field == 'synopsis' ) {
+                    if( $rc['content'] != $ciniki_product['short_description'] ) {
                         $update_args['short_description'] = $rc['content'];
-                    } elseif( $field == 'description' ) {
+                    }
+                } elseif( $field == 'description' ) {
+                    if( $rc['content'] != $ciniki_product['long_description'] ) {
                         $update_args['long_description'] = $rc['content'];
                     }
                 }

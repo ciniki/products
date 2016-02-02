@@ -129,7 +129,7 @@
 #							0x01 - Visible, display on the website
 #							0x02 - Sell Online
 #							0x04 - Hide Price
-#							0x08 - 
+#							0x08 - Sold Out **future**
 #							0x10 - Category Highlight
 #							0x20 - Sub-Category Highlight
 #							0x40 - 

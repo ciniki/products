@@ -114,77 +114,80 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
     $product_display = 'default';
     while(isset($uri_split[0]) ) {
         $permalink = array_shift($uri_split);
-        //
-        // Check if permalink is a category
-        //
-        $strsql = "SELECT DISTINCT tag_name "
-            . "FROM ciniki_product_tags "
-            . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
-            . "AND permalink = '" . ciniki_core_dbQuote($ciniki, $permalink) . "' "
-            . "AND tag_type = 10 "
-            . "LIMIT 1 " // Only grab the first one
-            . "";
-        $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'category');
-        if( $rc['stat'] != 'ok' ) {
-            return $rc;
-        }
-        if( isset($rc['category']) ) {
-            $category_permalink = $permalink;
-            $page['title'] = $rc['category']['tag_name'];
-            $display = 'category';
 
+        if( !isset($category) ) {
             //
-            // Get any details about the category from settings
+            // Check if permalink is a category
             //
-            $strsql = "SELECT id, name, subname, sequence, "
-                . "tag_type, display, subcategorydisplay, productdisplay, "
-                . "primary_image_id, synopsis, description "
-                . "FROM ciniki_product_categories "
+            $strsql = "SELECT DISTINCT tag_name "
+                . "FROM ciniki_product_tags "
                 . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
-                . "AND category = '" . ciniki_core_dbQuote($ciniki, $category_permalink) . "' "
-                . "AND subcategory = '' "
+                . "AND permalink = '" . ciniki_core_dbQuote($ciniki, $permalink) . "' "
+                . "AND tag_type = 10 "
+                . "LIMIT 1 " // Only grab the first one
                 . "";
             $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'category');
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
             }
-            if( isset($rc['category']) ) {  
-                $category = $rc['category'];
-                if( $category['name'] != '' ) {
-                    $page['title'] = $category['name'];
+            if( isset($rc['category']) ) {
+                $category_permalink = $permalink;
+                $page['title'] = $rc['category']['tag_name'];
+                $display = 'category';
+
+                //
+                // Get any details about the category from settings
+                //
+                $strsql = "SELECT id, name, subname, sequence, "
+                    . "tag_type, display, subcategorydisplay, productdisplay, "
+                    . "primary_image_id, synopsis, description "
+                    . "FROM ciniki_product_categories "
+                    . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                    . "AND category = '" . ciniki_core_dbQuote($ciniki, $category_permalink) . "' "
+                    . "AND subcategory = '' "
+                    . "";
+                $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'category');
+                if( $rc['stat'] != 'ok' ) {
+                    return $rc;
                 }
-                if( $category['display'] != '' && $category['display'] != 'default' ) {
-                    $category_display = $category['display'];
+                if( isset($rc['category']) ) {  
+                    $category = $rc['category'];
+                    if( $category['name'] != '' ) {
+                        $page['title'] = $category['name'];
+                    }
+                    if( $category['display'] != '' && $category['display'] != 'default' ) {
+                        $category_display = $category['display'];
+                    }
+                    if( $category['subcategorydisplay'] != '' && $category['subcategorydisplay'] != 'default' ) {
+                        $subcategory_display = $category['subcategorydisplay'];
+                    }
+                    if( $category['productdisplay'] != '' && $category['productdisplay'] != 'default' ) {
+                        $product_display = $category['productdisplay'];
+                    }
+                } else {
+                    $category = array(
+                        'id'=>0,
+                        'name'=>$page['title'],
+                        'subname'=>'',
+                        'sequence'=>1,
+                        'tag_type'=>0,
+                        'primary_image_id'=>0,
+                        'synopsis'=>'',
+                        'description'=>'',
+                        );
                 }
-                if( $category['subcategorydisplay'] != '' && $category['subcategorydisplay'] != 'default' ) {
-                    $subcategory_display = $category['subcategorydisplay'];
-                }
-                if( $category['productdisplay'] != '' && $category['productdisplay'] != 'default' ) {
-                    $product_display = $category['productdisplay'];
-                }
-            } else {
-                $category = array(
-                    'id'=>0,
-                    'name'=>$page['title'],
-                    'subname'=>'',
-                    'sequence'=>1,
-                    'tag_type'=>0,
-                    'primary_image_id'=>0,
-                    'synopsis'=>'',
-                    'description'=>'',
-                    );
+                $base_url .= '/' . $permalink;
+                $category['base_url'] = $base_url;
+                $category['permalink'] = $permalink;
+                $page['breadcrumbs'][] = array('name'=>$page['title'], 'url'=>$base_url);
+                continue;   // Skip to next piece of URI
             }
-            $base_url .= '/' . $permalink;
-            $category['base_url'] = $base_url;
-            $category['permalink'] = $permalink;
-            $page['breadcrumbs'][] = array('name'=>$page['title'], 'url'=>$base_url);
-            continue;   // Skip to next piece of URI
         }
 
         //
         // Check if permalink is a subcategory (if category is specified)
         //
-        if( isset($category) ) {
+        if( isset($category) && !isset($subcategory) ) {
             // Add breadcrumbs, set page_title
             $strsql = "SELECT DISTINCT tag_name "
                 . "FROM ciniki_product_tags "
@@ -257,7 +260,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
         $display = 'product';
         $product_permalink = $permalink;
     }
-    
+
     //
     // Check what should be displayed if no uri specified
     //
@@ -293,7 +296,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
             . "ciniki_products.type_id, "
             . "COUNT(ciniki_products.id) AS num_products "
             . "FROM ciniki_product_tags AS t1 "
-            . "LEFT JOIN ciniki_product_tags AS t2 ON ("
+            . "INNER JOIN ciniki_product_tags AS t2 ON ("
                 . "t1.product_id = t2.product_id "
                 . "AND t2.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' ";
          if( isset($category['tag_type']) && $category['tag_type'] > 0 ) {
@@ -476,6 +479,37 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
     // Display the list of categories
     //
     if( $display == 'categories' ) {
+        //
+        // Get the images for categories
+        //
+        $strsql = "SELECT t1.permalink, MAX(ciniki_products.primary_image_id) AS image_id "
+            . "FROM ciniki_product_tags AS t1, ciniki_products "
+            . "WHERE t1.tag_type = 10 "
+            . "AND t1.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND t1.product_id = ciniki_products.id "
+            . "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND ciniki_products.primary_image_id > 0 "
+            . "AND ciniki_products.start_date < UTC_TIMESTAMP() "
+            . "AND (ciniki_products.end_date = '0000-00-00 00:00:00' "
+                . "OR ciniki_products.end_date > UTC_TIMESTAMP()"
+                . ") "
+            . "AND (ciniki_products.webflags&0x01) > 0 "
+            . "GROUP BY t1.permalink "
+            . "ORDER BY t1.permalink, ciniki_products.date_added "
+            . "";
+        $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
+            array('container'=>'images', 'fname'=>'permalink', 'fields'=>array('image_id')),
+            ));
+        if( $rc['stat'] != 'ok' ) {
+            return $rc;
+        }
+        if( isset($rc['images']) ) {
+            $highlight_images = $rc['images'];
+        }
+
+        //
+        // Get the list of categories
+        //
         $strsql = "SELECT ciniki_product_tags.tag_name AS name, "
             . "IF(IFNULL(ciniki_product_categories.name, '')='', ciniki_product_tags.tag_name, ciniki_product_categories.name) AS cat_name, "
             . "IFNULL(ciniki_product_categories.primary_image_id, 0) AS primary_image_id, "
@@ -509,6 +543,13 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
             ));
         if( $rc['stat'] != 'ok' ) {
             return $rc;
+        }
+        if( isset($rc['categories']) && isset($highlight_images) ) {
+            foreach($rc['categories'] as $cid => $cat) {
+                if( $cat['image_id'] == 0 && isset($highlight_images[$cat['permalink']]['image_id']) ) {
+                    $rc['categories'][$cid]['image_id'] = $highlight_images[$cat['permalink']]['image_id'];
+                }
+            }
         }
         if( !isset($rc['categories']) ) {
             $page['blocks'][] = array('type'=>'content', 'content'=>"I'm sorry, but we currently don't have any products available.");

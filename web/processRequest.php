@@ -66,6 +66,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
         . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
         . "ORDER BY id "
         . "";
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
         array('container'=>'types', 'fname'=>'id',
             'fields'=>array('id', 'name_s', 'name_p', 'object_def')),
@@ -140,7 +141,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                 . "primary_image_id, synopsis, description "
                 . "FROM ciniki_product_categories "
                 . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
-                . "AND category = '" . ciniki_core_dbQuote($ciniki, $page['title']) . "' "
+                . "AND category = '" . ciniki_core_dbQuote($ciniki, $category_permalink) . "' "
                 . "AND subcategory = '' "
                 . "";
             $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'category');
@@ -149,7 +150,9 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
             }
             if( isset($rc['category']) ) {  
                 $category = $rc['category'];
-                $page['title'] = $category['name'];
+                if( $category['name'] != '' ) {
+                    $page['title'] = $category['name'];
+                }
                 if( $category['display'] != '' && $category['display'] != 'default' ) {
                     $category_display = $category['display'];
                 }
@@ -267,11 +270,23 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
     //
     if( $display == 'category' ) {
         //
+        // Display category information
+        //
+        if( $category_display == 'default' || $category_display == 'cilist' ) {
+            if( isset($category['primary_image_id']) && $category['primary_image_id'] > 0 ) {
+                $page['blocks'][] = array('type'=>'asideimage', 'title'=>$category['name'], 'image_id'=>$category['primary_image_id']);
+            }
+            if( isset($category['description']) && $category['description'] != '' ) {
+                $page['blocks'][] = array('type'=>'content', 'content'=>$category['description']);
+            }
+        }
+
+        //
         // Check if there are subcategories or products to display
         //
         $strsql = "SELECT t2.tag_type, t2.tag_name AS name, "
             . "t2.permalink, "
-            . "IFNULL(ciniki_product_categories.name, t2.tag_name) AS cat_name, "
+            . "IF(IFNULL(ciniki_product_categories.name, '')='',t2.tag_name, ciniki_product_categories.name) AS cat_name, "
             . "IFNULL(ciniki_product_categories.subname, '') AS cat_subname, "
             . "IFNULL(ciniki_product_categories.primary_image_id, 0) AS image_id, "
             . "IFNULL(ciniki_product_categories.synopsis, '') AS synopsis, "
@@ -339,6 +354,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                 //
                 // Go through the product types looking for names
                 //
+                $subcat_types = array();
                 foreach($product_types as $ptid => $ptype) {
                     // Check of the product type exists
                     if( isset($object_defs[$ptype['id']]) ) {
@@ -349,31 +365,100 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                             } else {
                                 $sub_cat_name = 'Sub-Categories';
                             }
-                            if( !isset($types[$sub_cat_name]) ) {
-                                $types[$sub_cat_name] = array('name'=>$sub_cat_name, 'categories'=>$type['categories']);
+                            if( !isset($subcat_types[$sub_cat_name]) ) {
+                                $subcat_types[$sub_cat_name] = array('name'=>$sub_cat_name, 'categories'=>$type['categories']);
                             } else {
                                 foreach($type['categories'] as $new_id => $new_cat) {
                                     // Check for existing category name
                                     $found = 'no';
-                                    foreach($types[$sub_cat_name]['categories'] as $old_id => $old_cat) {
+                                    foreach($subcat_types[$sub_cat_name]['categories'] as $old_id => $old_cat) {
                                         if( $old_cat['name'] == $new_cat['name'] ) {
-                                            $types[$sub_cat_name]['categories'][$old_id]['num_products'] += $new_cat['num_products'];
+                                            $subcat_types[$sub_cat_name]['categories'][$old_id]['num_products'] += $new_cat['num_products'];
                                             $found = 'yes';
                                             break;
                                         }
                                     }
                                     if( $found == 'no' ) {
-                                        $types[$sub_cat_name]['categories'][] = $type['categories'][$new_id];
+                                        $subcat_types[$sub_cat_name]['categories'][] = $type['categories'][$new_id];
                                     }
                                 }
                             }
                         }
                     }
                 }
+
+                if( count($subcat_types) > 0 ) {
+//                    print "<pre>" . print_r($subcat_types, true) . "</pre>";
+                    //
+                    // Figure out the thumbnail size    
+                    //
+                    if( isset($settings['page-products-subcategories-size']) 
+                        && $settings['page-products-subcategories-size'] != '' 
+                        && $settings['page-products-subcategories-size'] != 'auto' 
+                        ) {
+                        $size = $settings['page-products-subcategories-size'];
+                    } else {
+                        $size = 'large';
+                        foreach($subcat_types as $tid => $type) {
+                            if( count($type['categories']) > 12 ) {
+                                $size = 'small';
+                            } elseif( count($type['categories']) > 6 ) {
+                                $size = 'medium';
+                            }
+                        }
+                    }
+                    //
+                    // Get highlight images
+                    //
+                    $strsql = "SELECT t2.permalink AS subcat, ciniki_products.primary_image_id "
+                        . "FROM ciniki_product_tags AS t1, ciniki_products, ciniki_product_tags AS t2 "
+                        . "WHERE t1.tag_type = 10 "
+                        . "AND t1.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                        . "AND t1.product_id = ciniki_products.id "
+                        . "AND t1.permalink = '" . ciniki_core_dbQuote($ciniki, $category_permalink) . "' "
+                        . "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                        . "AND ciniki_products.primary_image_id > 0 "
+                        . "AND ciniki_products.start_date < UTC_TIMESTAMP() "
+                        . "AND (ciniki_products.end_date = '0000-00-00 00:00:00' "
+                            . "OR ciniki_products.end_date > UTC_TIMESTAMP()"
+                            . ") "
+                        . "AND (ciniki_products.webflags&0x01) > 0 "
+                        . "AND ciniki_products.id = t2.product_id "
+                        . "AND t2.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                        . "AND t2.tag_type > 10 "
+                        . "AND t2.tag_type < 30 "
+                        . "ORDER BY t1.permalink, t2.permalink, ciniki_products.date_added "
+                        . "";
+                    $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
+                        array('container'=>'images', 'fname'=>'subcat', 'fields'=>array('primary_image_id')),
+                        ));
+                    if( $rc['stat'] != 'ok' ) {
+                        return $rc;
+                    }
+//                    print "<pre>" . print_r($rc['images'], true) . "</pre>";
+                    if( isset($rc['images']) ) {
+                        $images = $rc['images'];
+                        foreach($subcat_types as $tid => $type) {
+                            foreach($type['categories'] as $cid => $cat) {
+                                if( $cat['image_id'] == 0 && isset($images[$cat['permalink']]['primary_image_id']) ) {
+                                    $subcat_types[$tid]['categories'][$cid]['image_id'] = $images[$cat['permalink']]['primary_image_id'];
+                                }
+                            }
+                        }
+                    }
+                    //
+                    // Output the product types
+                    //
+                    foreach($subcat_types as $type) {
+//                        print "<pre>" . print_r($type, true) . "</pre>";
+                        $page['blocks'][] = array('type'=>'tagimages', 'size'=>'small', 'base_url'=>$base_url, 'title'=>$type['name'], 'tags'=>$type['categories']);
+                    }
+                }
+
                 //
                 // Look for any products that are not sub-categorized
                 //
-                $display = 'products';
+                $display = 'categoryproducts';
             }
         } else {
             $display = 'products';
@@ -392,7 +477,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
     //
     if( $display == 'categories' ) {
         $strsql = "SELECT ciniki_product_tags.tag_name AS name, "
-            . "IFNULL(ciniki_product_categories.name, '') AS cat_name, "
+            . "IF(IFNULL(ciniki_product_categories.name, '')='', ciniki_product_tags.tag_name, ciniki_product_categories.name) AS cat_name, "
             . "IFNULL(ciniki_product_categories.primary_image_id, 0) AS primary_image_id, "
             . "IFNULL(ciniki_product_categories.synopsis, '') AS synopsis, "
             . "ciniki_product_tags.permalink, "
@@ -424,12 +509,15 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
             array('container'=>'categories', 'fname'=>'name', 
                 'fields'=>array('name', 'cat_name', 'title'=>'cat_name', 'permalink', 'image_id'=>'primary_image_id', 'num_products', 'synopsis', 'is_details')),
             ));
+        if( $rc['stat'] != 'ok' ) {
+            return $rc;
+        }
         if( !isset($rc['categories']) ) {
             $page['blocks'][] = array('type'=>'content', 'content'=>"I'm sorry, but we currently don't have any products available.");
 		} elseif( $category_display == 'tradingcards' ) {
             $page['blocks'][] = array('type'=>'tradingcards', 'title'=>'', 'base_url'=>$base_url, 'cards'=>$rc['categories']);
 		} elseif( $category_display == 'cilist' ) {
-            $page['blocks'][] = array('type'=>'cilist', 'title'=>'', 'base_url'=>$base_url, 'list'=>$rc['categories']);
+            $page['blocks'][] = array('type'=>'imagelist', 'title'=>'', 'base_url'=>$base_url, 'list'=>$rc['categories']);
         } else {
             $page['blocks'][] = array('type'=>'tagimages', 'base_url'=>$base_url, 'tags'=>$rc['categories']);
         }
@@ -439,6 +527,8 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
     // Display the list of products
     //
     elseif( $display == 'products' || $display == 'categoryproducts' || $display == 'subcategoryproducts' ) {
+        //
+        
         //
         // Check for any products that are not in a sub category
         //

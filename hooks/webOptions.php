@@ -49,6 +49,15 @@ function ciniki_products_hooks_webOptions(&$ciniki, $business_id, $args) {
                 array('value'=>'yes', 'label'=>'Yes'),
                 ),
             ),
+        array('label'=>'Category Format',
+            'setting'=>'page-products-categories-format', 
+            'type'=>'toggle',
+            'value'=>(isset($settings['page-products-categories-format'])?$settings['page-products-categories-format']:'thumbnails'),
+            'toggles'=>array(
+                array('value'=>'thumbnails', 'label'=>'Thumbnails'),
+                array('value'=>'list', 'label'=>'List'),
+                ),
+            ),
         ));
 
 	return array('stat'=>'ok', 'pages'=>$pages);

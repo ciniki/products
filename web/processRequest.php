@@ -259,6 +259,12 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
         //
         $display = 'product';
         $product_permalink = $permalink;
+    
+        if( isset($uri_split[1]) && $uri_split[0] == 'gallery' && $uri_split[1] != '' ) {
+            $display = 'productpic';
+            array_shift($uri_split);
+            $image_permalink = array_shift($uri_split);
+        }
     }
 
     //
@@ -728,7 +734,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
     //
     // Display a product
     //
-    elseif( $display == 'product' ) {
+    elseif( $display == 'product' || $display == 'productpic' ) {
         //
         // Get the product information
         //
@@ -782,10 +788,35 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
             //
             // Check if image requested
             //
-            if( isset($ciniki['request']['uri_split'][4]) && $ciniki['request']['uri_split'][4] == 'gallery'
-                && isset($ciniki['request']['uri_split'][5]) && $ciniki['request']['uri_split'][5] != '' 
-                ) {
-                $image_permalink = $ciniki['request']['uri_split'][5];
+            $product_base_url = $base_url . '/' . $product['permalink'];
+            if( $display == 'productpic' ) {
+                if( !isset($product['images']) || count($product['images']) < 1 ) {
+                    $page['blocks'][] = array('type'=>'message', 'content'=>"I'm sorry, but we can't seem to find the image you requested.");
+                } else {
+                    ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'galleryFindNextPrev');
+                    $rc = ciniki_web_galleryFindNextPrev($ciniki, $product['images'], $image_permalink);
+                    if( $rc['stat'] != 'ok' ) {
+                        return $rc;
+                    }
+                    if( $rc['img'] == NULL ) {
+                        $page['blocks'][] = array('type'=>'message', 'content'=>"I'm sorry, but we can't seem to find the image you requested.");
+                    } else {
+                        $page['breadcrumbs'][] = array('name'=>$rc['img']['title'], 'url'=>$product_base_url . '/gallery/' . $image_permalink);
+                        if( $rc['img']['title'] != '' ) {
+                            $page['title'] .= ' - ' . $rc['img']['title'];
+                        }
+                        $block = array('type'=>'galleryimage', 'primary'=>'yes', 'image'=>$rc['img']);
+                        if( $rc['prev'] != null ) {
+                            $block['prev'] = array('url'=>$product_base_url . '/gallery/' . $rc['prev']['permalink'], 'image_id'=>$rc['prev']['image_id']);
+                        }
+                        if( $rc['next'] != null ) {
+                            $block['next'] = array('url'=>$product_base_url . '/gallery/' . $rc['next']['permalink'], 'image_id'=>$rc['next']['image_id']);
+                        }
+                        $page['blocks'][] = $block;
+                    }
+                }
+
+/*                $image_permalink = $ciniki['request']['uri_split'][5];
                 $ciniki['response']['head']['links']['canonical']['href'] .= '/gallery/' . $image_permalink;
                 ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'processGalleryImage');
                 $rc = ciniki_web_processGalleryImage($ciniki, $settings, $ciniki['request']['business_id'],
@@ -798,7 +829,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                 if( $rc['stat'] != 'ok' ) {
                     return $rc;
                 }
-                $page['blocks'][] = array('type'=>'content', 'html'=>$rc['content']);
+                $page['blocks'][] = array('type'=>'content', 'html'=>$rc['content']); */
             } 
        
             //
@@ -830,6 +861,9 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                 // Add share buttons
                 if( !isset($settings['page-products-share-buttons']) || $settings['page-products-share-buttons'] == 'yes' ) {
                     $page['blocks'][] = array('type'=>'sharebuttons', 'section'=>'share', 'pagetitle'=>$product['name'], 'tags'=>array());
+                }
+                if( isset($product['images']) ) {
+                    $page['blocks'][] = array('type'=>'gallery', 'section'=>'gallery', 'title'=>'Additional Images', 'base_url'=>$product_base_url . '/gallery', 'images'=>$product['images']);
                 }
             }
             

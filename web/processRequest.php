@@ -862,7 +862,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                 if( !isset($settings['page-products-share-buttons']) || $settings['page-products-share-buttons'] == 'yes' ) {
                     $page['blocks'][] = array('type'=>'sharebuttons', 'section'=>'share', 'pagetitle'=>$product['name'], 'tags'=>array());
                 }
-                if( isset($product['images']) ) {
+                if( isset($product['images']) && count($product['images']) > 0 ) {
                     $page['blocks'][] = array('type'=>'gallery', 'section'=>'gallery', 'title'=>'Additional Images', 'base_url'=>$product_base_url . '/gallery', 'images'=>$product['images']);
                 }
             }

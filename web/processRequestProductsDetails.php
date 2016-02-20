@@ -20,6 +20,9 @@ function ciniki_products_web_processRequestProductsDetails(&$ciniki, $settings, 
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
 
     $product_ids = array_keys($products);
+    if( count($product_ids) == 0 ) {
+        return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'3126', 'msg'=>'No products found'));
+    }
 
     if( !isset($args['object_defs']) ) {
         $strsql = "SELECT id, name_s, name_p, object_def "

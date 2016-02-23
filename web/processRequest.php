@@ -738,12 +738,14 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                 if( $rc['stat'] != 'ok' ) {
                     return $rc;
                 }
-                $page['blocks'][] = array('type'=>'imagelist', 'section'=>'imageproductlist', 'prices'=>'yes', 'noimage'=>'yes', 'title'=>'', 'base_url'=>$base_url, 'list'=>$rc['products']);
+                $page['blocks'][] = array('type'=>'imagelist', 'section'=>'imageproductlist', 'prices'=>'yes', 'title'=>'', 'base_url'=>$base_url, 'list'=>$rc['products'],
+                    'noimage'=>'yes', 'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
             }
         } elseif( $display == 'categoryproducts' ) {
             // FIXME: Add query for category products
         } else {
-            $page['blocks'][] = array('type'=>'imagelist', 'section'=>'imageproductlist', 'prices'=>'yes', 'noimage'=>'yes', 'title'=>'', 'base_url'=>$base_url, 'list'=>$rc['products']);
+            $page['blocks'][] = array('type'=>'imagelist', 'section'=>'imageproductlist', 'prices'=>'yes', 'title'=>'', 'base_url'=>$base_url, 'list'=>$rc['products'],
+                'noimage'=>'yes', 'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
         }
 
     }

@@ -86,4 +86,4 @@ function ciniki_products_web_processRequestSubCategoryProducts(&$ciniki, $settin
 
     return array('stat'=>'ok', 'products'=>$products);
 }
-?>            
+?>

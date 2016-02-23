@@ -21,6 +21,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
 		'title'=>$args['page_title'],
 		'breadcrumbs'=>$args['breadcrumbs'],
 		'blocks'=>array(),
+        'path'=>(isset($settings['page-products-path'])&&$settings['page-products-path']!=''?$settings['page-products-path']:'yes'),
 		);
 
 	//

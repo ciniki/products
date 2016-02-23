@@ -385,7 +385,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                             if( isset($odef['subcategories-' . $type['tag_type']]['pname']) ) {
                                 $sub_cat_name = $odef['subcategories-' . $type['tag_type']]['pname'];
                             } else {
-                                $sub_cat_name = 'Sub-Categories';
+                                $sub_cat_name = '';
                             }
                             if( !isset($subcat_types[$sub_cat_name]) ) {
                                 $subcat_types[$sub_cat_name] = array('name'=>$sub_cat_name, 'categories'=>$type['categories']);
@@ -882,7 +882,8 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                     $page['blocks'][] = array('type'=>'sharebuttons', 'section'=>'share', 'pagetitle'=>$product['name'], 'tags'=>array());
                 }
                 if( isset($product['images']) && count($product['images']) > 0 ) {
-                    $page['blocks'][] = array('type'=>'gallery', 'section'=>'gallery', 'title'=>'Additional Images', 'base_url'=>$product_base_url . '/gallery', 'images'=>$product['images']);
+                    $page['blocks'][] = array('type'=>'gallery', 'section'=>'gallery', 'title'=>'Additional Images', 'base_url'=>$product_base_url . '/gallery', 
+                        'images'=>$product['images'], 'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
                 }
             }
             

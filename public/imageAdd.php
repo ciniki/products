@@ -117,7 +117,7 @@ function ciniki_products_imageAdd(&$ciniki) {
 	}
 
 	//
-	// Add the product to the database
+	// Add the product image to the database
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
 	$rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.products.image', $args, 0x04);
@@ -125,14 +125,14 @@ function ciniki_products_imageAdd(&$ciniki) {
 		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
 		return $rc;
 	}
-	$product_id = $rc['id'];
+	$image_id = $rc['id'];
 
 	//
 	// Update the sequence
 	//
 	if( isset($args['sequence']) && $adjust_sequence == 'yes' ) {
 		ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'imageUpdateSequences');
-		$rc = ciniki_products_imageUpdateSequences($ciniki, $args['business_id'], $product_id, 
+		$rc = ciniki_products_imageUpdateSequences($ciniki, $args['business_id'], $image_id, 
 			$args['sequence'], -1);
 		if( $rc['stat'] != 'ok' ) {
 			ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
@@ -155,6 +155,6 @@ function ciniki_products_imageAdd(&$ciniki) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
 	ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'products');
 
-	return array('stat'=>'ok', 'id'=>$location_id);
+	return array('stat'=>'ok', 'id'=>$image_id);
 }
 ?>

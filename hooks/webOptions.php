@@ -58,6 +58,20 @@ function ciniki_products_hooks_webOptions(&$ciniki, $business_id, $args) {
                 array('value'=>'list', 'label'=>'List'),
                 ),
             ),
+        array('label'=>'Thumbnail Format',
+            'setting'=>'page-products-thumbnail-format', 
+            'type'=>'toggle',
+            'value'=>(isset($settings['page-products-thumbnail-format'])?$settings['page-products-thumbnail-format']:'square-cropped'),
+            'toggles'=>array(
+                array('value'=>'square-cropped', 'label'=>'Cropped'),
+                array('value'=>'square-padded', 'label'=>'Padded'),
+                ),
+            ),
+        array('label'=>'Thumbnail Padding Color',
+            'setting'=>'page-products-thumbnail-padding-color', 
+            'type'=>'colour',
+            'value'=>(isset($settings['page-products-thumbnail-padding-color'])?$settings['page-products-thumbnail-padding-color']:'#ffffff'),
+            ),
         ));
 
 	return array('stat'=>'ok', 'pages'=>$pages);

@@ -59,6 +59,18 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
 	}
 
     //
+    // Check for image format
+    //
+    $thumbnail_format = 'square-cropped';
+    $thumbnail_padding_color = '#ffffff';
+    if( isset($settings['page-products-thumbnail-format']) && $settings['page-products-thumbnail-format'] == 'square-padded' ) {
+        $thumbnail_format = $settings['page-products-thumbnail-format'];
+        if( isset($settings['page-products-thumbnail-padding-color']) && $settings['page-products-thumbnail-padding-color'] != '' ) {
+            $thumbnail_padding_color = $settings['page-products-thumbnail-padding-color'];
+        } 
+    }
+
+    //
     // Load the product type definitions
     //
     $strsql = "SELECT id, name_s, name_p, object_def "
@@ -357,7 +369,8 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                         }
                     }
                 }
-                $page['blocks'][] = array('type'=>'tagimages', 'title'=>'', 'base_url'=>$base_url, 'tags'=>$categories);
+                $page['blocks'][] = array('type'=>'tagimages', 'title'=>'', 'base_url'=>$base_url, 'tags'=>$categories,
+                    'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
                 $display = '';
             } else {
                 //
@@ -460,7 +473,8 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                     //
                     foreach($subcat_types as $type) {
 //                        print "<pre>" . print_r($type, true) . "</pre>";
-                        $page['blocks'][] = array('type'=>'tagimages', 'size'=>'small', 'base_url'=>$base_url, 'title'=>$type['name'], 'tags'=>$type['categories']);
+                        $page['blocks'][] = array('type'=>'tagimages', 'size'=>'small', 'base_url'=>$base_url, 'title'=>$type['name'], 'tags'=>$type['categories'],
+                            'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
                     }
                 }
 
@@ -560,11 +574,14 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
         if( !isset($rc['categories']) ) {
             $page['blocks'][] = array('type'=>'content', 'content'=>"I'm sorry, but we currently don't have any products available.");
 		} elseif( $category_display == 'tradingcards' ) {
-            $page['blocks'][] = array('type'=>'tradingcards', 'title'=>'', 'base_url'=>$base_url, 'cards'=>$rc['categories']);
+            $page['blocks'][] = array('type'=>'tradingcards', 'title'=>'', 'base_url'=>$base_url, 'cards'=>$rc['categories'],
+                'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
 		} elseif( $category_display == 'cilist' ) {
-            $page['blocks'][] = array('type'=>'imagelist', 'title'=>'', 'base_url'=>$base_url, 'list'=>$rc['categories']);
+            $page['blocks'][] = array('type'=>'imagelist', 'title'=>'', 'base_url'=>$base_url, 'list'=>$rc['categories'],
+                'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
         } else {
-            $page['blocks'][] = array('type'=>'tagimages', 'base_url'=>$base_url, 'tags'=>$rc['categories']);
+            $page['blocks'][] = array('type'=>'tagimages', 'base_url'=>$base_url, 'tags'=>$rc['categories'],
+                'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
         }
     }
 

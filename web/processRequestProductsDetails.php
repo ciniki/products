@@ -379,4 +379,4 @@ function ciniki_products_web_processRequestProductsDetails(&$ciniki, $settings, 
 
     return array('stat'=>'ok', 'products'=>$products);
 }
-?>            
+?>

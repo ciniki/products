@@ -618,6 +618,15 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
         } elseif( $display == 'products' ) {
             $page['blocks'][] = array('type'=>'content', 'content'=>"We're sorry but we don't have any products available yet");
         }
+
+        //
+        // Check if only a single product, open the product page
+        //
+        if( count($products) == 1 ) {
+            $display = 'product';
+            $product = array_shift($products);
+            $product_permalink = $product['permalink'];
+        }
         
         //
         // Sort the products
@@ -744,17 +753,16 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
             }
         } elseif( $display == 'categoryproducts' ) {
             // FIXME: Add query for category products
-        } else {
+        } elseif( $display != 'product' ) {
             $page['blocks'][] = array('type'=>'imagelist', 'section'=>'imageproductlist', 'prices'=>'yes', 'title'=>'', 'base_url'=>$base_url, 'list'=>$rc['products'],
                 'noimage'=>'yes', 'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
         }
-
     }
 
     //
     // Display a product
     //
-    elseif( $display == 'product' || $display == 'productpic' ) {
+    if( $display == 'product' || $display == 'productpic' ) {
         //
         // Get the product information
         //

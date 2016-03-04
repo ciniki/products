@@ -815,6 +815,37 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                 $page['blocks'][] = array('type'=>'sharebuttons', 'section'=>'share', 'pagetitle'=>$product['name'], 'tags'=>array());
             }
 
+        } elseif( $product_display == 'image-description-audio-subcategorylist' ) {
+            if( isset($product['code']) && $product['code'] != '' ) {
+                $page['subtitle'] = $product['code'];
+            }
+            if( isset($product['image_id']) && $product['image_id'] > 0 ) {
+                $page['blocks'][] = array('type'=>'image', 'section'=>'primary-image', 'primary'=>'yes', 'image_id'=>$product['image_id'],
+                    'title'=>$product['name'], 'caption'=>'');
+            }
+            if( isset($product['description']) && $product['description'] != '' ) {
+                $page['blocks'][] = array('type'=>'content', 'section'=>'content', 'content'=>$product['description']);
+            } elseif( isset($product['synopsis']) && $product['synopsis'] != '' ) {
+                $page['blocks'][] = array('type'=>'content', 'section'=>'content', 'content'=>$product['synopsis']);
+            }
+            if( isset($product['audio']) && count($product['audio']) > 0 ) {
+                $page['blocks'][] = array('type'=>'audiolist', 'section'=>'audio', 'audio'=>$product['audio'], 'titles'=>'no');
+            }
+            
+            if( isset($product['prices']) && count($product['prices']) > 0 ) {
+                $page['blocks'][] = array('type'=>'prices', 'section'=>'prices', 'prices'=>$product['prices']);
+            }
+            if( isset($product['files']) && count($product['files']) > 0 ) {
+                // FIXME: Add files
+            }
+            
+            // FIXME: Add similar products
+            // FIXME: Add recipes
+            // Add share buttons
+            if( !isset($settings['page-products-share-buttons']) || $settings['page-products-share-buttons'] == 'yes' ) {
+                $page['blocks'][] = array('type'=>'sharebuttons', 'section'=>'share', 'pagetitle'=>$product['name'], 'tags'=>array());
+            }
+
         } else {
             //
             // Check if image requested

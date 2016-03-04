@@ -48,7 +48,9 @@ function ciniki_products_category() {
                     'productdisplay':{'label':'Product', 'type':'select', 
                         'options':{
                             'default':'Default', 
-                            'image-audio-description-subcategorylist':'Image, Audio, Description, Sub Category Products'},
+                            'image-audio-description-subcategorylist':'Image, Audio, Description, Sub Category Products',
+                            'image-description-audio-subcategorylist':'Image, Description, Audio, Sub Category Products',
+                            },
                         },
 			}},
 			'_synopsis':{'label':'Synopsis', 'fields':{

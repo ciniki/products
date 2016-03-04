@@ -785,12 +785,15 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
 
 
         if( $product_display == 'image-audio-description-subcategorylist' ) {
+            if( isset($product['code']) && $product['code'] != '' ) {
+                $page['subtitle'] = $product['code'];
+            }
             if( isset($product['image_id']) && $product['image_id'] > 0 ) {
                 $page['blocks'][] = array('type'=>'image', 'section'=>'primary-image', 'primary'=>'yes', 'image_id'=>$product['image_id'],
                     'title'=>$product['name'], 'caption'=>'');
             }
             if( isset($product['audio']) && count($product['audio']) > 0 ) {
-                $page['blocks'][] = array('type'=>'audiolist', 'section'=>'audio', 'audio'=>$product['audio']);
+                $page['blocks'][] = array('type'=>'audiolist', 'section'=>'audio', 'audio'=>$product['audio'], 'titles'=>'no');
             }
             if( isset($product['description']) && $product['description'] != '' ) {
                 $page['blocks'][] = array('type'=>'content', 'section'=>'content', 'content'=>$product['description']);

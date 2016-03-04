@@ -34,6 +34,7 @@ function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $a
 	// Get the product details
 	//
 	$strsql = "SELECT ciniki_products.id, "
+		. "ciniki_products.code, "
 		. "ciniki_products.name, "
 		. "ciniki_products.permalink, "
 		. "ciniki_products.short_description, "
@@ -71,7 +72,7 @@ function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $a
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
 	$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.artclub', array(
 		array('container'=>'products', 'fname'=>'id', 
-			'fields'=>array('id', 'name', 'permalink', 'image_id'=>'primary_image_id', 
+			'fields'=>array('id', 'code', 'name', 'permalink', 'image_id'=>'primary_image_id', 
 			'synopsis'=>'short_description', 'short_description', 'description'=>'long_description', 'webflags',
 			'price', 'unit_discount_amount', 'unit_discount_percentage', 'taxtype_id',
 			'inventory_flags', 'inventory_current_num', 'object_def')),

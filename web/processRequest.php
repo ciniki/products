@@ -714,7 +714,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                     return $rc;
                 }
                 if( isset($rc['products']) ) {
-                    $page['blocks'][] = array('type'=>'audiopricelist', 'section'=>'products', 'title'=>'Samples', 'list'=>$rc['products']);
+                    $page['blocks'][] = array('type'=>'audiopricelist', 'section'=>'products', 'title'=>'Audio Samples', 'list'=>$rc['products']);
                 }
                 
                 //

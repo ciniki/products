@@ -29,6 +29,7 @@ function ciniki_products_web_processRequestCategoryProducts(&$ciniki, $settings,
     }
 
     $strsql = "SELECT ciniki_products.id, "
+        . "ciniki_products.code, "
         . "ciniki_products.name AS title, "
         . "ciniki_products.type_id, "
         . "ciniki_products.permalink, "
@@ -75,7 +76,7 @@ function ciniki_products_web_processRequestCategoryProducts(&$ciniki, $settings,
         . "";
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
         array('container'=>'products', 'fname'=>'id', 
-            'fields'=>array('id', 'type_id', 'title', 'permalink', 'sequence', 'image_id', 'description', 'is_details',
+            'fields'=>array('id', 'type_id', 'code', 'title', 'permalink', 'sequence', 'image_id', 'description', 'is_details',
                 'price', 'unit_discount_amount', 'unit_discount_percentage', 'taxtype_id', 'inventory_flags', 'inventory_current_num', 'webflags',
                 )),
         ));

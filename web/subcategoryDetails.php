@@ -143,6 +143,7 @@ function ciniki_products_web_subcategoryDetails($ciniki, $settings, $business_id
 	// Get the list of products for this sub-category
 	//
 	$strsql = "SELECT ciniki_products.id, "
+		. "ciniki_products.code, "
 		. "ciniki_products.name AS title, "
 		. "ciniki_products.permalink, "
 		. "ciniki_products.primary_image_id AS image_id, "
@@ -182,7 +183,7 @@ function ciniki_products_web_subcategoryDetails($ciniki, $settings, $business_id
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
 	$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
 		array('container'=>'products', 'fname'=>'title', 
-			'fields'=>array('title', 'permalink', 'image_id', 'description', 
+			'fields'=>array('code', 'title', 'permalink', 'image_id', 'description', 
 				'is_details', 'last_updated')),
 		));
 	if( $rc['stat'] != 'ok' ) {

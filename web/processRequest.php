@@ -670,7 +670,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                     return $rc;
                 }
                 if( count($rc['products']) > 0 ) {
-                    $page['blocks'][] = array('type'=>'audiopricelist', 'section'=>'ordering', 'title'=>'Order', 'base_url'=>$base_url, 'list'=>$rc['products']);
+                    $page['blocks'][] = array('type'=>'audiopricelist', 'section'=>'ordering', 'title'=>'Order', 'codes'=>'yes', 'base_url'=>$base_url, 'list'=>$rc['products']);
                 }
 
             } elseif( $subcategory_display == 'image-description-audiopricelist' ) {
@@ -692,7 +692,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                 if( $rc['stat'] != 'ok' ) {
                     return $rc;
                 }
-                $page['blocks'][] = array('type'=>'audiopricelist', 'section'=>'products', 'title'=>'Products', 'base_url'=>$base_url, 'list'=>$rc['products']);
+                $page['blocks'][] = array('type'=>'audiopricelist', 'section'=>'products', 'title'=>'Products', 'codes'=>'yes', 'base_url'=>$base_url, 'list'=>$rc['products']);
                 
             } elseif( $subcategory_display == 'image-description-audio-prices' ) {
                 if( isset($subcategory['primary_image_id']) && $subcategory['primary_image_id'] > 0 ) {
@@ -714,7 +714,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                     return $rc;
                 }
                 if( isset($rc['products']) ) {
-                    $page['blocks'][] = array('type'=>'audiopricelist', 'section'=>'products', 'title'=>'Audio Samples', 'list'=>$rc['products']);
+                    $page['blocks'][] = array('type'=>'audiopricelist', 'section'=>'products', 'title'=>'Audio Samples', 'codes'=>'yes', 'list'=>$rc['products']);
                 }
                 
                 //
@@ -726,7 +726,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                     return $rc;
                 }
                 if( isset($rc['products']) && count($rc['products']) > 0 ) {
-                    $page['blocks'][] = array('type'=>'pricelist', 'section'=>'ordering', 'title'=>'Order', 'list'=>$rc['products']);
+                    $page['blocks'][] = array('type'=>'pricelist', 'section'=>'ordering', 'title'=>'Order', 'codes'=>'yes', 'list'=>$rc['products']);
                 }
                 
             } else {
@@ -748,7 +748,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                 if( $rc['stat'] != 'ok' ) {
                     return $rc;
                 }
-                $page['blocks'][] = array('type'=>'imagelist', 'section'=>'imageproductlist', 'prices'=>'yes', 'title'=>'', 'base_url'=>$base_url, 'list'=>$rc['products'],
+                $page['blocks'][] = array('type'=>'imagelist', 'section'=>'imageproductlist', 'prices'=>'yes', 'codes'=>'yes', 'title'=>'', 'base_url'=>$base_url, 'list'=>$rc['products'],
                     'noimage'=>'yes', 'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
             }
         } elseif( $display == 'categoryproducts' ) {

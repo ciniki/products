@@ -274,8 +274,13 @@ function ciniki_products_productAdd(&$ciniki) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
 	ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'products');
 
-	$ciniki['syncqueue'][] = array('push'=>'ciniki.products.product',
-		'args'=>array('id'=>$product_id));
+	$ciniki['syncqueue'][] = array('push'=>'ciniki.products.product', 'args'=>array('id'=>$product_id));
+
+    //
+    // Update the web index if enabled
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'hookExec');
+    ciniki_core_hookExec($ciniki, $args['business_id'], 'ciniki', 'web', 'indexObject', array('object'=>'ciniki.products.product', 'object_id'=>$product_id));
 
 	return array('stat'=>'ok', 'id'=>$product_id);
 }

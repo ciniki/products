@@ -56,6 +56,7 @@ function ciniki_products_hooks_webIndexObject($ciniki, $business_id, $args) {
             return array('stat'=>'ok');
         }
         $object = array(
+            'label'=>'Products',
             'title'=>$rc['item']['name'],
             'subtitle'=>'',
             'meta'=>'',
@@ -73,7 +74,7 @@ function ciniki_products_hooks_webIndexObject($ciniki, $business_id, $args) {
         //
         // Get the categories for the product
         //
-        $strsql = "SELECT DISTINCT tag_name "
+        $strsql = "SELECT DISTINCT tag_type, tag_name "
             . "FROM ciniki_product_tags "
             . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
             . "AND product_id = '" . ciniki_core_dbQuote($ciniki, $args['object_id']) . "' "
@@ -84,6 +85,9 @@ function ciniki_products_hooks_webIndexObject($ciniki, $business_id, $args) {
         }
         if( isset($rc['rows']) ) {
             foreach($rc['rows'] as $row) {
+                if( $row['tag_type'] == 10 ) {
+                    $object['label'] = $row['tag_name'];
+                }
                 $object['primary_words'] .= ' ' . $row['tag_name'];
             }
         }

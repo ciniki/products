@@ -28,14 +28,19 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
 	// Check if a file was specified to be downloaded
 	//
 	$download_err = '';
+    print_r($args['uri_split']);
+    if( isset($args['uri_split']) ) {
+        $num_uri = count($args['uri_split']);
+    }
+    print_r($num_uri);
 	if( isset($ciniki['business']['modules']['ciniki.products'])
-		&& isset($ciniki['request']['uri_split'][0]) && $ciniki['request']['uri_split'][0] == 'product'
-		&& isset($ciniki['request']['uri_split'][1]) && $ciniki['request']['uri_split'][1] != ''
-		&& isset($ciniki['request']['uri_split'][2]) && $ciniki['request']['uri_split'][2] == 'download'
-		&& isset($ciniki['request']['uri_split'][3]) && $ciniki['request']['uri_split'][3] != '' ) {
+        && isset($num_uri)
+		&& isset($args['uri_split'][$num_uri-3]) && $args['uri_split'][$num_uri-3] != ''
+		&& isset($args['uri_split'][$num_uri-2]) && $args['uri_split'][$num_uri-2] == 'download'
+		&& isset($args['uri_split'][$num_uri-1]) && $args['uri_split'][$num_uri-1] != '' ) {
 		ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'web', 'fileDownload');
 		$rc = ciniki_products_web_fileDownload($ciniki, $ciniki['request']['business_id'], 
-			$ciniki['request']['uri_split'][1], $ciniki['request']['uri_split'][3]);
+			$ciniki['request']['uri_split'][$num_uri-3], $ciniki['request']['uri_split'][$num_uri-1]);
 		if( $rc['stat'] == 'ok' ) {
 			header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 			header("Last-Modified: " . gmdate("D,d M YH:i:s") . " GMT");
@@ -783,7 +788,6 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
         $ciniki['response']['head']['og']['url'] = $ciniki['request']['domain_base_url'] . $base_url . '/' . $product_permalink;
         $ciniki['response']['head']['og']['description'] = strip_tags($product['synopsis']);
 
-
         if( $product_display == 'image-audio-description-subcategorylist' ) {
             if( isset($product['code']) && $product['code'] != '' ) {
                 $page['subtitle'] = $product['code'];
@@ -805,7 +809,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                 $page['blocks'][] = array('type'=>'prices', 'section'=>'prices', 'prices'=>$product['prices']);
             }
             if( isset($product['files']) && count($product['files']) > 0 ) {
-                // FIXME: Add files
+                $page['blocks'][] = array('type'=>'files', 'section'=>'files', 'base_url'=>$product_base_url . '/download', 'files'=>$product['files']);
             }
             
             // FIXME: Add similar products
@@ -836,7 +840,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                 $page['blocks'][] = array('type'=>'prices', 'section'=>'prices', 'prices'=>$product['prices']);
             }
             if( isset($product['files']) && count($product['files']) > 0 ) {
-                // FIXME: Add files
+                $page['blocks'][] = array('type'=>'files', 'section'=>'files', 'base_url'=>$product_base_url . '/download', 'files'=>$product['files']);
             }
             
             // FIXME: Add similar products
@@ -915,7 +919,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                     $page['blocks'][] = array('type'=>'prices', 'section'=>'prices', 'prices'=>$product['prices']);
                 }
                 if( isset($product['files']) && count($product['files']) > 0 ) {
-                    // FIXME: Add files
+                    $page['blocks'][] = array('type'=>'files', 'section'=>'files', 'base_url'=>$product_base_url . '/download', 'files'=>$product['files']);
                 }
                 
                 // FIXME: Add similar products

@@ -28,11 +28,9 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
 	// Check if a file was specified to be downloaded
 	//
 	$download_err = '';
-    print_r($args['uri_split']);
     if( isset($args['uri_split']) ) {
         $num_uri = count($args['uri_split']);
     }
-    print_r($num_uri);
 	if( isset($ciniki['business']['modules']['ciniki.products'])
         && isset($num_uri)
 		&& isset($args['uri_split'][$num_uri-3]) && $args['uri_split'][$num_uri-3] != ''

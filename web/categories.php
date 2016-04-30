@@ -85,7 +85,7 @@ function ciniki_products_web_categories($ciniki, $settings, $business_id) {
 			// Look for the highlight image, or the most recently added image
 			//
 			if( $cat['image_id'] == 0 ) {
-				$strsql = "SELECT ciniki_products.primary_image_id, ciniki_images.image "
+				$strsql = "SELECT ciniki_products.primary_image_id "
 					. "FROM ciniki_product_tags, ciniki_products, ciniki_images "
 					. "WHERE ciniki_product_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 					. "AND ciniki_product_tags.permalink = '" . ciniki_core_dbQuote($ciniki, $cat['permalink']) . "' "

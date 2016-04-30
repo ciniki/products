@@ -186,7 +186,6 @@ function ciniki_products_web_categoryDetails($ciniki, $settings, $business_id, $
 				//
 				// Look for the highlight image, or the most recently added image
 				//
-				//$strsql = "SELECT ciniki_products.primary_image_id, ciniki_images.image "
 				$strsql = "SELECT ciniki_products.primary_image_id "
 					. "FROM ciniki_product_tags, ciniki_products, ciniki_images "
 					. "WHERE ciniki_product_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "

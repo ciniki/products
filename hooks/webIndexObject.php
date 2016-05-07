@@ -43,7 +43,7 @@ function ciniki_products_hooks_webIndexObject($ciniki, $business_id, $args) {
             return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3282', 'msg'=>'Object not found'));
         }
         if( !isset($rc['item']) ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3283', 'msg'=>'Object not found'));
+            return array('stat'=>'noexist', 'err'=>array('pkg'=>'ciniki', 'code'=>'3283', 'msg'=>'Object not found'));
         }
 
         //

@@ -220,6 +220,35 @@ function ciniki_products_objects($ciniki) {
 			),
 		'history_table'=>'ciniki_product_history',
 		);
+	$objects['pdfcatalog'] = array(
+		'name'=>'PDF Catalog',
+        'o_name'=>'catalog',
+        'o_container'=>'catalogs',
+		'sync'=>'yes',
+		'table'=>'ciniki_product_pdfcatalogs',
+		'fields'=>array(
+			'name'=>array('name'=>'Name'),
+			'permalink'=>array('name'=>'Permalink'),
+			'sequence'=>array('name'=>'Sequence', 'default'=>'0'),
+			'status'=>array('name'=>'Status', 'default'=>'10'),
+			'flags'=>array('name'=>'Options', 'default'=>'0'),
+			'num_pages'=>array('name'=>'Number of Pages', 'default'=>'0'),
+			),
+		'history_table'=>'ciniki_product_history',
+		);
+	$objects['pdfcatalogimage'] = array(
+		'name'=>'PDF Catalog Images',
+        'o_name'=>'image',
+        'o_container'=>'images',
+		'sync'=>'yes',
+		'table'=>'ciniki_product_pdfcatalog_images',
+		'fields'=>array(
+			'catalog_id'=>array('name'=>'Catalog'),
+			'page_number'=>array('name'=>'Page Number'),
+			'image_id'=>array('name'=>'Image'),
+			),
+		'history_table'=>'ciniki_product_history',
+		);
 	$objects['setting'] = array(
 		'type'=>'settings',
 		'name'=>'Product Settings',

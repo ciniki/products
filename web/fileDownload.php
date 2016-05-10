@@ -9,10 +9,21 @@
 //
 function ciniki_products_web_fileDownload($ciniki, $business_id, $product_permalink, $file_permalink) {
 
+    //
+    // Get the business storage directory
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'hooks', 'storageDir');
+    $rc = ciniki_businesses_hooks_storageDir($ciniki, $business_id, array());
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    $business_storage_dir = $rc['storage_dir'];
+
 	//
 	// Get the file details
 	//
 	$strsql = "SELECT ciniki_product_files.id, "
+		. "ciniki_product_files.uuid, "
 		. "ciniki_product_files.name, "
 		. "ciniki_product_files.permalink, "
 		. "ciniki_product_files.extension, "
@@ -33,6 +44,14 @@ function ciniki_products_web_fileDownload($ciniki, $business_id, $product_permal
 		return array('stat'=>'noexist', 'err'=>array('pkg'=>'ciniki', 'code'=>'1500', 'msg'=>'Unable to find requested file'));
 	}
 	$rc['file']['filename'] = $rc['file']['name'] . '.' . $rc['file']['extension'];
+
+    //
+    // Get the storage filename
+    //
+    $storage_filename = $business_storage_dir . '/ciniki.products/files/' . $rc['file']['uuid'][0] . '/' . $rc['file']['uuid'];
+    if( file_exists($storage_filename) ) {
+        $rc['file']['binary_content'] = file_get_contents($storage_filename);    
+    }
 
 	return array('stat'=>'ok', 'file'=>$rc['file']);
 }

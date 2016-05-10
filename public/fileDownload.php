@@ -39,10 +39,20 @@ function ciniki_products_fileDownload($ciniki) {
         return $rc;
     }   
 
+    //
+    // Get the business storage directory
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'hooks', 'storageDir');
+    $rc = ciniki_businesses_hooks_storageDir($ciniki, $args['business_id'], array());
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    $business_storage_dir = $rc['storage_dir'];
+
 	//
 	// Get the uuid for the file
 	//
-	$strsql = "SELECT ciniki_product_files.id, "
+	$strsql = "SELECT ciniki_product_files.id, ciniki_product_files.uuid, "
 		. "ciniki_product_files.name, ciniki_product_files.extension, "
 		. "ciniki_product_files.binary_content "
 		. "FROM ciniki_product_files "
@@ -58,6 +68,17 @@ function ciniki_products_fileDownload($ciniki) {
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1484', 'msg'=>'Unable to find file'));
 	}
 	$filename = $rc['file']['name'] . '.' . $rc['file']['extension'];
+    $uuid = $rc['file']['uuid'];
+
+    //
+    // Build the storage filename
+    //
+    $storage_filename = $business_storage_dir . '/ciniki.products/files/' . $uuid[0] . '/' . $uuid;
+    if( file_exists($storage_filename) ) {
+        $binary_content = file_get_contents($storage_filename);
+    } elseif( $rc['file']['binary_content'] != '' ) {
+        $binary_content = $rc['file']['binary_content'];
+    }
 
 	header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); 
 	header("Last-Modified: " . gmdate("D,d M YH:i:s") . " GMT"); 
@@ -69,12 +90,13 @@ function ciniki_products_fileDownload($ciniki) {
 	} else {
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1485', 'msg'=>'Unsupported file type'));
 	}
+
 	// Specify Filename
 	header('Content-Disposition: attachment;filename="' . $filename . '"');
-	header('Content-Length: ' . strlen($rc['file']['binary_content']));
+	header('Content-Length: ' . strlen($binary_content));
 	header('Cache-Control: max-age=0');
 
-	print $rc['file']['binary_content'];
+	print $binary_content;
 	exit();
 	
 	return array('stat'=>'binary');

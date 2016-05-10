@@ -53,10 +53,21 @@ function ciniki_products_fileAdd(&$ciniki) {
         return $rc;
     }   
 
+    //
+    // Get the business storage directory
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'hooks', 'storageDir');
+    $rc = ciniki_businesses_hooks_storageDir($ciniki, $args['business_id'], array());
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    $business_storage_dir = $rc['storage_dir'];
+
 	//
 	// Check the permalink doesn't already exist
 	//
-	$strsql = "SELECT id, name, permalink FROM ciniki_product_files "
+	$strsql = "SELECT id, name, permalink "
+        . "FROM ciniki_product_files "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "AND product_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
 		. "AND permalink = '" . ciniki_core_dbQuote($ciniki, $args['permalink']) . "' "
@@ -68,6 +79,16 @@ function ciniki_products_fileAdd(&$ciniki) {
 	if( $rc['num_rows'] > 0 ) {
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1479', 'msg'=>'You already have a file with this name, please choose another name'));
 	}
+
+    //
+    // Get a new UUID
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbUUID');
+    $rc = ciniki_core_dbUUID($ciniki, 'ciniki.images');
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    $args['uuid'] = $rc['uuid'];
 
     //
     // Check to see if an image was uploaded
@@ -93,7 +114,22 @@ function ciniki_products_fileAdd(&$ciniki) {
 	if( $args['extension'] != 'pdf' ) {
         return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1482', 'msg'=>'The file must be a PDF file.'));
 	}
-	$args['binary_content'] = file_get_contents($_FILES['uploadfile']['tmp_name']);
+   
+    //
+    // Move the file to ciniki-storage
+    //
+    $storage_filename = $business_storage_dir . '/ciniki.products/files/' . $args['uuid'][0] . '/' . $args['uuid'];
+    if( !is_dir(dirname($storage_filename)) ) {
+        if( !mkdir(dirname($storage_filename), 0700, true) ) {
+            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3405', 'msg'=>'Unable to add file'));
+        }
+    }
+
+    if( !rename($_FILES['uploadfile']['tmp_name'], $storage_filename) ) {
+        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3406', 'msg'=>'Unable to add file'));
+    }
+
+	$args['binary_content'] = '';//file_get_contents($_FILES['uploadfile']['tmp_name']);
 
 	//
 	// Add the file to the database

@@ -18,23 +18,36 @@ function ciniki_products_main() {
 			'mc', 'medium', 'sectioned', 'ciniki.products.main.menu');
 		this.menu.data = {'tools':[]};
 		this.menu.sections = {
+            '_tabs':{'label':'', 'type':'paneltabs', 'selected':'products', 'visible':'no', 'tabs':{}},
 			'search':{'label':'Search', 'type':'livesearchgrid', 'livesearchcols':1, 
+//                'visible':function() { return M.ciniki_products_main.menu.sections._tabs.selected == 'products' ? 'yes' : 'no'; },
 				'headerValues':null,
 				'hint':'product name', 
 				'noData':'No products found',
 				},
-			'tools':{'label':'', 'visible':'no', 'type':'simplegrid', 'num_cols':1},
+			'tools':{'label':'', 'type':'simplegrid', 'num_cols':1,
+                'visible':function() { return (M.ciniki_products_main.menu.sections._tabs.selected == 'products' && M.modFlagSet('ciniki.products', 0x04) == 'yes') ? 'yes' : 'no'; },
+                },
 			'categories':{'label':'Categories', 'type':'simplegrid', 'num_cols':1,
+//                'visible':function() { return M.ciniki_products_main.menu.sections._tabs.selected == 'products' ? 'yes' : 'no'; },
 				'headerValues':null,
 				'addTxt':'Add',
 				'addFn':'M.startApp(\'ciniki.products.edit\',null,\'M.ciniki_products_main.showMenu();\',\'mc\',{\'product_id\':\'0\'});',
 				},
 			'products':{'label':'Products', 'type':'simplegrid', 'num_cols':1,
+//                'visible':function() { return M.ciniki_products_main.menu.sections._tabs.selected == 'products' ? 'yes' : 'no'; },
 				'headerValues':null,
 				'addTxt':'Add',
 				'addFn':'M.startApp(\'ciniki.products.edit\',null,\'M.ciniki_products_main.showMenu();\',\'mc\',{\'product_id\':\'0\'});',
 				},
-			'suppliers':{'label':'Suppliers', 'visible':'no', 'type':'simplegrid', 'num_cols':1,
+			'catalogs':{'label':'Catalogs', 'type':'simplegrid', 'num_cols':1,
+                'visible':function() { return M.ciniki_products_main.menu.sections._tabs.selected == 'catalogs' ? 'yes' : 'no'; },
+				'headerValues':null,
+				'addTxt':'Add',
+				'addFn':'M.startApp(\'ciniki.products.catalogs\',null,\'M.ciniki_products_main.showMenu();\',\'mc\',{\'catalog_id\':\'0\'});',
+				},
+			'suppliers':{'label':'Suppliers', 'type':'simplegrid', 'num_cols':1,
+                'visible':function() { return ((M.curBusiness.modules['ciniki.products'].flags&0x08)>0 && M.ciniki_products_main.menu.sections._tabs.selected == 'suppliers') ? 'yes' : 'no'; },
 				'headerValues':null,
 				},
 			};
@@ -238,6 +251,19 @@ function ciniki_products_main() {
 			return false;
 		} 
 
+        this.menu.sections._tabs.visible = 'no';
+        this.menu.sections._tabs.tabs = {
+            'products':{'label':'Products', 'fn':'M.ciniki_products_main.showMenu(null,"products");'},
+            };
+        if( M.modFlagSet('ciniki.products', 0x08) == 'yes' ) {
+            this.menu.sections._tabs.visible = 'yes';
+            this.menu.sections._tabs.tabs['suppliers'] = {'label':'Suppliers', 'fn':'M.ciniki_products_main.showMenu(null,"suppliers");'};
+        }
+        if( M.modFlagSet('ciniki.products', 0x80) == 'yes' ) {
+            this.menu.sections._tabs.visible = 'yes';
+            this.menu.sections._tabs.tabs['catalogs'] = {'label':'Catalogs', 'fn':'M.ciniki_products_main.showMenu(null,"catalogs");'};
+        }
+
 		// Check if inventory enabled
 		if( (M.curBusiness.modules['ciniki.products'].flags&0x04) > 0 ) {
 			this.menu.sections.products.num_cols = 2;
@@ -258,9 +284,9 @@ function ciniki_products_main() {
 		}
 
 		this.menu.data.tools = {};
-		this.menu.sections.tools.visible = 'no';
+//		this.menu.sections.tools.visible = 'no';
 		if( (M.curBusiness.modules['ciniki.products'].flags&0x04) > 0 ) {
-			this.menu.sections.tools.visible = 'yes';
+//			this.menu.sections.tools.visible = 'yes';
 			this.menu.data.tools['duplicates_exact'] = {'label':'Inventory', 'fn':'M.startApp(\'ciniki.products.inventory\', null, \'M.ciniki_products_main.showMenu();\');'};
 		}
 
@@ -274,8 +300,9 @@ function ciniki_products_main() {
 	//
 	// Grab the stats for the business from the database and present the list of products.
 	//
-	this.showMenu = function(cb) {
-		this.menu.sections.suppliers.visible=((M.curBusiness.modules['ciniki.products'].flags&0x08)>0)?'yes':'no';
+	this.showMenu = function(cb, category) {
+        if( category != null ) { this.menu.sections._tabs.selected = category; }
+//		this.menu.sections.suppliers.visible=((M.curBusiness.modules['ciniki.products'].flags&0x08)>0)?'yes':'no';
 		M.api.getJSONCb('ciniki.products.productStats', 
 			{'business_id':M.curBusinessID, 'status':10, 'reserved':'yes'}, function(rsp) {
 				if( rsp.stat != 'ok' ) {
@@ -283,18 +310,24 @@ function ciniki_products_main() {
 					return false;
 				}
 				var p = M.ciniki_products_main.menu;
-				if( rsp.products != null ) {
-					p.data.products = rsp.products;
-					p.data.categories = {};
-					p.sections.search.visible = 'no';
-					p.sections.categories.visible = 'no';
-					p.sections.products.visible = 'yes';
-				} else {
-					p.data.categories = rsp.categories
-					p.sections.search.visible = 'yes';
-					p.sections.categories.visible = 'yes';
-					p.sections.products.visible = 'no';
-				}
+                if( p.sections._tabs.selected == 'products' ) {
+                    if( rsp.products != null ) {
+                        p.data.products = rsp.products;
+                        p.data.categories = {};
+                        p.sections.search.visible = 'no';
+                        p.sections.categories.visible = 'no';
+                        p.sections.products.visible = 'yes';
+                    } else {
+                        p.data.categories = rsp.categories
+                        p.sections.search.visible = 'yes';
+                        p.sections.categories.visible = 'yes';
+                        p.sections.products.visible = 'no';
+                    }
+                } else {
+                    p.sections.search.visible = 'no';
+                    p.sections.categories.visible = 'no';
+                    p.sections.products.visible = 'no';
+                }
 				p.data.suppliers = rsp.suppliers;
 				p.refresh();
 				p.show(cb);

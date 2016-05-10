@@ -48,6 +48,8 @@ function ciniki_products_dbMoveFileStorage($ciniki) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbFixTableHistory');
 
+    ini_set('memory_limit', '4192M');
+
     $strsql = "SELECT id, uuid, binary_content "
         . "FROM ciniki_product_files "
         . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "

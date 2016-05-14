@@ -29,7 +29,13 @@ function ciniki_products_maps($ciniki) {
 			0x80=>'Distributors',
 		),
 	);
-	
+	$maps['pdfcatalog'] = array(
+		'status'=>array(
+			'10'=>'Uploaded',
+			'20'=>'Processing',
+			'30'=>'Active',
+		),
+	);
 	return array('stat'=>'ok', 'maps'=>$maps);
 }
 ?>

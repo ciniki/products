@@ -121,12 +121,12 @@ function ciniki_products_fileAdd(&$ciniki) {
     $storage_filename = $business_storage_dir . '/ciniki.products/files/' . $args['uuid'][0] . '/' . $args['uuid'];
     if( !is_dir(dirname($storage_filename)) ) {
         if( !mkdir(dirname($storage_filename), 0700, true) ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3405', 'msg'=>'Unable to add file'));
+            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3410', 'msg'=>'Unable to add file'));
         }
     }
 
     if( !rename($_FILES['uploadfile']['tmp_name'], $storage_filename) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3406', 'msg'=>'Unable to add file'));
+        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3411', 'msg'=>'Unable to add file'));
     }
 
 	$args['binary_content'] = '';//file_get_contents($_FILES['uploadfile']['tmp_name']);

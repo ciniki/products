@@ -31,34 +31,57 @@ function ciniki_products_cron_jobs(&$ciniki) {
 	if( $rc['stat'] != 'ok' ) {
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2891', 'msg'=>'Unable to get list of businesses with products', 'err'=>$rc['err']));
 	}
-	if( !isset($rc['rows']) ) {
-		return array('stat'=>'ok');
-	}
-	$businesses = $rc['rows'];
-	
-	foreach($businesses as $business) {
-		//
-		// Load business modules
-		//
-		$rc = ciniki_businesses_checkModuleAccess($ciniki, $business['business_id'], 'ciniki', 'products');
-		if( $rc['stat'] != 'ok' ) {	
-			ciniki_cron_logMsg($ciniki, $business['business_id'], array('code'=>'2897', 'msg'=>'ciniki.products not configured', 
-				'severity'=>30, 'err'=>$rc['err']));
-			continue;
-		}
+	if( isset($rc['rows']) ) {
+        $businesses = $rc['rows'];
+        
+        foreach($businesses as $business) {
+            //
+            // Load business modules
+            //
+            $rc = ciniki_businesses_checkModuleAccess($ciniki, $business['business_id'], 'ciniki', 'products');
+            if( $rc['stat'] != 'ok' ) {	
+                ciniki_cron_logMsg($ciniki, $business['business_id'], array('code'=>'2897', 'msg'=>'ciniki.products not configured', 
+                    'severity'=>30, 'err'=>$rc['err']));
+                continue;
+            }
 
-		ciniki_cron_logMsg($ciniki, $business['business_id'], array('code'=>'0', 'msg'=>'Updating products from dropbox', 'severity'=>'10'));
+            ciniki_cron_logMsg($ciniki, $business['business_id'], array('code'=>'0', 'msg'=>'Updating products from dropbox', 'severity'=>'10'));
 
-		//
-		// Update the business products from dropbox
-		//
-		$rc = ciniki_products_dropboxDownload($ciniki, $business['business_id']);
-		if( $rc['stat'] != 'ok' ) {
-			ciniki_cron_logMsg($ciniki, $business['business_id'], array('code'=>'2898', 'msg'=>'Unable to update products', 
-				'severity'=>50, 'err'=>$rc['err']));
-			continue;
-		}
-	}
+            //
+            // Update the business products from dropbox
+            //
+            $rc = ciniki_products_dropboxDownload($ciniki, $business['business_id']);
+            if( $rc['stat'] != 'ok' ) {
+                ciniki_cron_logMsg($ciniki, $business['business_id'], array('code'=>'2898', 'msg'=>'Unable to update products', 
+                    'severity'=>50, 'err'=>$rc['err']));
+                continue;
+            }
+        }
+    }
+
+    //
+    // Check for pdfcatalogs that need processing
+    //
+    $strsql = "SELECT id, business_id "
+        . "FROM ciniki_product_pdfcatalogs "
+        . "WHERE status = 10 "
+        . "";
+    $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'catalog');
+    if( $rc['stat'] != 'ok' ) {
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2699', 'msg'=>'Unable to get list of businesses with pdfcatalogs', 'err'=>$rc['err']));
+    }
+    if( isset($rc['rows']) ) {
+        $catalogs = $rc['rows'];
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'processPDFCatalog');
+        foreach($catalogs as $catalog) {
+            $rc = ciniki_products_processPDFCatalog($ciniki, $catalog['business_id'], $catalog['id']);
+            if( $rc['stat'] != 'ok' ) {
+                ciniki_cron_logMsg($ciniki, $catalog['business_id'], array('code'=>'2569', 'msg'=>'Unable to update PDF Catalog: ' . $catalog['id'], 
+                    'severity'=>50, 'err'=>$rc['err']));
+                continue;
+            }
+        }
+    }
 
 	return array('stat'=>'ok');
 }

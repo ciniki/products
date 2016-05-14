@@ -20,7 +20,7 @@ function ciniki_products_main() {
 		this.menu.sections = {
             '_tabs':{'label':'', 'type':'paneltabs', 'selected':'products', 'visible':'no', 'tabs':{}},
 			'search':{'label':'Search', 'type':'livesearchgrid', 'livesearchcols':1, 
-//                'visible':function() { return M.ciniki_products_main.menu.sections._tabs.selected == 'products' ? 'yes' : 'no'; },
+                'visible':function() { return M.ciniki_products_main.menu.sections._tabs.selected == 'products' ? 'yes' : 'no'; },
 				'headerValues':null,
 				'hint':'product name', 
 				'noData':'No products found',
@@ -29,22 +29,22 @@ function ciniki_products_main() {
                 'visible':function() { return (M.ciniki_products_main.menu.sections._tabs.selected == 'products' && M.modFlagSet('ciniki.products', 0x04) == 'yes') ? 'yes' : 'no'; },
                 },
 			'categories':{'label':'Categories', 'type':'simplegrid', 'num_cols':1,
-//                'visible':function() { return M.ciniki_products_main.menu.sections._tabs.selected == 'products' ? 'yes' : 'no'; },
+                'visible':function() { return M.ciniki_products_main.menu.sections._tabs.selected == 'products' ? 'yes' : 'no'; },
 				'headerValues':null,
 				'addTxt':'Add',
 				'addFn':'M.startApp(\'ciniki.products.edit\',null,\'M.ciniki_products_main.showMenu();\',\'mc\',{\'product_id\':\'0\'});',
 				},
 			'products':{'label':'Products', 'type':'simplegrid', 'num_cols':1,
-//                'visible':function() { return M.ciniki_products_main.menu.sections._tabs.selected == 'products' ? 'yes' : 'no'; },
+                'visible':function() { return M.ciniki_products_main.menu.sections._tabs.selected == 'products' ? 'yes' : 'no'; },
 				'headerValues':null,
 				'addTxt':'Add',
 				'addFn':'M.startApp(\'ciniki.products.edit\',null,\'M.ciniki_products_main.showMenu();\',\'mc\',{\'product_id\':\'0\'});',
 				},
-			'catalogs':{'label':'Catalogs', 'type':'simplegrid', 'num_cols':1,
+			'catalogs':{'label':'Catalogs', 'type':'simplegrid', 'num_cols':2,
                 'visible':function() { return M.ciniki_products_main.menu.sections._tabs.selected == 'catalogs' ? 'yes' : 'no'; },
-				'headerValues':null,
+				'headerValues':['Name', 'Pages', 'Status'],
 				'addTxt':'Add',
-				'addFn':'M.startApp(\'ciniki.products.catalogs\',null,\'M.ciniki_products_main.showMenu();\',\'mc\',{\'catalog_id\':\'0\'});',
+				'addFn':'M.startApp(\'ciniki.products.pdfcatalogs\',null,\'M.ciniki_products_main.showMenu();\',\'mc\',{\'catalog_id\':\'0\'});',
 				},
 			'suppliers':{'label':'Suppliers', 'type':'simplegrid', 'num_cols':1,
                 'visible':function() { return ((M.curBusiness.modules['ciniki.products'].flags&0x08)>0 && M.ciniki_products_main.menu.sections._tabs.selected == 'suppliers') ? 'yes' : 'no'; },
@@ -94,6 +94,12 @@ function ciniki_products_main() {
 				}
 			} else if( s == 'tools' ) {
 				return d.label;
+			} else if( s == 'catalogs' ) {
+                switch(j) {
+                    case 0: return d.name;
+                    case 1: return d.num_pages;
+                    case 2: return d.status_text;
+                }
 			}
 		};
 		this.menu.rowFn = function(s, i, d) {
@@ -109,6 +115,8 @@ function ciniki_products_main() {
 				return 'M.ciniki_products_main.showList(\'M.ciniki_products_main.showMenu();\',\'supplier_id\',\'' + d.supplier.id + '\',\'' + escape(d.supplier.name) + '\');';
 			} else if( s == 'tools' ) {
 				return d.fn;
+			} else if( s == 'catalogs' ) {
+				return 'M.startApp(\'ciniki.products.pdfcatalogs\',null,\'M.ciniki_products_main.showMenu();\',\'mc\',{\'catalog_id\':\'' + d.id + '\'});';
 			}
 		};
 		this.menu.addButton('add', 'Add', 'M.startApp(\'ciniki.products.edit\',null,\'M.ciniki_products_main.showMenu();\',\'mc\',{\'product_id\':\'0\'});');
@@ -302,14 +310,27 @@ function ciniki_products_main() {
 	//
 	this.showMenu = function(cb, category) {
         if( category != null ) { this.menu.sections._tabs.selected = category; }
-//		this.menu.sections.suppliers.visible=((M.curBusiness.modules['ciniki.products'].flags&0x08)>0)?'yes':'no';
-		M.api.getJSONCb('ciniki.products.productStats', 
-			{'business_id':M.curBusinessID, 'status':10, 'reserved':'yes'}, function(rsp) {
-				if( rsp.stat != 'ok' ) {
-					M.api.err(rsp);
-					return false;
-				}
-				var p = M.ciniki_products_main.menu;
+        if( this.menu.sections._tabs.selected == 'catalogs' ) {
+            M.api.getJSONCb('ciniki.products.pdfcatalogList', {'business_id':M.curBusinessID}, function(rsp) {
+                if( rsp.stat != 'ok' ) {
+                    M.api.err(rsp);
+                    return false;
+                }
+                var p = M.ciniki_products_main.menu;
+                p.data.catalogs = rsp.catalogs;
+                p.sections.search.visible = 'no';
+                p.sections.categories.visible = 'no';
+                p.sections.products.visible = 'no';
+                p.refresh();
+                p.show(cb);
+            });
+        } else {
+            M.api.getJSONCb('ciniki.products.productStats', {'business_id':M.curBusinessID, 'status':10, 'reserved':'yes'}, function(rsp) {
+                if( rsp.stat != 'ok' ) {
+                    M.api.err(rsp);
+                    return false;
+                }
+                var p = M.ciniki_products_main.menu;
                 if( p.sections._tabs.selected == 'products' ) {
                     if( rsp.products != null ) {
                         p.data.products = rsp.products;
@@ -328,10 +349,11 @@ function ciniki_products_main() {
                     p.sections.categories.visible = 'no';
                     p.sections.products.visible = 'no';
                 }
-				p.data.suppliers = rsp.suppliers;
-				p.refresh();
-				p.show(cb);
-			});
+                p.data.suppliers = rsp.suppliers;
+                p.refresh();
+                p.show(cb);
+            });
+        }
 	};
 
 	//

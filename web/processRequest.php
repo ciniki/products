@@ -17,6 +17,12 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
 	if( !isset($ciniki['business']['modules']['ciniki.products']) ) {
 		return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'3045', 'msg'=>"I'm sorry, the page you requested does not exist."));
 	}
+
+    if( isset($args['module_page']) && $args['module_page'] == 'ciniki.products.pdfcatalogs' ) {
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'web', 'processRequestPDFCatalogs');
+        return ciniki_products_web_processRequestPDFCatalogs($ciniki, $settings, $business_id, $args);
+    }
+
 	$page = array(
 		'title'=>$args['page_title'],
 		'breadcrumbs'=>$args['breadcrumbs'],

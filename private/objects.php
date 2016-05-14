@@ -233,6 +233,9 @@ function ciniki_products_objects($ciniki) {
 			'status'=>array('name'=>'Status', 'default'=>'10'),
 			'flags'=>array('name'=>'Options', 'default'=>'0'),
 			'num_pages'=>array('name'=>'Number of Pages', 'default'=>'0'),
+			'primary_image_id'=>array('name'=>'Image', 'default'=>'0'),
+			'synopsis'=>array('name'=>'Synopsis', 'default'=>''),
+			'description'=>array('name'=>'Description', 'default'=>''),
 			),
 		'history_table'=>'ciniki_product_history',
 		);

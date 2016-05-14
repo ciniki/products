@@ -29,7 +29,7 @@ function ciniki_products_hooks_webOptions(&$ciniki, $business_id, $args) {
 	// Get the settings from the database
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQueryDash');
-	$rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_web_settings', 'business_id', $business_id, 'ciniki.web', 'settings', 'page-products');
+	$rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_web_settings', 'business_id', $business_id, 'ciniki.web', 'settings', 'page');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}
@@ -38,6 +38,12 @@ function ciniki_products_hooks_webOptions(&$ciniki, $business_id, $args) {
 	} else {
 		$settings = $rc['settings'];
 	}
+
+    $pages = array();
+
+    if( ($ciniki['business']['modules']['ciniki.products']['flags']&0x80) > 0 ) {
+        $pages['ciniki.pdfcatalogs'] = array('name'=>'Catalogs', 'options'=>array());
+    }
 
 	$pages['ciniki.products'] = array('name'=>'Products', 'options'=>array(
         array('label'=>'Display Product Codes',

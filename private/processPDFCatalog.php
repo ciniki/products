@@ -138,6 +138,8 @@ function ciniki_products_processPDFCatalog(&$ciniki, $business_id, $catalog_id) 
         }
     }
 
+    unlink($tmp_filename);
+
     //
     // Update the pdf catalog status to lock
     //

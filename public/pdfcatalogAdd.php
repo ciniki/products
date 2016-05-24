@@ -152,7 +152,7 @@ function ciniki_products_pdfcatalogAdd(&$ciniki) {
 
     //
     // Move the file into storage
-    if( !rename($_FILES['uploadfile']['tmp_name'], $storage_filename) ) {
+    if( !copy($_FILES['uploadfile']['tmp_name'], $storage_filename) ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
         return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3408', 'msg'=>'Unable to add file'));
     }

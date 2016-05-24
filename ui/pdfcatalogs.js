@@ -89,14 +89,13 @@ function ciniki_products_pdfcatalogs() {
                 }
             } else {
                 var c = this.serializeFormData('yes');
-                M.api.postJSONFormData('ciniki.products.pdfcatalogAdd', {'business_id':M.curBusinessID, 'catalog_id':this.catalog_id}, c,
-                    function(rsp) {
-                        if( rsp.stat != 'ok' ) {
-                            M.api.err(rsp);
-                            return false;
-                        } 
+                M.api.postJSONFormData('ciniki.products.pdfcatalogAdd', {'business_id':M.curBusinessID}, c, function(rsp) {
+                    if( rsp.stat != 'ok' ) {
+                        M.api.err(rsp);
+                        return false;
+                    } 
                     M.ciniki_products_pdfcatalogs.catalog.close();
-                    });
+                });
             }
         }
 

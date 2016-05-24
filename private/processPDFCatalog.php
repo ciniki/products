@@ -78,12 +78,25 @@ function ciniki_products_processPDFCatalog(&$ciniki, $business_id, $catalog_id) 
         return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3414', 'msg'=>'Unable to open pdf.'));
     }
 
+    //
+    // Copy to tmp directory so it's local for processing. Remove files take too long to open over and over for each page.
+    //
+    if( isset($ciniki['config']['ciniki.core']['tmp_dir']) ) {
+        $tmp_filename = $ciniki['config']['ciniki.core']['tmp_dir'] . '/' . $catalog['uuid'];
+    } else {
+        $tmp_filename = '/tmp/' . $catalog['uuid'];
+    }
+
+    if( !copy($storage_filename, $tmp_filename) ) {
+        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3458', 'msg'=>'Unable to copy pdf.'));
+    }
+
     ini_set('memory_limit', '4096M');
 
     $imagick = new Imagick();
     $imagick->setResolution(300, 300);
 
-    $imagick->pingImage($storage_filename);
+    $imagick->pingImage($tmp_filename);
     $num_pages = $imagick->getNumberImages();
     $imagick->clear();
     $imagick->destroy();
@@ -93,7 +106,7 @@ function ciniki_products_processPDFCatalog(&$ciniki, $business_id, $catalog_id) 
 
     $page_number = 0;
     for($page_number = 0; $page_number < $num_pages; $page_number++) {
-        $imagick->readImage($storage_filename . '[' . $page_number . ']');
+        $imagick->readImage($tmp_filename . '[' . $page_number . ']');
         $imagick = $imagick->flattenImages();
         $imagick->setImageFormat('jpeg');
        

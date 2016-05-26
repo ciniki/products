@@ -70,10 +70,30 @@ function ciniki_products_pdfcatalogDelete(&$ciniki) {
     }
 
     //
+    // Remove the images
+    //
+    $strsql = "SELECT id, uuid "
+        . "FROM ciniki_product_pdfcatalog_images "
+        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "AND catalog_id = '" . ciniki_core_dbQuote($ciniki, $args['catalog_id']) . "' "
+        . "";
+    $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'image');
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    if( isset($rc['rows']) ) {
+        foreach($rc['rows'] as $item) {
+            $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.products.pdfcatalogimage', $item['id'], $item['uuid'], 0x04);
+            if( $rc['stat'] != 'ok' ) {
+                return $rc;
+            }
+        }
+    }
+
+    //
     // Remove the catalog
     //
-    $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.products.pdfcatalog',
-        $args['catalog_id'], $catalog['uuid'], 0x04);
+    $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.products.pdfcatalog', $args['catalog_id'], $catalog['uuid'], 0x04);
     if( $rc['stat'] != 'ok' ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
         return $rc;

@@ -147,10 +147,6 @@ function ciniki_products_pdfcatalogs() {
 			M.ciniki_products_pdfcatalogs.image.setFieldValue('image_id', iid, null, null);
 			return true;
 		};
-		this.image.deleteImage = function(fid) {
-			this.setFieldValue(fid, 0, null, null);
-			return true;
-		};
         this.image.edit = function(cb, iid) {
             this.reset();
             if( iid != null) { this.catalog_image_id = iid; }

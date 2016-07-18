@@ -19,7 +19,7 @@ function ciniki_products_supplierUpdate(&$ciniki) {
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
         'supplier_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Supplier'), 
-		'name'=>array('required'=>'no', 'trimblanks'=>'yes', 'blank'=>'no', 'name'=>'Name'),
+        'name'=>array('required'=>'no', 'trimblanks'=>'yes', 'blank'=>'no', 'name'=>'Name'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -36,15 +36,15 @@ function ciniki_products_supplierUpdate(&$ciniki) {
         return $rc;
     }   
 
-	//
-	// Add the supplier
-	//
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
-	$rc = ciniki_core_objectUpdate($ciniki, $args['business_id'], 'ciniki.products.supplier', 
-		$args['supplier_id'], $args, 0x07);
-	if( $rc['stat'] != 'ok' ) {
-		return $rc;
-	}
-	return $rc;
+    //
+    // Add the supplier
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
+    $rc = ciniki_core_objectUpdate($ciniki, $args['business_id'], 'ciniki.products.supplier', 
+        $args['supplier_id'], $args, 0x07);
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    return $rc;
 }
 ?>

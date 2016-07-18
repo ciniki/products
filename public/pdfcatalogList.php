@@ -35,15 +35,15 @@ function ciniki_products_pdfcatalogList($ciniki) {
         return $rc;
     }
 
-	//
-	// Load maps
-	//
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'maps');
-	$rc = ciniki_products_maps($ciniki);
-	if( $rc['stat'] != 'ok' ) {
-		return $rc;
-	}
-	$maps = $rc['maps'];
+    //
+    // Load maps
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'maps');
+    $rc = ciniki_products_maps($ciniki);
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    $maps = $rc['maps'];
 
     //
     // Get the list of catalogs

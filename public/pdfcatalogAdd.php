@@ -112,22 +112,22 @@ function ciniki_products_pdfcatalogAdd(&$ciniki) {
         return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3386', 'msg'=>'Upload failed, file too large.'));
     }
 
-	//
-	// Make sure a file was submitted
-	//
-	if( !isset($_FILES) || !isset($_FILES['uploadfile']) || $_FILES['uploadfile']['tmp_name'] == '' ) {
+    //
+    // Make sure a file was submitted
+    //
+    if( !isset($_FILES) || !isset($_FILES['uploadfile']) || $_FILES['uploadfile']['tmp_name'] == '' ) {
         return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3387', 'msg'=>'No file specified.'));
-	}
+    }
 
-	$args['org_filename'] = $_FILES['uploadfile']['name'];
-	$args['extension'] = preg_replace('/^.*\.([a-zA-Z]+)$/', '$1', $args['org_filename']);
+    $args['org_filename'] = $_FILES['uploadfile']['name'];
+    $args['extension'] = preg_replace('/^.*\.([a-zA-Z]+)$/', '$1', $args['org_filename']);
 
-	//
-	// Check the extension is a PDF, currently only accept PDF files
-	//
-	if( $args['extension'] != 'pdf' ) {
+    //
+    // Check the extension is a PDF, currently only accept PDF files
+    //
+    if( $args['extension'] != 'pdf' ) {
         return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3393', 'msg'=>'The file must be a PDF file.'));
-	}
+    }
    
     //
     // Move the file to ciniki-storage

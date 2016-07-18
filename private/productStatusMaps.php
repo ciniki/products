@@ -11,12 +11,12 @@
 // -------
 //
 function ciniki_products_productStatusMaps($ciniki) {
-	
-	$status_maps = array(
-		'10'=>'Active',
-		'60'=>'Inactive',
-		);
-	
-	return array('stat'=>'ok', 'maps'=>$status_maps);
+    
+    $status_maps = array(
+        '10'=>'Active',
+        '60'=>'Inactive',
+        );
+    
+    return array('stat'=>'ok', 'maps'=>$status_maps);
 }
 ?>

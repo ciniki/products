@@ -7,57 +7,57 @@
 // Arguments
 // ---------
 // ciniki:
-// settings:		The web settings structure, similar to ciniki variable but only web specific information.
+// settings:        The web settings structure, similar to ciniki variable but only web specific information.
 //
 // Returns
 // -------
 //
 function ciniki_products_web_processRequestPDFCatalogs(&$ciniki, $settings, $business_id, $args) {
 
-	$page = array(
-		'title'=>$args['page_title'],
-		'breadcrumbs'=>$args['breadcrumbs'],
-		'blocks'=>array(),
+    $page = array(
+        'title'=>$args['page_title'],
+        'breadcrumbs'=>$args['breadcrumbs'],
+        'blocks'=>array(),
         'path'=>(isset($settings['page-products-path'])&&$settings['page-products-path']!=''?$settings['page-products-path']:'yes'),
-		);
+        );
 
-	//
-	// Check if a file was specified to be downloaded
-	//
-	$download_err = '';
+    //
+    // Check if a file was specified to be downloaded
+    //
+    $download_err = '';
     if( isset($args['uri_split']) ) {
         $num_uri = count($args['uri_split']);
     }
-	if( isset($ciniki['business']['modules']['ciniki.products'])
+    if( isset($ciniki['business']['modules']['ciniki.products'])
         && isset($num_uri)
-		&& isset($args['uri_split'][$num_uri-3]) && $args['uri_split'][$num_uri-3] != ''
-		&& isset($args['uri_split'][$num_uri-2]) && $args['uri_split'][$num_uri-2] == 'download'
-		&& isset($args['uri_split'][$num_uri-1]) && $args['uri_split'][$num_uri-1] != '' ) {
-		ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'web', 'pdfcatalogFileDownload');
-		$rc = ciniki_products_web_pdfcatalogFileDownload($ciniki, $ciniki['request']['business_id'], 
-			$ciniki['request']['uri_split'][$num_uri-3], $ciniki['request']['uri_split'][$num_uri-1]);
-		if( $rc['stat'] == 'ok' ) {
-			header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
-			header("Last-Modified: " . gmdate("D,d M YH:i:s") . " GMT");
-			header('Cache-Control: no-cache, must-revalidate');
-			header('Pragma: no-cache');
-			$file = $rc['file'];
-			if( $file['extension'] == 'pdf' ) {
-				header('Content-Type: application/pdf');
-			}
-//			header('Content-Disposition: attachment;filename="' . $file['filename'] . '"');
-			header('Content-Length: ' . strlen($file['binary_content']));
-			header('Cache-Control: max-age=0');
+        && isset($args['uri_split'][$num_uri-3]) && $args['uri_split'][$num_uri-3] != ''
+        && isset($args['uri_split'][$num_uri-2]) && $args['uri_split'][$num_uri-2] == 'download'
+        && isset($args['uri_split'][$num_uri-1]) && $args['uri_split'][$num_uri-1] != '' ) {
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'web', 'pdfcatalogFileDownload');
+        $rc = ciniki_products_web_pdfcatalogFileDownload($ciniki, $ciniki['request']['business_id'], 
+            $ciniki['request']['uri_split'][$num_uri-3], $ciniki['request']['uri_split'][$num_uri-1]);
+        if( $rc['stat'] == 'ok' ) {
+            header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+            header("Last-Modified: " . gmdate("D,d M YH:i:s") . " GMT");
+            header('Cache-Control: no-cache, must-revalidate');
+            header('Pragma: no-cache');
+            $file = $rc['file'];
+            if( $file['extension'] == 'pdf' ) {
+                header('Content-Type: application/pdf');
+            }
+//          header('Content-Disposition: attachment;filename="' . $file['filename'] . '"');
+            header('Content-Length: ' . strlen($file['binary_content']));
+            header('Cache-Control: max-age=0');
 
-			print $file['binary_content'];
-			exit;
-		}
-		
-		//
-		// If there was an error locating the files, display generic error
-		//
-		return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'3431', 'msg'=>'The file you requested does not exist.'));
-	}
+            print $file['binary_content'];
+            exit;
+        }
+        
+        //
+        // If there was an error locating the files, display generic error
+        //
+        return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'3431', 'msg'=>'The file you requested does not exist.'));
+    }
 
     //
     // Check if catalog to be displayed
@@ -160,7 +160,7 @@ function ciniki_products_web_processRequestPDFCatalogs(&$ciniki, $settings, $bus
         $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
             array('container'=>'images', 'fname'=>'page_number', 'fields'=>array('id', 'image_id', 'page_number', 'permalink', 'title')),
             ));
-        if( $rc['stat'] != 'ok' ) {	
+        if( $rc['stat'] != 'ok' ) { 
             return $rc;
         }
         if( isset($rc['images']) ) {

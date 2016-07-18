@@ -9,7 +9,7 @@
 // Arguments
 // ---------
 // ciniki:
-// settings:		The web settings structure, similar to ciniki variable but only web specific information.
+// settings:        The web settings structure, similar to ciniki variable but only web specific information.
 //
 // Returns
 // -------
@@ -90,7 +90,7 @@ function ciniki_products_web_processRequestProductsDetails(&$ciniki, $settings, 
                 'maps'=>array('extension'=>array('20'=>'ogg', '30'=>'wav', '40'=>'mp3')),
                 ),
             ));
-//    				print "<pre>" . print_r($rc, true) . "</pre>";
+//                  print "<pre>" . print_r($rc, true) . "</pre>";
         if( $rc['stat'] == 'ok' ) {  
             foreach($products as $pid => $product) {
                 if( isset($rc['products'][$pid]['audio']) ) {
@@ -149,96 +149,96 @@ function ciniki_products_web_processRequestProductsDetails(&$ciniki, $settings, 
         //
         // Get any complex prices for products
         //
-		if( isset($ciniki['session']['customer']['price_flags']) ) {
-			$price_flags = $ciniki['session']['customer']['price_flags'];
-		} else {
-			$price_flags = 0x01;
-		}
-		//
-		// If the customer has a pricepoint set, then get the applicable prices for that customer
-		//
-		if( isset($ciniki['session']['customer']['pricepoint']['id']) && $ciniki['session']['customer']['pricepoint']['id'] > 0 ) {
-			//
-			// Get all prices, regardless of pricepoint
-			//
-			$strsql = "SELECT ciniki_product_prices.id, "
-				. "ciniki_product_prices.product_id, "
-				. "ciniki_product_prices.name, "
-				. "ciniki_product_prices.pricepoint_id, "
-				. "ciniki_customer_pricepoints.sequence AS pricepoint_sequence, "
-				. "ciniki_customer_pricepoints.flags AS pricepoint_flags, "
-				. "ciniki_product_prices.available_to, "
-				. "ciniki_product_prices.unit_amount, "
-				. "ciniki_product_prices.unit_discount_amount, "
-				. "ciniki_product_prices.unit_discount_percentage "
-				. "FROM ciniki_product_prices "
-				. "LEFT JOIN ciniki_customer_pricepoints ON ("
-					. "ciniki_product_prices.pricepoint_id = ciniki_customer_pricepoints.id "
-					. "AND ciniki_customer_pricepoints.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
-					. ") "
-				. "WHERE ciniki_product_prices.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
-				. "AND ciniki_product_prices.product_id IN (" . ciniki_core_dbQuoteIDs($ciniki, $product_ids) . ") "
-				. "AND (ciniki_product_prices.webflags&0x01) = 0 "
-				. "AND ((ciniki_product_prices.available_to&$price_flags) > 0 OR (webflags&available_to&0xF0) > 0) "
-				. "";
-			// Check if pricepoints should be restricted to only those available to the customer, or
-			// if we should get all and decide on best one for the customer.
-			if( ($ciniki['session']['customer']['pricepoint']['flags']&0x01) == 0 ) {
-				$strsql .= "AND (ciniki_product_prices.pricepoint_id = '" . ciniki_core_dbQuote($ciniki, $ciniki['session']['customer']['pricepoint']['id']) . "' "
-					. " OR ciniki_product_prices.pricepoint_id = 0 "
-					. ") ";
-			}
-			$strsql .= "ORDER BY ciniki_product_prices.product_id, ciniki_customer_pricepoints.sequence ASC, ciniki_product_prices.name "
-				. "";
-			$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
-                array('container'=>'products', 'fname'=>'product_id', 'fields'=>array()),
-				array('container'=>'prices', 'fname'=>'id',
-					'fields'=>array('id', 'name', 'pricepoint_id', 'pricepoint_sequence', 'available_to', 
-						'unit_amount', 'unit_discount_amount', 'unit_discount_percentage')),
-				));
-			if( $rc['stat'] != 'ok' ) {
-				return $rc;
-			}
-			if( isset($rc['products']) ) {
-				$prices = $rc['products'];
-			}
+        if( isset($ciniki['session']['customer']['price_flags']) ) {
+            $price_flags = $ciniki['session']['customer']['price_flags'];
         } else {
-			//
-			// Get only those prices with no pricepoint set
-			//
-			$strsql = "SELECT ciniki_product_prices.id, "
-				. "ciniki_product_prices.product_id, "
-				. "ciniki_product_prices.name, "
-				. "ciniki_product_prices.pricepoint_id, "
-				. "ciniki_product_prices.available_to, "
-				. "ciniki_product_prices.unit_amount, "
-				. "ciniki_product_prices.unit_discount_amount, "
-				. "ciniki_product_prices.unit_discount_percentage "
-				. "FROM ciniki_product_prices "
-				. "WHERE ciniki_product_prices.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
-				. "AND ciniki_product_prices.product_id IN (" . ciniki_core_dbQuoteIDs($ciniki, $product_ids) . ") "
-				. "AND ciniki_product_prices.pricepoint_id = 0 "
-				. "AND (ciniki_product_prices.webflags&0x01) = 0 "
-				// Find only prices that are available to customer OR visible on website
-
-				. "AND ((ciniki_product_prices.available_to&$price_flags) > 0 "
-					// Use available to with webflags to make sure the price is available to that group
-					// then make sure one is turned on
-					. "OR (webflags&available_to&0xF0) > 0) "
-				. "ORDER BY ciniki_product_prices.name "
-				. "";
-			$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
+            $price_flags = 0x01;
+        }
+        //
+        // If the customer has a pricepoint set, then get the applicable prices for that customer
+        //
+        if( isset($ciniki['session']['customer']['pricepoint']['id']) && $ciniki['session']['customer']['pricepoint']['id'] > 0 ) {
+            //
+            // Get all prices, regardless of pricepoint
+            //
+            $strsql = "SELECT ciniki_product_prices.id, "
+                . "ciniki_product_prices.product_id, "
+                . "ciniki_product_prices.name, "
+                . "ciniki_product_prices.pricepoint_id, "
+                . "ciniki_customer_pricepoints.sequence AS pricepoint_sequence, "
+                . "ciniki_customer_pricepoints.flags AS pricepoint_flags, "
+                . "ciniki_product_prices.available_to, "
+                . "ciniki_product_prices.unit_amount, "
+                . "ciniki_product_prices.unit_discount_amount, "
+                . "ciniki_product_prices.unit_discount_percentage "
+                . "FROM ciniki_product_prices "
+                . "LEFT JOIN ciniki_customer_pricepoints ON ("
+                    . "ciniki_product_prices.pricepoint_id = ciniki_customer_pricepoints.id "
+                    . "AND ciniki_customer_pricepoints.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                    . ") "
+                . "WHERE ciniki_product_prices.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                . "AND ciniki_product_prices.product_id IN (" . ciniki_core_dbQuoteIDs($ciniki, $product_ids) . ") "
+                . "AND (ciniki_product_prices.webflags&0x01) = 0 "
+                . "AND ((ciniki_product_prices.available_to&$price_flags) > 0 OR (webflags&available_to&0xF0) > 0) "
+                . "";
+            // Check if pricepoints should be restricted to only those available to the customer, or
+            // if we should get all and decide on best one for the customer.
+            if( ($ciniki['session']['customer']['pricepoint']['flags']&0x01) == 0 ) {
+                $strsql .= "AND (ciniki_product_prices.pricepoint_id = '" . ciniki_core_dbQuote($ciniki, $ciniki['session']['customer']['pricepoint']['id']) . "' "
+                    . " OR ciniki_product_prices.pricepoint_id = 0 "
+                    . ") ";
+            }
+            $strsql .= "ORDER BY ciniki_product_prices.product_id, ciniki_customer_pricepoints.sequence ASC, ciniki_product_prices.name "
+                . "";
+            $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
                 array('container'=>'products', 'fname'=>'product_id', 'fields'=>array()),
-				array('container'=>'prices', 'fname'=>'id',
-					'fields'=>array('id', 'name', 'available_to', 
-						'unit_amount', 'unit_discount_amount', 'unit_discount_percentage')),
-				));
-			if( $rc['stat'] != 'ok' ) {
-				return $rc;
-			}
-			if( isset($rc['products']) ) {
-				$prices = $rc['products'];
-			}
+                array('container'=>'prices', 'fname'=>'id',
+                    'fields'=>array('id', 'name', 'pricepoint_id', 'pricepoint_sequence', 'available_to', 
+                        'unit_amount', 'unit_discount_amount', 'unit_discount_percentage')),
+                ));
+            if( $rc['stat'] != 'ok' ) {
+                return $rc;
+            }
+            if( isset($rc['products']) ) {
+                $prices = $rc['products'];
+            }
+        } else {
+            //
+            // Get only those prices with no pricepoint set
+            //
+            $strsql = "SELECT ciniki_product_prices.id, "
+                . "ciniki_product_prices.product_id, "
+                . "ciniki_product_prices.name, "
+                . "ciniki_product_prices.pricepoint_id, "
+                . "ciniki_product_prices.available_to, "
+                . "ciniki_product_prices.unit_amount, "
+                . "ciniki_product_prices.unit_discount_amount, "
+                . "ciniki_product_prices.unit_discount_percentage "
+                . "FROM ciniki_product_prices "
+                . "WHERE ciniki_product_prices.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                . "AND ciniki_product_prices.product_id IN (" . ciniki_core_dbQuoteIDs($ciniki, $product_ids) . ") "
+                . "AND ciniki_product_prices.pricepoint_id = 0 "
+                . "AND (ciniki_product_prices.webflags&0x01) = 0 "
+                // Find only prices that are available to customer OR visible on website
+
+                . "AND ((ciniki_product_prices.available_to&$price_flags) > 0 "
+                    // Use available to with webflags to make sure the price is available to that group
+                    // then make sure one is turned on
+                    . "OR (webflags&available_to&0xF0) > 0) "
+                . "ORDER BY ciniki_product_prices.name "
+                . "";
+            $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
+                array('container'=>'products', 'fname'=>'product_id', 'fields'=>array()),
+                array('container'=>'prices', 'fname'=>'id',
+                    'fields'=>array('id', 'name', 'available_to', 
+                        'unit_amount', 'unit_discount_amount', 'unit_discount_percentage')),
+                ));
+            if( $rc['stat'] != 'ok' ) {
+                return $rc;
+            }
+            if( isset($rc['products']) ) {
+                $prices = $rc['products'];
+            }
         }
 
         //
@@ -330,7 +330,7 @@ function ciniki_products_web_processRequestProductsDetails(&$ciniki, $settings, 
                     if( $pricepoint_found == 'no' && $prev_price_id > -1 ) {
                         $products[$pid]['prices'] = array($prev_price_id=>$prices[$pid]['prices'][$prev_price_id]);
                     }
-    //				print "<pre>" . print_r($product['prices'], true) . "</pre>";
+    //              print "<pre>" . print_r($product['prices'], true) . "</pre>";
                 }
             } 
             elseif( isset($prices[$pid]['prices']) ) {

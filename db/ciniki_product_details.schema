@@ -22,19 +22,19 @@
 #
 # Fields
 # ------
-# product_id:		The product the detail is for.
-# detail_key:		The decimal notated key, eg: details.alternate_name
+# product_id:       The product the detail is for.
+# detail_key:       The decimal notated key, eg: details.alternate_name
 # 
-# detail_value:		The value associated with the detail_key. 
-# date_added:		The date and time the record was created.
-# last_updated:		The date and time the record was last updated.
+# detail_value:     The value associated with the detail_key. 
+# date_added:       The date and time the record was created.
+# last_updated:     The date and time the record was last updated.
 #
 create table ciniki_product_details (
-	business_id int not null,
-	product_id int not null,
-	detail_key varchar(50) not null,
-	detail_value varchar(60000) not null,
-	date_added datetime not null,
-	last_updated datetime not null,
-	primary key (business_id, product_id, detail_key)
+    business_id int not null,
+    product_id int not null,
+    detail_key varchar(50) not null,
+    detail_value varchar(60000) not null,
+    date_added datetime not null,
+    last_updated datetime not null,
+    primary key (business_id, product_id, detail_key)
 ) ENGINE='InnoDB', COMMENT='v1.02';

@@ -123,7 +123,7 @@ function ciniki_products_pdfcatalogGet($ciniki) {
             array('container'=>'images', 'fname'=>'id', 'name'=>'image',
                 'fields'=>array('id', 'image_id', 'page_number')),
             ));
-        if( $rc['stat'] != 'ok' ) {	
+        if( $rc['stat'] != 'ok' ) { 
             return $rc;
         }
         if( isset($rc['images']) ) {

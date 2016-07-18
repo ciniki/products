@@ -5,11 +5,11 @@
 #
 # Fields
 # ------
-# id: 				The unique id number for the pdf catalog.
-# uuid:				The Universal Unique ID.
-# business_id:		The ID of the business the catalog is attached to.
+# id:               The unique id number for the pdf catalog.
+# uuid:             The Universal Unique ID.
+# business_id:      The ID of the business the catalog is attached to.
 #
-# name:				The name of the catalog.
+# name:             The name of the catalog.
 # permalink:        The permalink for the catalog.
 #
 # sequence:         The sequence to display this catalog.
@@ -20,26 +20,26 @@
 #                   20 - Processing
 #                   30 - Active
 #
-# flags:			The options for the catalog.
+# flags:            The options for the catalog.
 #
-#					0x01 - Visible on website
-#					0x02 - 
-#					0x04 - 
-#					0x08 - 
-#					0x10 - 
-#					0x20 -
-#					0x40 -
-#					0x80 -
+#                   0x01 - Visible on website
+#                   0x02 - 
+#                   0x04 - 
+#                   0x08 - 
+#                   0x10 - 
+#                   0x20 -
+#                   0x40 -
+#                   0x80 -
 #
 # num_pages:        The number of pages in the PDF.
 #
-# date_added:		The UTC date and time the catalog was added to the database.
-# last_updated:		The UTC date and time of the last update.
+# date_added:       The UTC date and time the catalog was added to the database.
+# last_updated:     The UTC date and time of the last update.
 #
 create table ciniki_product_pdfcatalogs (
-	id int not null auto_increment,
-	uuid char(36) not null,
-	business_id int not null,
+    id int not null auto_increment,
+    uuid char(36) not null,
+    business_id int not null,
     name varchar(250) not null,
     permalink varchar(250) not null,
     sequence tinyint unsigned not null,
@@ -49,8 +49,8 @@ create table ciniki_product_pdfcatalogs (
     primary_image_id int not null,
     synopsis varchar(5000) not null,
     description varchar(10000) not null,
-	date_added datetime not null,
-	last_updated datetime not null,
-	primary key (id),
-	index sync (business_id, uuid, last_updated)
+    date_added datetime not null,
+    last_updated datetime not null,
+    primary key (id),
+    index sync (business_id, uuid, last_updated)
 ) ENGINE='InnoDB', COMMENT='v1.01';

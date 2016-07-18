@@ -10,7 +10,7 @@
 // Returns
 // -------
 // <categories>
-//		<category name="Red Wines"/>
+//      <category name="Red Wines"/>
 // </categories>
 //
 function ciniki_products_productCategorySearch($ciniki) {
@@ -41,32 +41,32 @@ function ciniki_products_productCategorySearch($ciniki) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuoteIDs');
 
-	$strsql = "SELECT DISTINCT category AS name "
-		. "FROM ciniki_products "
-		. "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-		. "AND ciniki_products.category != '' "
-		. "";
-	if( isset($args['start_needle']) && $args['start_needle'] != '' ) {
-		$strsql .= "AND (ciniki_products.category LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
-			. "OR ciniki_products.category LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%') "
-			. "";
-	}
-	$strsql .= "ORDER BY ciniki_products.category "
-		. "";
+    $strsql = "SELECT DISTINCT category AS name "
+        . "FROM ciniki_products "
+        . "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "AND ciniki_products.category != '' "
+        . "";
+    if( isset($args['start_needle']) && $args['start_needle'] != '' ) {
+        $strsql .= "AND (ciniki_products.category LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
+            . "OR ciniki_products.category LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%') "
+            . "";
+    }
+    $strsql .= "ORDER BY ciniki_products.category "
+        . "";
 
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
-	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
-		array('container'=>'categories', 'fname'=>'name', 'name'=>'category',
-			'fields'=>array('name')),
-		));
-	if( $rc != 'ok' ) {
-		return $rc;
-	}
-	if( !isset($rc['categories']) ) {
-		return array('stat'=>'ok', 'categories'=>array());
-	}
-	$categories = $rc['categories'];
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
+    $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
+        array('container'=>'categories', 'fname'=>'name', 'name'=>'category',
+            'fields'=>array('name')),
+        ));
+    if( $rc != 'ok' ) {
+        return $rc;
+    }
+    if( !isset($rc['categories']) ) {
+        return array('stat'=>'ok', 'categories'=>array());
+    }
+    $categories = $rc['categories'];
 
-	return array('stat'=>'ok', 'categories'=>$categories);
+    return array('stat'=>'ok', 'categories'=>$categories);
 }
 ?>

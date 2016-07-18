@@ -10,8 +10,8 @@
 // Returns
 // -------
 // <suppliers>
-//		<supplier name="RJ Spagnols"/>
-//		...
+//      <supplier name="RJ Spagnols"/>
+//      ...
 // </suppliers>
 //
 function ciniki_products_supplierSearch($ciniki) {
@@ -42,32 +42,32 @@ function ciniki_products_supplierSearch($ciniki) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuoteIDs');
 
-	$strsql = "SELECT id, name "
-		. "FROM ciniki_product_suppliers "
-		. "WHERE ciniki_product_suppliers.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-		. "AND ciniki_product_suppliers.name != '' "
-		. "";
-	if( isset($args['start_needle']) && $args['start_needle'] != '' ) {
-		$strsql .= "AND (ciniki_product_suppliers.name LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
-			. "OR ciniki_product_suppliers.name LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%') "
-			. "";
-	}
-	$strsql .= "ORDER BY ciniki_product_suppliers.name "
-		. "";
+    $strsql = "SELECT id, name "
+        . "FROM ciniki_product_suppliers "
+        . "WHERE ciniki_product_suppliers.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "AND ciniki_product_suppliers.name != '' "
+        . "";
+    if( isset($args['start_needle']) && $args['start_needle'] != '' ) {
+        $strsql .= "AND (ciniki_product_suppliers.name LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
+            . "OR ciniki_product_suppliers.name LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%') "
+            . "";
+    }
+    $strsql .= "ORDER BY ciniki_product_suppliers.name "
+        . "";
 
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
-	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
-		array('container'=>'suppliers', 'fname'=>'name', 'name'=>'supplier',
-			'fields'=>array('id', 'name')),
-		));
-	if( $rc != 'ok' ) {
-		return $rc;
-	}
-	if( !isset($rc['suppliers']) ) {
-		return array('stat'=>'ok', 'suppliers'=>array());
-	}
-	$suppliers = $rc['suppliers'];
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
+    $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
+        array('container'=>'suppliers', 'fname'=>'name', 'name'=>'supplier',
+            'fields'=>array('id', 'name')),
+        ));
+    if( $rc != 'ok' ) {
+        return $rc;
+    }
+    if( !isset($rc['suppliers']) ) {
+        return array('stat'=>'ok', 'suppliers'=>array());
+    }
+    $suppliers = $rc['suppliers'];
 
-	return array('stat'=>'ok', 'suppliers'=>$suppliers);
+    return array('stat'=>'ok', 'suppliers'=>$suppliers);
 }
 ?>

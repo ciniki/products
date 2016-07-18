@@ -7,66 +7,66 @@
 // Arguments
 // ---------
 // ciniki:
-// settings:		The web settings structure, similar to ciniki variable but only web specific information.
+// settings:        The web settings structure, similar to ciniki variable but only web specific information.
 //
 // Returns
 // -------
 //
 function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $args) {
 
-	if( !isset($ciniki['business']['modules']['ciniki.products']) ) {
-		return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'3045', 'msg'=>"I'm sorry, the page you requested does not exist."));
-	}
+    if( !isset($ciniki['business']['modules']['ciniki.products']) ) {
+        return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'3045', 'msg'=>"I'm sorry, the page you requested does not exist."));
+    }
 
     if( isset($args['module_page']) && $args['module_page'] == 'ciniki.products.pdfcatalogs' ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'web', 'processRequestPDFCatalogs');
         return ciniki_products_web_processRequestPDFCatalogs($ciniki, $settings, $business_id, $args);
     }
 
-	$page = array(
-		'title'=>$args['page_title'],
-		'breadcrumbs'=>$args['breadcrumbs'],
-		'blocks'=>array(),
+    $page = array(
+        'title'=>$args['page_title'],
+        'breadcrumbs'=>$args['breadcrumbs'],
+        'blocks'=>array(),
         'path'=>(isset($settings['page-products-path'])&&$settings['page-products-path']!=''?$settings['page-products-path']:'yes'),
-		);
+        );
 
-	//
-	// Check if a file was specified to be downloaded
-	//
-	$download_err = '';
+    //
+    // Check if a file was specified to be downloaded
+    //
+    $download_err = '';
     if( isset($args['uri_split']) ) {
         $num_uri = count($args['uri_split']);
     }
-	if( isset($ciniki['business']['modules']['ciniki.products'])
+    if( isset($ciniki['business']['modules']['ciniki.products'])
         && isset($num_uri)
-		&& isset($args['uri_split'][$num_uri-3]) && $args['uri_split'][$num_uri-3] != ''
-		&& isset($args['uri_split'][$num_uri-2]) && $args['uri_split'][$num_uri-2] == 'download'
-		&& isset($args['uri_split'][$num_uri-1]) && $args['uri_split'][$num_uri-1] != '' ) {
-		ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'web', 'fileDownload');
-		$rc = ciniki_products_web_fileDownload($ciniki, $ciniki['request']['business_id'], 
-			$ciniki['request']['uri_split'][$num_uri-3], $ciniki['request']['uri_split'][$num_uri-1]);
-		if( $rc['stat'] == 'ok' ) {
-			header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
-			header("Last-Modified: " . gmdate("D,d M YH:i:s") . " GMT");
-			header('Cache-Control: no-cache, must-revalidate');
-			header('Pragma: no-cache');
-			$file = $rc['file'];
-			if( $file['extension'] == 'pdf' ) {
-				header('Content-Type: application/pdf');
-			}
-//			header('Content-Disposition: attachment;filename="' . $file['filename'] . '"');
-			header('Content-Length: ' . strlen($file['binary_content']));
-			header('Cache-Control: max-age=0');
+        && isset($args['uri_split'][$num_uri-3]) && $args['uri_split'][$num_uri-3] != ''
+        && isset($args['uri_split'][$num_uri-2]) && $args['uri_split'][$num_uri-2] == 'download'
+        && isset($args['uri_split'][$num_uri-1]) && $args['uri_split'][$num_uri-1] != '' ) {
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'web', 'fileDownload');
+        $rc = ciniki_products_web_fileDownload($ciniki, $ciniki['request']['business_id'], 
+            $ciniki['request']['uri_split'][$num_uri-3], $ciniki['request']['uri_split'][$num_uri-1]);
+        if( $rc['stat'] == 'ok' ) {
+            header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+            header("Last-Modified: " . gmdate("D,d M YH:i:s") . " GMT");
+            header('Cache-Control: no-cache, must-revalidate');
+            header('Pragma: no-cache');
+            $file = $rc['file'];
+            if( $file['extension'] == 'pdf' ) {
+                header('Content-Type: application/pdf');
+            }
+//          header('Content-Disposition: attachment;filename="' . $file['filename'] . '"');
+            header('Content-Length: ' . strlen($file['binary_content']));
+            header('Cache-Control: max-age=0');
 
-			print $file['binary_content'];
-			exit;
-		}
-		
-		//
-		// If there was an error locating the files, display generic error
-		//
-		return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'3053', 'msg'=>'The file you requested does not exist.'));
-	}
+            print $file['binary_content'];
+            exit;
+        }
+        
+        //
+        // If there was an error locating the files, display generic error
+        //
+        return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'3053', 'msg'=>'The file you requested does not exist.'));
+    }
 
     //
     // Check for image format
@@ -100,20 +100,20 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
         $object_defs[$type_id] = unserialize($type['object_def']);
     }
 
-	//
-	// Store the content created by the page
-	//
-	$page_content = '';
+    //
+    // Store the content created by the page
+    //
+    $page_content = '';
 
-	//
-	// FIXME: Check if anything has changed, and if not load from cache
-	//
+    //
+    // FIXME: Check if anything has changed, and if not load from cache
+    //
     
     if( $page['title'] == '' ) {
         $page_title = "Products";
     }
-	$tags = array();
-	$ciniki['response']['head']['og']['url'] = $ciniki['request']['domain_base_url'] . '/products';
+    $tags = array();
+    $ciniki['response']['head']['og']['url'] = $ciniki['request']['domain_base_url'] . '/products';
 
     #
     # URLs
@@ -583,10 +583,10 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
         }
         if( !isset($rc['categories']) ) {
             $page['blocks'][] = array('type'=>'content', 'content'=>"I'm sorry, but we currently don't have any products available.");
-		} elseif( $category_display == 'tradingcards' ) {
+        } elseif( $category_display == 'tradingcards' ) {
             $page['blocks'][] = array('type'=>'tradingcards', 'title'=>'', 'base_url'=>$base_url, 'cards'=>$rc['categories'],
                 'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
-		} elseif( $category_display == 'cilist' ) {
+        } elseif( $category_display == 'cilist' ) {
             $page['blocks'][] = array('type'=>'imagelist', 'title'=>'', 'base_url'=>$base_url, 'list'=>$rc['categories'],
                 'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
         } else {

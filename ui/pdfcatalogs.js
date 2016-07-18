@@ -2,19 +2,19 @@
 // This is the UI to edit pdf catalogs
 //
 function ciniki_products_pdfcatalogs() {
-	this.init = function() {
-		//
-		// The edit panel
-		//
-		this.catalog = new M.panel('Catalog',
-			'ciniki_products_pdfcatalogs', 'catalog',
-			'mc', 'medium mediumaside', 'sectioned', 'ciniki.products.catalogs.catalog');
-		this.catalog.data = {};
-		this.catalog.catalog_id = 0;
+    this.init = function() {
+        //
+        // The edit panel
+        //
+        this.catalog = new M.panel('Catalog',
+            'ciniki_products_pdfcatalogs', 'catalog',
+            'mc', 'medium mediumaside', 'sectioned', 'ciniki.products.catalogs.catalog');
+        this.catalog.data = {};
+        this.catalog.catalog_id = 0;
         this.catalog.sections = {
-			'_image':{'label':'Image', 'aside':'yes', 'type':'imageform', 'fields':{
+            '_image':{'label':'Image', 'aside':'yes', 'type':'imageform', 'fields':{
                 'primary_image_id':{'label':'', 'type':'image_id', 'hidelabel':'yes', 'controls':'all', 'history':'no'},
-				}},
+                }},
             'general':{'label':'Catalog', 'aside':'yes', 'fields':{
                 'name':{'label':'Name', 'type':'text'},
                 'sequence':{'label':'Order', 'type':'text', 'size':'small'},
@@ -38,25 +38,25 @@ function ciniki_products_pdfcatalogs() {
                  }},
         };
         this.catalog.sectionData = function(s) { return this.data[s]; }
-		this.catalog.fieldValue = function(s, i, d) {
-			if( this.data[i] != null ) { return this.data[i]; }
-			return '';
-		};
-		this.catalog.fieldHistoryArgs = function(s, i) {
-			return {'method':'ciniki.products.pdfcatalogHistory', 'args':{'business_id':M.curBusinessID,
-				'catalog_id':this.catalog_id, 'field':i}};
-		}
+        this.catalog.fieldValue = function(s, i, d) {
+            if( this.data[i] != null ) { return this.data[i]; }
+            return '';
+        };
+        this.catalog.fieldHistoryArgs = function(s, i) {
+            return {'method':'ciniki.products.pdfcatalogHistory', 'args':{'business_id':M.curBusinessID,
+                'catalog_id':this.catalog_id, 'field':i}};
+        }
         this.catalog.thumbFn = function(s, i, d) {
             return 'M.ciniki_products_pdfcatalogs.image.edit(\'M.ciniki_products_pdfcatalogs.catalog.edit();\',\'' + d.id + '\');';
         };
-		this.catalog.addDropImage = function(iid) {
-			M.ciniki_products_pdfcatalogs.catalog.setFieldValue('primary_image_id', iid, null, null);
-			return true;
-		};
-		this.catalog.deleteImage = function(fid) {
-			this.setFieldValue(fid, 0, null, null);
-			return true;
-		};
+        this.catalog.addDropImage = function(iid) {
+            M.ciniki_products_pdfcatalogs.catalog.setFieldValue('primary_image_id', iid, null, null);
+            return true;
+        };
+        this.catalog.deleteImage = function(fid) {
+            this.setFieldValue(fid, 0, null, null);
+            return true;
+        };
         this.catalog.edit = function(cb, cid) {
             this.reset();
             if( cid != null) { this.catalog_id = cid; }
@@ -111,21 +111,21 @@ function ciniki_products_pdfcatalogs() {
                     });
             }
         }
-		this.catalog.addButton('save', 'Save', 'M.ciniki_products_pdfcatalogs.catalog.save();');
-		this.catalog.addClose('Cancel');
+        this.catalog.addButton('save', 'Save', 'M.ciniki_products_pdfcatalogs.catalog.save();');
+        this.catalog.addClose('Cancel');
 
-		//
-		// The edit image panel
-		//
-		this.image = new M.panel('Image',
-			'ciniki_products_pdfcatalogs', 'image',
-			'mc', 'medium', 'sectioned', 'ciniki.products.catalogs.image');
-		this.image.data = {};
-		this.image.catalog_image_id = 0;
+        //
+        // The edit image panel
+        //
+        this.image = new M.panel('Image',
+            'ciniki_products_pdfcatalogs', 'image',
+            'mc', 'medium', 'sectioned', 'ciniki.products.catalogs.image');
+        this.image.data = {};
+        this.image.catalog_image_id = 0;
         this.image.sections = {
-			'_image':{'label':'Image', 'type':'imageform', 'fields':{
+            '_image':{'label':'Image', 'type':'imageform', 'fields':{
                 'image_id':{'label':'', 'type':'image_id', 'hidelabel':'yes', 'controls':'all', 'history':'no'},
-				}},
+                }},
             'general':{'label':'', 'fields':{
                 'page_number':{'label':'Page', 'type':'text'},
                 }},
@@ -135,18 +135,18 @@ function ciniki_products_pdfcatalogs() {
                  }},
         };
         this.image.sectionData = function(s) { return this.data[s]; }
-		this.image.fieldValue = function(s, i, d) {
-			if( this.data[i] != null ) { return this.data[i]; }
-			return '';
-		};
-		this.image.fieldHistoryArgs = function(s, i) {
-			return {'method':'ciniki.products.pdfcatalogImageHistory', 'args':{'business_id':M.curBusinessID,
-				'catalog_image_id':this.catalog_image_id, 'field':i}};
-		}
-		this.image.addDropImage = function(iid) {
-			M.ciniki_products_pdfcatalogs.image.setFieldValue('image_id', iid, null, null);
-			return true;
-		};
+        this.image.fieldValue = function(s, i, d) {
+            if( this.data[i] != null ) { return this.data[i]; }
+            return '';
+        };
+        this.image.fieldHistoryArgs = function(s, i) {
+            return {'method':'ciniki.products.pdfcatalogImageHistory', 'args':{'business_id':M.curBusinessID,
+                'catalog_image_id':this.catalog_image_id, 'field':i}};
+        }
+        this.image.addDropImage = function(iid) {
+            M.ciniki_products_pdfcatalogs.image.setFieldValue('image_id', iid, null, null);
+            return true;
+        };
         this.image.edit = function(cb, iid) {
             this.reset();
             if( iid != null) { this.catalog_image_id = iid; }
@@ -201,19 +201,19 @@ function ciniki_products_pdfcatalogs() {
                     });
             }
         }
-		this.image.addButton('save', 'Save', 'M.ciniki_products_pdfcatalogs.image.save();');
-		this.image.addClose('Cancel');
-	};
+        this.image.addButton('save', 'Save', 'M.ciniki_products_pdfcatalogs.image.save();');
+        this.image.addClose('Cancel');
+    };
 
-	this.start = function(cb, aP, aG) {
-		args = {};
-		if( aG != null ) { args = eval(aG); }
-		var aC = M.createContainer(aP, 'ciniki_products_pdfcatalogs', 'yes');
-		if( aC == null ) {
-			alert('App Error');
-			return false;
-		}
+    this.start = function(cb, aP, aG) {
+        args = {};
+        if( aG != null ) { args = eval(aG); }
+        var aC = M.createContainer(aP, 'ciniki_products_pdfcatalogs', 'yes');
+        if( aC == null ) {
+            alert('App Error');
+            return false;
+        }
 
-		this.catalog.edit(cb, args.catalog_id);
-	}
+        this.catalog.edit(cb, args.catalog_id);
+    }
 }

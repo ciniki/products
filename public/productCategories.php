@@ -10,7 +10,7 @@
 // Returns
 // -------
 // <categories>
-//		<category name="Red Wines"/>
+//      <category name="Red Wines"/>
 // </categories>
 //
 function ciniki_products_productCategories($ciniki) {
@@ -38,41 +38,41 @@ function ciniki_products_productCategories($ciniki) {
         return $rc;
     }   
 
-//	ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'dateFormat');
-//	$date_format = ciniki_users_dateFormat($ciniki);
+//  ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'dateFormat');
+//  $date_format = ciniki_users_dateFormat($ciniki);
 
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuoteIDs');
 
-	//
-	// Get the list of
+    //
+    // Get the list of
 
-	$strsql = "SELECT category AS name, "
-//		. "IF(category='','Uncategorized',category) AS name, "
-		. "COUNT(id) AS num_products "
-		. "FROM ciniki_products "
-		. "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-		. "";
-	if( isset($args['status']) && $args['status'] != '' ) {
-		$strsql .= "AND ciniki_products.status = '" . ciniki_core_dbQuote($ciniki, $args['status']) . "' ";
-	}
-	$strsql .= "GROUP BY category ";
-	$strsql .= "ORDER BY ciniki_products.category "
-		. "";
+    $strsql = "SELECT category AS name, "
+//      . "IF(category='','Uncategorized',category) AS name, "
+        . "COUNT(id) AS num_products "
+        . "FROM ciniki_products "
+        . "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "";
+    if( isset($args['status']) && $args['status'] != '' ) {
+        $strsql .= "AND ciniki_products.status = '" . ciniki_core_dbQuote($ciniki, $args['status']) . "' ";
+    }
+    $strsql .= "GROUP BY category ";
+    $strsql .= "ORDER BY ciniki_products.category "
+        . "";
 
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
-	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
-		array('container'=>'categories', 'fname'=>'name', 'name'=>'category',
-			'fields'=>array('name', 'product_count'=>'num_products')),
-		));
-	if( $rc != 'ok' ) {
-		return $rc;
-	}
-	if( !isset($rc['categories']) ) {
-		return array('stat'=>'ok', 'categories'=>array());
-	}
-	$categories = $rc['categories'];
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
+    $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
+        array('container'=>'categories', 'fname'=>'name', 'name'=>'category',
+            'fields'=>array('name', 'product_count'=>'num_products')),
+        ));
+    if( $rc != 'ok' ) {
+        return $rc;
+    }
+    if( !isset($rc['categories']) ) {
+        return array('stat'=>'ok', 'categories'=>array());
+    }
+    $categories = $rc['categories'];
 
-	return array('stat'=>'ok', 'categories'=>$categories);
+    return array('stat'=>'ok', 'categories'=>$categories);
 }
 ?>

@@ -443,7 +443,7 @@ function ciniki_products_web_productDetails($ciniki, $settings, $business_id, $a
         $strsql = "SELECT ciniki_recipes.id, "
             . "ciniki_recipes.name, "
             . "ciniki_recipes.permalink, "
-            . "ciniki_recipes.image_id, "
+            . "ciniki_recipes.primary_image_id AS image_id, "
             . "ciniki_recipes.description, "
             . "'yes' AS is_details, "
             . "UNIX_TIMESTAMP(ciniki_recipes.last_updated) AS last_updated "

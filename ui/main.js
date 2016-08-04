@@ -234,11 +234,72 @@ function ciniki_products_main() {
                 'duplicates_exact':{'label':'Find Exact Duplicates', 'fn':'M.startApp(\'ciniki.products.duplicates\', null, \'M.ciniki_products_main.tools.show();\',\'mc\',{\'type\':\'exact\'});'},
                 'duplicates_soundex':{'label':'Find Similar Duplicates', 'fn':'M.startApp(\'ciniki.products.duplicates\', null, \'M.ciniki_products_main.tools.show();\',\'mc\',{\'type\':\'soundex\'});'},
             }},
+            'audio':{'label':'Audio Download', 
+                'visible':function() { return M.modFlagSet('ciniki.products', 0x1000); },
+                'list':{
+                    'audio':{'label':'Audio Files', 'fn':'M.ciniki_products_main.toolsaudio.open(\'M.ciniki_products_main.showTools();\');'},
+            }},
             'download':{'label':'Export (Advanced)', 'list':{
                 'export':{'label':'Export to Excel', 'fn':'M.ciniki_products_main.downloadExcel();'},
             }},
             };
         this.tools.addClose('Back');
+
+        //
+        // This panel displays all the audio samples for the products
+        //
+        this.toolsaudio = new M.panel('Audio Samples',
+            'ciniki_products_main', 'toolsaudio',
+            'mc', 'medium', 'sectioned', 'ciniki.products.main.toolsaudio');
+        this.toolsaudio.data = {};
+        this.toolsaudio.sections = {
+            'audio':{'label':'', 'type':'simplegrid', 'num_cols':4,
+                'sortable':'yes',
+                'sortTypes':['text', '', '', ''],
+                'headerValues':['Product', 'WAV', 'MP3', 'OGG'], 
+                },
+        };
+        this.toolsaudio.sectionData = function(s) { return this.data[s]; }
+        this.toolsaudio.noData = function() { return 'No products found'; }
+        this.toolsaudio.cellValue = function(s, i, j, d) {
+            switch(j) {
+                case 0: return (d.product_code!=''?d.product_code + ' - ':'') + d.product_name;
+                case 1: 
+                    if( d.wav_audio_id > 0 ) {
+                        return '<button onclick="event.stopPropagation();M.ciniki_products_main.toolsaudio.download(\'' + d.wav_audio_id + '\',\'' + escape(d.wav_audio_filename) + '\');">WAV</button>';
+                    }
+                    return '';
+                case 2: 
+                    if( d.mp3_audio_id > 0 ) {
+                        return '<button onclick="event.stopPropagation();M.ciniki_products_main.toolsaudio.download(\'' + d.mp3_audio_id + '\',\'' + escape(d.mp3_audio_filename) + '\');">MP3</button>';
+                    }
+                    return '';
+                case 3: 
+                    if( d.ogg_audio_id > 0 ) {
+                        return '<button onclick="event.stopPropagation();M.ciniki_products_main.toolsaudio.download(\'' + d.ogg_audio_id + '\',\'' + escape(d.ogg_audio_filename) + '\');">OGG</button>';
+                    }
+                    return '';
+            }
+        };
+        this.toolsaudio.rowFn = function(s, i, d) {
+            return 'M.startApp(\'ciniki.products.product\',null,\'M.ciniki_products_main.toolsaudio.open();\',\'mc\',{\'product_id\':\'' + d.product_id + '\'});';
+        };
+        this.toolsaudio.open = function(cb) {
+            M.api.getJSONCb('ciniki.products.audioList', {'business_id':M.curBusinessID}, function(rsp) {
+                if( rsp.stat != 'ok' ) {
+                    M.api.err(rsp);
+                    return false;
+                }
+                var p = M.ciniki_products_main.toolsaudio;
+                p.data = {'audio':rsp.audio};
+                p.refresh();
+                p.show(cb);
+            });
+        };
+        this.toolsaudio.download = function(aid, name) {
+            M.api.openFile('ciniki.audio.download', {'business_id':M.curBusinessID, 'audio_id':aid});
+        };
+        this.toolsaudio.addClose('Back');
     }
 
     //

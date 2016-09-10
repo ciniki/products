@@ -41,6 +41,76 @@ function ciniki_products_hooks_uiSettings($ciniki, $business_id, $args) {
         }
     }
 
-    return array('stat'=>'ok', 'settings'=>$settings);  
+    $rsp = array('stat'=>'ok', 'settings'=>$settings, 'menu_items'=>array());  
+
+    //
+    // Check if full owner
+    //
+    if( isset($ciniki['business']['modules']['ciniki.products'])
+        && (isset($args['permissions']['owners'])
+            || isset($args['permissions']['employees'])
+            || isset($args['permissions']['resellers'])
+            || ($ciniki['session']['user']['perms']&0x01) == 0x01
+            )
+        ) {
+        $menu_item = array(
+            'priority'=>5800,
+            'label'=>'Products', 
+            'edit'=>array('app'=>'ciniki.products.main'),
+            'add'=>array('app'=>'ciniki.products.edit', 'args'=>array('product_id'=>0)),
+            'search'=>array(
+                'method'=>'ciniki.products.productSearch',
+                'args'=>array('status'=>1, 'reserved'=>'yes'),
+                'container'=>'products',
+                'cols'=>1,
+                'cellValues'=>array(
+                    '0'=>'d.product.name;',
+                    '1'=>'d.product.inventory_current_num + ((d.product.rsv!=null&&parseFloat(d.product.rsv)>0)?\' <span class="subdue">[\' + d.product.rsv + \']</span>\':\'\')',
+                    ),
+                'noData'=>'No products found',
+                'edit'=>array('method'=>'ciniki.products.product', 'args'=>array('product_id'=>'d.product.id;')),
+                'submit'=>array('method'=>'ciniki.products.main', 'args'=>array('search'=>'search_str')),
+                ),
+            );
+        if( ciniki_core_checkModuleFlags($ciniki, 'ciniki.products', 0x04) ) {
+            $menu_item['search']['headerValues'] = array('Product', 'Inventory [Reserved]');
+            $menu_item['search']['cols'] = 2;
+        }
+        $rsp['menu_items'][] = $menu_item;
+    } 
+
+    //
+    // Check if only a sales rep 
+    //
+    if( isset($ciniki['business']['modules']['ciniki.products'])
+        && !isset($args['permissions']['owners']) 
+        && !isset($args['permissions']['employees']) 
+        && !isset($args['permissions']['resellers'])
+        && isset($args['permissions']['salesreps'])
+        ) {
+        $menu_item = array(
+            'priority'=>5800,
+            'label'=>'Products', 
+            'edit'=>array('app'=>'ciniki.products.inventory'),
+            'search'=>array(
+                'method'=>'ciniki.products.productSearch',
+                'args'=>array('status'=>1, 'reserved'=>'yes'),
+                'container'=>'products',
+                'cols'=>1,
+                'cellValues'=>array(
+                    '0'=>'d.product.name;',
+                    '1'=>'d.product.inventory_current_num + ((d.product.rsv!=null&&parseFloat(d.product.rsv)>0)?\' <span class="subdue">[\' + d.product.rsv + \']</span>\':\'\')',
+                    ),
+                'noData'=>'No products found',
+                ),
+            );
+        if( ciniki_core_checkModuleFlags($ciniki, 'ciniki.products', 0x04) ) {
+            $menu_item['search']['headerValues'] = array('Product', 'Inventory [Reserved]');
+            $menu_item['search']['cols'] = 2;
+        }
+        $rsp['menu_items'][] = $menu_item;
+    } 
+
+    return $rsp;
 }
 ?>

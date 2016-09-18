@@ -63,7 +63,7 @@ function ciniki_products_web_processRequestPDFCatalogs(&$ciniki, $settings, $bus
         $storage_filename = $business_storage_dir . '/ciniki.products/pdfcatalogs/' . $catalog['uuid'][0] . '/' . $catalog['uuid'];
 
         if( !file_exists($storage_filename) ) {
-            return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'3610', 'msg'=>"I'm sorry, we could not find the file you were looking for. Please try again or contact us for help."));
+            return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'3597', 'msg'=>"I'm sorry, we could not find the file you were looking for. Please try again or contact us for help."));
         }
 
         header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");

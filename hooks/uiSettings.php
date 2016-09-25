@@ -26,8 +26,7 @@ function ciniki_products_hooks_uiSettings($ciniki, $business_id, $args) {
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
-        array('container'=>'types', 'fname'=>'id',
-            'fields'=>array('id', 'name_s', 'name_p', 'object_def')),
+        array('container'=>'types', 'fname'=>'id', 'fields'=>array('id', 'name_s', 'name_p', 'object_def')),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -41,7 +40,7 @@ function ciniki_products_hooks_uiSettings($ciniki, $business_id, $args) {
         }
     }
 
-    $rsp = array('stat'=>'ok', 'settings'=>$settings, 'menu_items'=>array());  
+    $rsp = array('stat'=>'ok', 'settings'=>$settings, 'menu_items'=>array(), 'settings_menu_items'=>array());  
 
     //
     // Check if full owner
@@ -110,6 +109,16 @@ function ciniki_products_hooks_uiSettings($ciniki, $business_id, $args) {
         }
         $rsp['menu_items'][] = $menu_item;
     } 
+
+    if( ciniki_core_checkModuleFlags($ciniki, 'ciniki.products', 0x0100) 
+        && (isset($args['permissions']['owners'])
+            || isset($args['permissions']['employees'])
+            || isset($args['permissions']['resellers'])
+            || ($ciniki['session']['user']['perms']&0x01) == 0x01
+            )
+        ) {
+        $rsp['settings_menu_items'][] = array('priority'=>5800, 'label'=>'Products', 'edit'=>array('app'=>'ciniki.products.settings'));
+    }
 
     return $rsp;
 }

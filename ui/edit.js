@@ -203,7 +203,7 @@ function ciniki_products_edit() {
         if( type[pc]['subcategories-11'] != null ) {
             webFlags['6'].active = 'yes';
         }
-        if( (M.curBusiness.modules['ciniki.customers'].flags&0x10) > 0 ) {
+        if( M.curBusiness.modules['ciniki.customers'] != null && (M.curBusiness.modules['ciniki.customers'].flags&0x10) > 0 ) {
             webFlags['11'].active = 'yes';
         }
         form['info'] = {'label':'', 'aside':'yes', 'fields':{

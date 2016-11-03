@@ -40,7 +40,7 @@ function ciniki_products_cron_jobs(&$ciniki) {
             //
             $rc = ciniki_businesses_checkModuleAccess($ciniki, $business['business_id'], 'ciniki', 'products');
             if( $rc['stat'] != 'ok' ) { 
-                ciniki_cron_logMsg($ciniki, $business['business_id'], array('code'=>'2897', 'msg'=>'ciniki.products not configured', 
+                ciniki_cron_logMsg($ciniki, $business['business_id'], array('code'=>'ciniki.products.166', 'msg'=>'ciniki.products not configured', 
                     'severity'=>30, 'err'=>$rc['err']));
                 continue;
             }
@@ -52,7 +52,7 @@ function ciniki_products_cron_jobs(&$ciniki) {
             //
             $rc = ciniki_products_dropboxDownload($ciniki, $business['business_id']);
             if( $rc['stat'] != 'ok' ) {
-                ciniki_cron_logMsg($ciniki, $business['business_id'], array('code'=>'2898', 'msg'=>'Unable to update products', 
+                ciniki_cron_logMsg($ciniki, $business['business_id'], array('code'=>'ciniki.products.167', 'msg'=>'Unable to update products', 
                     'severity'=>50, 'err'=>$rc['err']));
                 continue;
             }
@@ -76,7 +76,7 @@ function ciniki_products_cron_jobs(&$ciniki) {
         foreach($catalogs as $catalog) {
             $rc = ciniki_products_processPDFCatalog($ciniki, $catalog['business_id'], $catalog['id']);
             if( $rc['stat'] != 'ok' ) {
-                ciniki_cron_logMsg($ciniki, $catalog['business_id'], array('code'=>'2569', 'msg'=>'Unable to update PDF Catalog: ' . $catalog['id'], 
+                ciniki_cron_logMsg($ciniki, $catalog['business_id'], array('code'=>'ciniki.products.168', 'msg'=>'Unable to update PDF Catalog: ' . $catalog['id'], 
                     'severity'=>50, 'err'=>$rc['err']));
                 continue;
             }

@@ -46,7 +46,7 @@ function ciniki_products_audioDelete(&$ciniki) {
         return $rc;
     }
     if( !isset($rc['item']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1872', 'msg'=>'Product audio does not exist'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.44', 'msg'=>'Product audio does not exist'));
     }
     $item = $rc['item'];
 

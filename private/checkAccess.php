@@ -31,7 +31,7 @@ function ciniki_products_checkAccess(&$ciniki, $business_id, $method, $product_i
     }
 
     if( !isset($rc['ruleset']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'698', 'msg'=>'No permissions granted'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.17', 'msg'=>'No permissions granted'));
     }
     $modules = $rc['modules'];
 
@@ -57,7 +57,7 @@ function ciniki_products_checkAccess(&$ciniki, $business_id, $method, $product_i
     //
     if( $business_id <= 0 ) {
         // If no business_id specified, then fail
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'400', 'msg'=>'Access denied'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.18', 'msg'=>'Access denied'));
     }
 
     // 
@@ -83,7 +83,7 @@ function ciniki_products_checkAccess(&$ciniki, $business_id, $method, $product_i
     //
     // By default, deny access
     //
-    return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2258', 'msg'=>'Access denied'));
+    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.19', 'msg'=>'Access denied'));
     
 /* OLD CODE
     //
@@ -101,7 +101,7 @@ function ciniki_products_checkAccess(&$ciniki, $business_id, $method, $product_i
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbRspQuery');
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.businesses', 'user');
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'398', 'msg'=>'Access denied', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.20', 'msg'=>'Access denied', 'err'=>$rc['err']));
     }
     //
     // If the user has permission, return ok
@@ -110,7 +110,7 @@ function ciniki_products_checkAccess(&$ciniki, $business_id, $method, $product_i
         || !isset($rc['rows'][0]) 
         || $rc['rows'][0]['user_id'] <= 0 
         || $rc['rows'][0]['user_id'] != $ciniki['session']['user']['id'] ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'399', 'msg'=>'Access denied'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.21', 'msg'=>'Access denied'));
     }
 
     // 
@@ -127,14 +127,14 @@ function ciniki_products_checkAccess(&$ciniki, $business_id, $method, $product_i
             . "AND id = '" . ciniki_core_dbQuote($ciniki, $product_id) . "' "
             . "";
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbRspQuery');
-        $rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.products', 'products', 'product', array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'401', 'msg'=>'Access denied')));
+        $rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.products', 'products', 'product', array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.22', 'msg'=>'Access denied')));
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'517', 'msg'=>'Access denied', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.23', 'msg'=>'Access denied', 'err'=>$rc['err']));
         }
         if( $rc['num_rows'] != 1 
             || $rc['products'][0]['product']['business_id'] != $business_id
             || $rc['products'][0]['product']['id'] != $product_id ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'402', 'msg'=>'Access denied'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.24', 'msg'=>'Access denied'));
         }
     }
 

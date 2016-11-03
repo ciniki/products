@@ -45,7 +45,7 @@ function ciniki_products_typeDelete(&$ciniki) {
         return $rc;
     }
     if( isset($rc['num']) && $rc['num']['num_products'] > 0 ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1815', 'msg'=>'Unable to remove product type, there are still products using it.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.128', 'msg'=>'Unable to remove product type, there are still products using it.'));
     }
     
     //
@@ -55,7 +55,7 @@ function ciniki_products_typeDelete(&$ciniki) {
     $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.products.type',
         $args['type_id'], NULL, 0x07);
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1816', 'msg'=>'Unable to delete, internal error.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.129', 'msg'=>'Unable to delete, internal error.'));
     }
 
     return array('stat'=>'ok');

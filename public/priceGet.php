@@ -90,7 +90,7 @@ function ciniki_products_priceGet($ciniki) {
         return $rc;
     }
     if( !isset($rc['prices']) || !isset($rc['prices'][0]) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1805', 'msg'=>'Unable to find price'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.83', 'msg'=>'Unable to find price'));
     }
     $price = $rc['prices'][0]['price'];
 

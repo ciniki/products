@@ -132,7 +132,7 @@ function ciniki_products_productLoad($ciniki, $business_id, $product_id, $args) 
         return $rc;
     }
     if( !isset($rc['products'][0]['product']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1471', 'msg'=>'Unable to find the specified product'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.39', 'msg'=>'Unable to find the specified product'));
     }
     $product = $rc['products'][0]['product'];
 

@@ -52,7 +52,7 @@ function ciniki_products_categoryGet($ciniki) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'category');
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1844', 'msg'=>'Unable to find category', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.49', 'msg'=>'Unable to find category', 'err'=>$rc['err']));
     }
     if( !isset($rc['category']) ) {
         //

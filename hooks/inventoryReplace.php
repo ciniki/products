@@ -31,7 +31,7 @@ function ciniki_products_hooks_inventoryReplace($ciniki, $business_id, $args) {
             return $rc;
         }
         if( !isset($rc['product']) ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1944', 'msg'=>'Unable to find product'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.9', 'msg'=>'Unable to find product'));
         }
         $product = $rc['product'];
 
@@ -41,7 +41,7 @@ function ciniki_products_hooks_inventoryReplace($ciniki, $business_id, $args) {
             // Reduce the amount in the inventory
             //
             if( $args['quantity'] < 0 ) {
-                return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1945', 'msg'=>'Unable to find product'));
+                return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.10', 'msg'=>'Unable to find product'));
             }
             $new_quantity = $product['inventory_current_num'] + $args['quantity'];
             $rc = ciniki_core_objectUpdate($ciniki, $business_id, 'ciniki.products.product', $product['id'], 
@@ -64,7 +64,7 @@ function ciniki_products_hooks_inventoryReplace($ciniki, $business_id, $args) {
                         'new_inventory_level'=>$new_quantity,
                         ));
                     if( $rc['stat'] != 'ok' ) {
-                        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2004', 'msg'=>'Unable to update inventory levels.', 'err'=>$rc['err']));
+                        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.11', 'msg'=>'Unable to update inventory levels.', 'err'=>$rc['err']));
                     }
                 }
             }

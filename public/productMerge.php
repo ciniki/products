@@ -73,7 +73,7 @@ function ciniki_products_productMerge($ciniki) {
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.wineproductions', 'wineproduction');
         if( $rc['stat'] != 'ok' ) {
             ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'899', 'msg'=>'Unable to find wine production orders', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.101', 'msg'=>'Unable to find wine production orders', 'err'=>$rc['err']));
         }
         $wineproductions = $rc['rows'];
         foreach($wineproductions as $i => $row) {
@@ -86,7 +86,7 @@ function ciniki_products_productMerge($ciniki) {
             $rc = ciniki_core_dbUpdate($ciniki, $strsql, 'ciniki.wineproductions');
             if( $rc['stat'] != 'ok' ) {
                 ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
-                return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'900', 'msg'=>'Unable to update wine production orders', 'err'=>$rc['err']));
+                return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.102', 'msg'=>'Unable to update wine production orders', 'err'=>$rc['err']));
             }
             if( $rc['num_affected_rows'] == 1 ) {
                 // Record update as merge action

@@ -60,7 +60,7 @@ function ciniki_products_audioUpdate(&$ciniki) {
         return $rc;
     }
     if( !isset($rc['item']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1869', 'msg'=>'Product audio not found'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.47', 'msg'=>'Product audio not found'));
     }
     $item = $rc['item'];
 
@@ -86,7 +86,7 @@ function ciniki_products_audioUpdate(&$ciniki) {
             return $rc;
         }
         if( $rc['num_rows'] > 0 ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1870', 'msg'=>'You already have an audio with this name, please choose another name'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.48', 'msg'=>'You already have an audio with this name, please choose another name'));
         }
     }
 

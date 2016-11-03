@@ -75,7 +75,7 @@ function ciniki_products_pdfcatalogAdd(&$ciniki) {
         return $rc;
     }
     if( $rc['num_rows'] > 0 ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3402', 'msg'=>'You already have a pdf catalog with that name, please choose another.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.70', 'msg'=>'You already have a pdf catalog with that name, please choose another.'));
     }
 
     //
@@ -109,14 +109,14 @@ function ciniki_products_pdfcatalogAdd(&$ciniki) {
     // Check to see if an image was uploaded
     //
     if( isset($_FILES['uploadfile']['error']) && $_FILES['uploadfile']['error'] == UPLOAD_ERR_INI_SIZE ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3386', 'msg'=>'Upload failed, file too large.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.71', 'msg'=>'Upload failed, file too large.'));
     }
 
     //
     // Make sure a file was submitted
     //
     if( !isset($_FILES) || !isset($_FILES['uploadfile']) || $_FILES['uploadfile']['tmp_name'] == '' ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3387', 'msg'=>'No file specified.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.72', 'msg'=>'No file specified.'));
     }
 
     $args['org_filename'] = $_FILES['uploadfile']['name'];
@@ -126,7 +126,7 @@ function ciniki_products_pdfcatalogAdd(&$ciniki) {
     // Check the extension is a PDF, currently only accept PDF files
     //
     if( $args['extension'] != 'pdf' ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3393', 'msg'=>'The file must be a PDF file.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.73', 'msg'=>'The file must be a PDF file.'));
     }
    
     //
@@ -135,7 +135,7 @@ function ciniki_products_pdfcatalogAdd(&$ciniki) {
     $storage_filename = $business_storage_dir . '/ciniki.products/pdfcatalogs/' . $args['uuid'][0] . '/' . $args['uuid'];
     if( !is_dir(dirname($storage_filename)) ) {
         if( !mkdir(dirname($storage_filename), 0700, true) ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3407', 'msg'=>'Unable to add file'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.74', 'msg'=>'Unable to add file'));
         }
     }
 
@@ -154,7 +154,7 @@ function ciniki_products_pdfcatalogAdd(&$ciniki) {
     // Move the file into storage
     if( !copy($_FILES['uploadfile']['tmp_name'], $storage_filename) ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3408', 'msg'=>'Unable to add file'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.75', 'msg'=>'Unable to add file'));
     }
 
     //

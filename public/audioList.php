@@ -83,7 +83,7 @@ function ciniki_products_audioList($ciniki) {
         return $rc;
     }
     if( !isset($rc['audio']) ) {
-        return array('stat'=>'ok', 'err'=>array('pkg'=>'ciniki', 'code'=>'3539', 'msg'=>'Unable to find audio'));
+        return array('stat'=>'ok', 'err'=>array('code'=>'ciniki.products.46', 'msg'=>'Unable to find audio'));
     }
     $audio = $rc['audio'];
     foreach($audio as $aid => $a) {

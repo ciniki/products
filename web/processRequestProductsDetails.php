@@ -21,7 +21,7 @@ function ciniki_products_web_processRequestProductsDetails(&$ciniki, $settings, 
 
     $product_ids = array_keys($products);
     if( count($product_ids) == 0 ) {
-        return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'3126', 'msg'=>'No products found'));
+        return array('stat'=>'404', 'err'=>array('code'=>'ciniki.products.164', 'msg'=>'No products found'));
     }
 
     if( !isset($args['object_defs']) ) {

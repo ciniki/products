@@ -57,13 +57,13 @@ function ciniki_products_web_processRequestPDFCatalogs(&$ciniki, $settings, $bus
             return $rc;
         }
         if( !isset($rc['catalog']) ) {
-            return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'3609', 'msg'=>"I'm sorry, we could not find the file you were looking for. Please try again or contact us for help."));
+            return array('stat'=>'404', 'err'=>array('code'=>'ciniki.products.158', 'msg'=>"I'm sorry, we could not find the file you were looking for. Please try again or contact us for help."));
         }
         $catalog = $rc['catalog'];
         $storage_filename = $business_storage_dir . '/ciniki.products/pdfcatalogs/' . $catalog['uuid'][0] . '/' . $catalog['uuid'];
 
         if( !file_exists($storage_filename) ) {
-            return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'3597', 'msg'=>"I'm sorry, we could not find the file you were looking for. Please try again or contact us for help."));
+            return array('stat'=>'404', 'err'=>array('code'=>'ciniki.products.159', 'msg'=>"I'm sorry, we could not find the file you were looking for. Please try again or contact us for help."));
         }
 
         header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
@@ -77,7 +77,7 @@ function ciniki_products_web_processRequestPDFCatalogs(&$ciniki, $settings, $bus
         flush();
         $fh = fopen($storage_filename, "rb");
         if ($fh === false) { 
-            return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'3610', 'msg'=>"I'm sorry, we could not find the file you were looking for. Please try again or contact us for help."));
+            return array('stat'=>'404', 'err'=>array('code'=>'ciniki.products.160', 'msg'=>"I'm sorry, we could not find the file you were looking for. Please try again or contact us for help."));
         }
         while (!feof($fh)) { 
             echo fread($fh, (1024*1024));
@@ -89,7 +89,7 @@ function ciniki_products_web_processRequestPDFCatalogs(&$ciniki, $settings, $bus
         //
         // If there was an error locating the files, display generic error
         //
-        return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'3431', 'msg'=>'The file you requested does not exist.'));
+        return array('stat'=>'404', 'err'=>array('code'=>'ciniki.products.161', 'msg'=>'The file you requested does not exist.'));
     }
 
     //
@@ -162,10 +162,10 @@ function ciniki_products_web_processRequestPDFCatalogs(&$ciniki, $settings, $bus
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'catalog');
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3428', 'msg'=>'PDF Catalog not found', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.162', 'msg'=>'PDF Catalog not found', 'err'=>$rc['err']));
         }
         if( !isset($rc['catalog']) ) {
-            return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'3429', 'msg'=>'No'));
+            return array('stat'=>'404', 'err'=>array('code'=>'ciniki.products.163', 'msg'=>'No'));
         }
         $catalog = $rc['catalog'];
 

@@ -79,10 +79,10 @@ function ciniki_products_pdfcatalogImageGet($ciniki) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'image');
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3426', 'msg'=>'PDF Catalog Images not found', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.80', 'msg'=>'PDF Catalog Images not found', 'err'=>$rc['err']));
         }
         if( !isset($rc['image']) ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3427', 'msg'=>'Unable to find PDF Catalog Images'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.81', 'msg'=>'Unable to find PDF Catalog Images'));
         }
         $image = $rc['image'];
     }

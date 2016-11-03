@@ -53,10 +53,10 @@ function ciniki_products_refGet($ciniki) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'ref');
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1543', 'msg'=>'Unable to find reference', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.107', 'msg'=>'Unable to find reference', 'err'=>$rc['err']));
     }
     if( !isset($rc['ref']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1544', 'msg'=>'Reference does not exist'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.108', 'msg'=>'Reference does not exist'));
     }
     $ref = $rc['ref'];
 

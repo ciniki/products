@@ -69,7 +69,7 @@ function ciniki_products_typeGet($ciniki) {
         return $rc;
     }
     if( !isset($rc['types'][0]['type']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1809', 'msg'=>'Unable to find the specified product type'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.130', 'msg'=>'Unable to find the specified product type'));
     }
     $type = $rc['types'][0]['type'];
 

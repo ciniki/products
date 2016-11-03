@@ -52,7 +52,7 @@ function ciniki_products_productLookup($ciniki) {
     if( (!isset($args['code']) || $args['code'] == '') 
         && (!isset($args['product_id']) || $args['product_id'] == '') 
         ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1846', 'msg'=>'You must specify either the product_id or the code.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.96', 'msg'=>'You must specify either the product_id or the code.'));
     }
 
     //
@@ -71,9 +71,9 @@ function ciniki_products_productLookup($ciniki) {
         $args['product_id'] = $rc['product']['id'];
     } else {
         if( $rc['num_rows'] == 0 ) {
-            return array('stat'=>'noexist', 'err'=>array('pkg'=>'ciniki', 'code'=>'1847', 'msg'=>'Product code does not exist.'));
+            return array('stat'=>'noexist', 'err'=>array('code'=>'ciniki.products.97', 'msg'=>'Product code does not exist.'));
         } 
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1848', 'msg'=>'Multiple products exist with that code.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.98', 'msg'=>'Multiple products exist with that code.'));
     }
 
     //
@@ -97,7 +97,7 @@ function ciniki_products_productLookup($ciniki) {
         $rc = ciniki_core_tagsList($ciniki, 'ciniki.products', $args['business_id'], 
             'ciniki_product_tags', 10);
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1897', 'msg'=>'Unable to get list of categories', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.99', 'msg'=>'Unable to get list of categories', 'err'=>$rc['err']));
         }
         if( isset($rc['tags']) ) {
             $rsp['categories'] = $rc['tags'];
@@ -142,7 +142,7 @@ function ciniki_products_productLookup($ciniki) {
         $rc = ciniki_core_tagsList($ciniki, 'ciniki.products', $args['business_id'], 
             'ciniki_product_tags', 40);
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1896', 'msg'=>'Unable to get list of tags', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.100', 'msg'=>'Unable to get list of tags', 'err'=>$rc['err']));
         }
         if( isset($rc['tags']) ) {
             $rsp['tags'] = $rc['tags'];

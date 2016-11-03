@@ -99,10 +99,10 @@ function ciniki_products_pdfcatalogGet($ciniki) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'catalog');
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3404', 'msg'=>'PDF Catalog not found', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.77', 'msg'=>'PDF Catalog not found', 'err'=>$rc['err']));
         }
         if( !isset($rc['catalog']) ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3409', 'msg'=>'Unable to find PDF Catalog'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.78', 'msg'=>'Unable to find PDF Catalog'));
         }
         $catalog = $rc['catalog'];
 

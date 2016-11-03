@@ -14,7 +14,7 @@ function ciniki_products_hooks_inventoryLevels($ciniki, $business_id, $args) {
 
     if( !isset($args['object']) || $args['object'] == '' 
         || !isset($args['object_ids']) || $args['object_ids'] == '' ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1979', 'msg'=>'No products specified.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.3', 'msg'=>'No products specified.'));
     }
 
     //
@@ -41,6 +41,6 @@ function ciniki_products_hooks_inventoryLevels($ciniki, $business_id, $args) {
         return array('stat'=>'ok', 'quantities'=>$rc['quantities']);
     }
 
-    return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1992', 'msg'=>'No product specified.'));        
+    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.4', 'msg'=>'No product specified.'));        
 }
 ?>

@@ -68,7 +68,7 @@ function ciniki_products_sapos_itemDelete($ciniki, $business_id, $invoice_id, $i
 //              return $rc;
 //          }
 //          if( !isset($rc['product']) ) {
-//              return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1959', 'msg'=>'Unable to find product'));
+//              return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.147', 'msg'=>'Unable to find product'));
 //          }
 //          $product = $rc['product'];
 //      

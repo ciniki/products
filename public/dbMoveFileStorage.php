@@ -71,7 +71,7 @@ function ciniki_products_dbMoveFileStorage($ciniki) {
         $storage_filename = $business_storage_dir . '/ciniki.products/files/' . $file['uuid'][0] . '/' . $file['uuid'];
         if( !is_dir(dirname($storage_filename)) ) {
             if( !mkdir(dirname($storage_filename), 0700, true) ) {
-                return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3405', 'msg'=>'Unable to add file'));
+                return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.50', 'msg'=>'Unable to add file'));
             }
         }
         if( !file_exists($storage_filename) ) { 

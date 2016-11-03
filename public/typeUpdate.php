@@ -54,7 +54,7 @@ function ciniki_products_typeUpdate(&$ciniki) {
         return $rc;
     }
     if( !isset($rc['item']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1808', 'msg'=>'Product type not found'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.131', 'msg'=>'Product type not found'));
     }
     $item = $rc['item'];
 

@@ -51,7 +51,7 @@ function ciniki_products_pdfcatalogImageDelete(&$ciniki) {
         return $rc;
     }
     if( !isset($rc['image']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3425', 'msg'=>'PDF Catalog Images does not exist.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.79', 'msg'=>'PDF Catalog Images does not exist.'));
     }
     $image = $rc['image'];
 

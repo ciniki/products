@@ -62,7 +62,7 @@ function ciniki_products_productDelete(&$ciniki) {
         return $rc;
     }
     if( !isset($rc['product']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'893', 'msg'=>'Unable to find existing product'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.87', 'msg'=>'Unable to find existing product'));
     }
     $uuid = $rc['product']['uuid'];
 
@@ -77,10 +77,10 @@ function ciniki_products_productDelete(&$ciniki) {
             . "";
         $rc = ciniki_core_dbCount($ciniki, $strsql, 'ciniki.products', 'num');
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'896', 'msg'=>'Unable to check for wine orders', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.88', 'msg'=>'Unable to check for wine orders', 'err'=>$rc['err']));
         }
         if( isset($rc['num']['wineproductions']) && $rc['num']['wineproductions'] > 0 ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'897', 'msg'=>'Unable to delete, wine orders still exist for this product.'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.89', 'msg'=>'Unable to delete, wine orders still exist for this product.'));
         }
     }
 
@@ -96,10 +96,10 @@ function ciniki_products_productDelete(&$ciniki) {
             . "";
         $rc = ciniki_core_dbCount($ciniki, $strsql, 'ciniki.products', 'num');
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1830', 'msg'=>'Unable to check for orders', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.90', 'msg'=>'Unable to check for orders', 'err'=>$rc['err']));
         }
         if( isset($rc['num']['invoices']) && $rc['num']['invoices'] > 0 ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1831', 'msg'=>'Unable to delete, orders still exist for this product.'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.91', 'msg'=>'Unable to delete, orders still exist for this product.'));
         }
     }
 
@@ -148,7 +148,7 @@ function ciniki_products_productDelete(&$ciniki) {
     $rc = ciniki_core_dbDelete($ciniki, $strsql, 'ciniki.products');
     if( $rc['stat'] != 'ok' ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'901', 'msg'=>'Unable to delete, internal error.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.92', 'msg'=>'Unable to delete, internal error.'));
     }
     // FIXME: Does this need history logged for details delete?
 
@@ -159,7 +159,7 @@ function ciniki_products_productDelete(&$ciniki) {
         $args['product_id'], $uuid, 0x04);
     if( $rc['stat'] != 'ok' ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'898', 'msg'=>'Unable to delete, internal error.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.93', 'msg'=>'Unable to delete, internal error.'));
     }
 
     //

@@ -77,7 +77,7 @@ function ciniki_products_fileAdd(&$ciniki) {
         return $rc;
     }
     if( $rc['num_rows'] > 0 ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1479', 'msg'=>'You already have a file with this name, please choose another name'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.51', 'msg'=>'You already have a file with this name, please choose another name'));
     }
 
     //
@@ -94,7 +94,7 @@ function ciniki_products_fileAdd(&$ciniki) {
     // Check to see if an image was uploaded
     //
     if( isset($_FILES['uploadfile']['error']) && $_FILES['uploadfile']['error'] == UPLOAD_ERR_INI_SIZE ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1480', 'msg'=>'Upload failed, file too large.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.52', 'msg'=>'Upload failed, file too large.'));
     }
     // FIXME: Add other checkes for $_FILES['uploadfile']['error']
 
@@ -102,7 +102,7 @@ function ciniki_products_fileAdd(&$ciniki) {
     // Make sure a file was submitted
     //
     if( !isset($_FILES) || !isset($_FILES['uploadfile']) || $_FILES['uploadfile']['tmp_name'] == '' ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1481', 'msg'=>'No file specified.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.53', 'msg'=>'No file specified.'));
     }
 
     $args['org_filename'] = $_FILES['uploadfile']['name'];
@@ -112,7 +112,7 @@ function ciniki_products_fileAdd(&$ciniki) {
     // Check the extension is a PDF, currently only accept PDF files
     //
     if( $args['extension'] != 'pdf' ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1482', 'msg'=>'The file must be a PDF file.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.54', 'msg'=>'The file must be a PDF file.'));
     }
    
     //
@@ -121,12 +121,12 @@ function ciniki_products_fileAdd(&$ciniki) {
     $storage_filename = $business_storage_dir . '/ciniki.products/files/' . $args['uuid'][0] . '/' . $args['uuid'];
     if( !is_dir(dirname($storage_filename)) ) {
         if( !mkdir(dirname($storage_filename), 0700, true) ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3410', 'msg'=>'Unable to add file'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.55', 'msg'=>'Unable to add file'));
         }
     }
 
     if( !rename($_FILES['uploadfile']['tmp_name'], $storage_filename) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3411', 'msg'=>'Unable to add file'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.56', 'msg'=>'Unable to add file'));
     }
 
     $args['binary_content'] = '';//file_get_contents($_FILES['uploadfile']['tmp_name']);

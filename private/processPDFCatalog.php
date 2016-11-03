@@ -42,7 +42,7 @@ function ciniki_products_processPDFCatalog(&$ciniki, $business_id, $catalog_id) 
         return $rc;
     }
     if( !isset($rc['catalog']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3412', 'msg'=>'Catalog does not exist'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.33', 'msg'=>'Catalog does not exist'));
     }
     $catalog = $rc['catalog'];
    
@@ -59,7 +59,7 @@ function ciniki_products_processPDFCatalog(&$ciniki, $business_id, $catalog_id) 
         return $rc;
     }
     if( $rc['num_affected_rows'] < 1 ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3413', 'msg'=>'Unable to lock catalog for processing.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.34', 'msg'=>'Unable to lock catalog for processing.'));
     }
 
     //
@@ -75,7 +75,7 @@ function ciniki_products_processPDFCatalog(&$ciniki, $business_id, $catalog_id) 
     // Check the file exists
     $storage_filename = $business_storage_dir . '/ciniki.products/pdfcatalogs/' . $catalog['uuid'][0] . '/' . $catalog['uuid'];
     if( !file_exists($storage_filename) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3414', 'msg'=>'Unable to open pdf.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.35', 'msg'=>'Unable to open pdf.'));
     }
 
     //
@@ -88,7 +88,7 @@ function ciniki_products_processPDFCatalog(&$ciniki, $business_id, $catalog_id) 
     }
 
     if( !copy($storage_filename, $tmp_filename) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3458', 'msg'=>'Unable to copy pdf.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.36', 'msg'=>'Unable to copy pdf.'));
     }
 
     ini_set('memory_limit', '4096M');
@@ -121,7 +121,7 @@ function ciniki_products_processPDFCatalog(&$ciniki, $business_id, $catalog_id) 
             'perms'=>1,
             ));
         if( $rc['stat'] != 'ok' && $rc['stat'] != 'exists' ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3424', 'msg'=>"Unable to save image for page $page_number.", 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.37', 'msg'=>"Unable to save image for page $page_number.", 'err'=>$rc['err']));
         }
         $image_id = $rc['id'];
 
@@ -134,7 +134,7 @@ function ciniki_products_processPDFCatalog(&$ciniki, $business_id, $catalog_id) 
             'image_id'=>$image_id,
             ));
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3442', 'msg'=>"Unable to save image for page $page_number."));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.38', 'msg'=>"Unable to save image for page $page_number."));
         }
     }
 

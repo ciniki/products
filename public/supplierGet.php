@@ -70,7 +70,7 @@ function ciniki_products_supplierGet($ciniki) {
         return $rc;
     }
     if( !isset($rc['suppliers'][0]['supplier']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1492', 'msg'=>'Unable to find the specified supplier'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.127', 'msg'=>'Unable to find the specified supplier'));
     }
     $supplier = $rc['suppliers'][0]['supplier'];
 

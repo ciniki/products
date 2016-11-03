@@ -51,7 +51,7 @@ function ciniki_products_refAdd(&$ciniki) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectCheckExists');
     $rc = ciniki_core_objectCheckExists($ciniki, $args['business_id'], $args['object'], $args['object_id']);
     if( $rc['stat'] == 'noexist' ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1541', 'msg'=>'Object does not exist'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.105', 'msg'=>'Object does not exist'));
     }
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -72,7 +72,7 @@ function ciniki_products_refAdd(&$ciniki) {
         return $rc;
     }
     if( isset($rc['rows']) && count($rc['rows']) > 0 ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1542', 'msg'=>'Object is already attached to the product'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.106', 'msg'=>'Object is already attached to the product'));
     }
 
     //

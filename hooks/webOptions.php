@@ -22,7 +22,7 @@ function ciniki_products_hooks_webOptions(&$ciniki, $business_id, $args) {
     // Check to make sure the module is enabled
     //
     if( !isset($ciniki['business']['modules']['ciniki.products']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3048', 'msg'=>"I'm sorry, the page you requested does not exist."));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.16', 'msg'=>"I'm sorry, the page you requested does not exist."));
     }
 
     //

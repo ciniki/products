@@ -25,7 +25,7 @@ function ciniki_products_dropboxDownloadAudio(&$ciniki, $business_id, $client, $
     ciniki_core_loadMethod($ciniki, 'ciniki', 'audio', 'hooks', 'dropboxFileRevs');
 
     if( !isset($ciniki['config']['ciniki.core']['sox']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2923', 'msg'=>'Missing audio converter'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.28', 'msg'=>'Missing audio converter'));
     }
     $sox = $ciniki['config']['ciniki.core']['sox'];
 
@@ -51,7 +51,7 @@ function ciniki_products_dropboxDownloadAudio(&$ciniki, $business_id, $client, $
         $extension = preg_replace("/^.*\.([^\.]+)$/", "$1", $filename);
 
         if( $extension != 'wav' ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2924', 'msg'=>'Incorrect file format'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.29', 'msg'=>'Incorrect file format'));
         }
 
         //
@@ -128,7 +128,7 @@ function ciniki_products_dropboxDownloadAudio(&$ciniki, $business_id, $client, $
             'dropbox_rev'=>$file['rev'],
             ));
         if( $rc['stat'] != 'ok' && $rc['stat'] != 'exists' ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2925', 'msg'=>'Unable to add file', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.30', 'msg'=>'Unable to add file', 'err'=>$rc['err']));
         }
         $wav_audio_id = $rc['id'];
 
@@ -141,7 +141,7 @@ function ciniki_products_dropboxDownloadAudio(&$ciniki, $business_id, $client, $
             'dropbox_rev'=>$file['rev'],
             ));
         if( $rc['stat'] != 'ok' && $rc['stat'] != 'exists' ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2926', 'msg'=>'Unable to add file', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.31', 'msg'=>'Unable to add file', 'err'=>$rc['err']));
         }
         $mp3_audio_id = $rc['id'];
 
@@ -154,7 +154,7 @@ function ciniki_products_dropboxDownloadAudio(&$ciniki, $business_id, $client, $
             'dropbox_rev'=>$file['rev'],
             ));
         if( $rc['stat'] != 'ok' && $rc['stat'] != 'exists' ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2927', 'msg'=>'Unable to add file', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.32', 'msg'=>'Unable to add file', 'err'=>$rc['err']));
         }
         $ogg_audio_id = $rc['id'];
 

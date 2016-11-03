@@ -58,7 +58,7 @@ function ciniki_products_pdfcatalogUpdate(&$ciniki) {
             return $rc;
         }
         if( $rc['num_rows'] > 0 ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3406', 'msg'=>'You already have an pdf catalog with this name, please choose another.'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.82', 'msg'=>'You already have an pdf catalog with this name, please choose another.'));
         }
     }
 

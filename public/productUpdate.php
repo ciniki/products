@@ -119,7 +119,7 @@ function ciniki_products_productUpdate(&$ciniki) {
             return $rc;
         }
         if( isset($rc['product']) || (isset($rc['rows']) && count($rc['rows']) > 0) ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1494', 'msg'=>'You already have a product with that name, please choose another'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.103', 'msg'=>'You already have a product with that name, please choose another'));
         }
     }
 
@@ -163,7 +163,7 @@ function ciniki_products_productUpdate(&$ciniki) {
                     'new_inventory_level'=>$args['inventory_current_num'],
                     ));
                 if( $rc['stat'] != 'ok' ) {
-                    return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2001', 'msg'=>'Unable to update inventory levels.', 'err'=>$rc['err']));
+                    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.104', 'msg'=>'Unable to update inventory levels.', 'err'=>$rc['err']));
                 }
             }
         }

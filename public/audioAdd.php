@@ -49,7 +49,7 @@ function ciniki_products_audioAdd(&$ciniki) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbUUID');
     $rc = ciniki_core_dbUUID($ciniki, 'ciniki.products');
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1866', 'msg'=>'Unable to get a new UUID', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.41', 'msg'=>'Unable to get a new UUID', 'err'=>$rc['err']));
     }
     $args['uuid'] = $rc['uuid'];
 
@@ -79,12 +79,12 @@ function ciniki_products_audioAdd(&$ciniki) {
         return $rc;
     }
     if( $rc['num_rows'] > 0 ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1867', 'msg'=>'You already have an audio with this name, please choose another name'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.42', 'msg'=>'You already have an audio with this name, please choose another name'));
     }
 
 
     if( $args['product_id'] <= 0 ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1868', 'msg'=>'No product specified'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.43', 'msg'=>'No product specified'));
     }
 
     //

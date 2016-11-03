@@ -41,7 +41,7 @@ function ciniki_products_web_fileDownload($ciniki, $business_id, $product_permal
         return $rc;
     }
     if( !isset($rc['file']) ) {
-        return array('stat'=>'noexist', 'err'=>array('pkg'=>'ciniki', 'code'=>'1500', 'msg'=>'Unable to find requested file'));
+        return array('stat'=>'noexist', 'err'=>array('code'=>'ciniki.products.155', 'msg'=>'Unable to find requested file'));
     }
     $rc['file']['filename'] = $rc['file']['name'] . '.' . $rc['file']['extension'];
 

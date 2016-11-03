@@ -29,7 +29,7 @@ function ciniki_products_cron_jobs(&$ciniki) {
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.sapos', 'item');
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2891', 'msg'=>'Unable to get list of businesses with products', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.1', 'msg'=>'Unable to get list of businesses with products', 'err'=>$rc['err']));
     }
     if( isset($rc['rows']) ) {
         $businesses = $rc['rows'];
@@ -68,7 +68,7 @@ function ciniki_products_cron_jobs(&$ciniki) {
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'catalog');
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2699', 'msg'=>'Unable to get list of businesses with pdfcatalogs', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.2', 'msg'=>'Unable to get list of businesses with pdfcatalogs', 'err'=>$rc['err']));
     }
     if( isset($rc['rows']) ) {
         $catalogs = $rc['rows'];

@@ -15,7 +15,7 @@
 function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $args) {
 
     if( !isset($ciniki['business']['modules']['ciniki.products']) ) {
-        return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'3045', 'msg'=>"I'm sorry, the page you requested does not exist."));
+        return array('stat'=>'404', 'err'=>array('code'=>'ciniki.products.156', 'msg'=>"I'm sorry, the page you requested does not exist."));
     }
 
     if( isset($args['module_page']) && $args['module_page'] == 'ciniki.products.pdfcatalogs' ) {
@@ -65,7 +65,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
         //
         // If there was an error locating the files, display generic error
         //
-        return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'3053', 'msg'=>'The file you requested does not exist.'));
+        return array('stat'=>'404', 'err'=>array('code'=>'ciniki.products.157', 'msg'=>'The file you requested does not exist.'));
     }
 
     //

@@ -70,14 +70,14 @@ function ciniki_products_relationshipUpdate(&$ciniki) {
         return $rc;
     }
     if( !isset($rc['relationship']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1528', 'msg'=>'Unable to find existing relationship'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.120', 'msg'=>'Unable to find existing relationship'));
     }
     $relationship = $rc['relationship'];
 
     if( (isset($args['product_id']) && $args['product_id'] == $relationship['related_id'])
         || (isset($args['related_id']) && $args['related_id'] == $relationship['product_id'])
         ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1529', 'msg'=>'The product is the same, please choose another'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.121', 'msg'=>'The product is the same, please choose another'));
     }
 
     //
@@ -86,7 +86,7 @@ function ciniki_products_relationshipUpdate(&$ciniki) {
     if( (isset($args['product_id']) && ($args['product_id'] == '' || $args['product_id'] == '0') )
         || (isset($args['related_id']) && ($args['related_id'] == '' || $args['related_id'] == '0') )
         ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1531', 'msg'=>'Please specify a product.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.122', 'msg'=>'Please specify a product.'));
     }
 
     //
@@ -117,7 +117,7 @@ function ciniki_products_relationshipUpdate(&$ciniki) {
             return $rc;
         }
         if( isset($rc['rows']) && count($rc['rows']) > 0 ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1530', 'msg'=>'Relationship already exists'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.123', 'msg'=>'Relationship already exists'));
         }
     }
 

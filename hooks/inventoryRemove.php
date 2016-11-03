@@ -31,7 +31,7 @@ function ciniki_products_hooks_inventoryRemove($ciniki, $business_id, $args) {
             return $rc;
         }
         if( !isset($rc['product']) ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1943', 'msg'=>'Unable to find product'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.5', 'msg'=>'Unable to find product'));
         }
         $product = $rc['product'];
 
@@ -41,13 +41,13 @@ function ciniki_products_hooks_inventoryRemove($ciniki, $business_id, $args) {
             // Check to make sure the quantity to be removed is a positive value
             //
             if( $args['quantity'] < 0 ) {
-                return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1941', 'msg'=>'Unable to find product'));
+                return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.6', 'msg'=>'Unable to find product'));
             }
             //
             // Check to make sure there is enough in inventory
             //
             if( $product['inventory_current_num'] < $args['quantity'] ) {
-                return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1942', 'msg'=>'There is not enough inventory.'));
+                return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.7', 'msg'=>'There is not enough inventory.'));
             }
 
             //
@@ -74,7 +74,7 @@ function ciniki_products_hooks_inventoryRemove($ciniki, $business_id, $args) {
                         'new_inventory_level'=>$new_quantity,
                         ));
                     if( $rc['stat'] != 'ok' ) {
-                        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2008', 'msg'=>'Unable to update inventory levels.', 'err'=>$rc['err']));
+                        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.8', 'msg'=>'Unable to update inventory levels.', 'err'=>$rc['err']));
                     }
                 }
             }

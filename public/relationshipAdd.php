@@ -77,14 +77,14 @@ function ciniki_products_relationshipAdd(&$ciniki) {
         return $rc;
     }
     if( isset($rc['rows']) && count($rc['rows']) > 0 ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1526', 'msg'=>'Relationship already exists'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.114', 'msg'=>'Relationship already exists'));
     }
 
     //
     // Check to make sure the product and related product are not the same
     //
     if( $args['product_id'] == $args['related_id'] ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1527', 'msg'=>'The products are the same, please choose another product'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.115', 'msg'=>'The products are the same, please choose another product'));
     }
 
     //

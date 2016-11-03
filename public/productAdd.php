@@ -112,7 +112,7 @@ function ciniki_products_productAdd(&$ciniki) {
     if( (!isset($args['type_id']) || $args['type_id'] == '' || $args['type_id'] == 0) 
         && (!isset($args['type_name_s']) || $args['type_name_s'] == '' ) 
         ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1820', 'msg'=>'You must specify a product type'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.84', 'msg'=>'You must specify a product type'));
     }
 
     //
@@ -130,7 +130,7 @@ function ciniki_products_productAdd(&$ciniki) {
             return $rc;
         }
         if( !isset($rc['type']) ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1821', 'msg'=>'Invalid product type'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.85', 'msg'=>'Invalid product type'));
         }
         $args['type_id'] = $rc['type']['id'];
     }
@@ -157,7 +157,7 @@ function ciniki_products_productAdd(&$ciniki) {
         return $rc;
     }
     if( isset($rc['product']) || (isset($rc['rows']) && count($rc['rows']) > 0) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1493', 'msg'=>'You already have a product with that name, please choose another'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.86', 'msg'=>'You already have a product with that name, please choose another'));
     }
 
     //  

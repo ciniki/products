@@ -57,7 +57,7 @@ function ciniki_products_refUpdate(&$ciniki) {
         return $rc;
     }
     if( !isset($rc['ref']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1540', 'msg'=>'Unable to find existing product reference'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.111', 'msg'=>'Unable to find existing product reference'));
     }
     $ref = $rc['ref'];
 
@@ -65,7 +65,7 @@ function ciniki_products_refUpdate(&$ciniki) {
     // Check for blank or 0 products
     //
     if( isset($args['object_id']) && ($args['object_id'] == '' || $args['object_id'] == '0') ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1536', 'msg'=>'Please specify a product reference.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.112', 'msg'=>'Please specify a product reference.'));
     }
 
     //
@@ -86,7 +86,7 @@ function ciniki_products_refUpdate(&$ciniki) {
             return $rc;
         }
         if( isset($rc['rows']) && count($rc['rows']) > 0 ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1545', 'msg'=>'Reference already exists for this product'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.113', 'msg'=>'Reference already exists for this product'));
         }
     }
 

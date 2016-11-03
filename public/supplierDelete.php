@@ -61,7 +61,7 @@ function ciniki_products_supplierDelete(&$ciniki) {
         return $rc;
     }
     if( !isset($rc['supplier']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1489', 'msg'=>'Unable to find existing supplier'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.124', 'msg'=>'Unable to find existing supplier'));
     }
     $uuid = $rc['supplier']['uuid'];
 
@@ -75,10 +75,10 @@ function ciniki_products_supplierDelete(&$ciniki) {
         . "";
     $rc = ciniki_core_dbCount($ciniki, $strsql, 'ciniki.products', 'num');
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1490', 'msg'=>'Unable to check for products', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.125', 'msg'=>'Unable to check for products', 'err'=>$rc['err']));
     }
     if( isset($rc['num']['products']) && $rc['num']['products'] > 0 ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1491', 'msg'=>'Unable to delete, products still exist for this supplier.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.126', 'msg'=>'Unable to delete, products still exist for this supplier.'));
     }
 
     //

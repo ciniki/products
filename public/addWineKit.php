@@ -98,7 +98,7 @@ function ciniki_products_addWineKit(&$ciniki) {
     }
     if( !isset($rc['insert_id']) || $rc['insert_id'] < 1 ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'436', 'msg'=>'Unable to add product'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.40', 'msg'=>'Unable to add product'));
     }
     $product_id = $rc['insert_id'];
 

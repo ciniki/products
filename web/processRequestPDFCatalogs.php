@@ -92,6 +92,15 @@ function ciniki_products_web_processRequestPDFCatalogs(&$ciniki, $settings, $bus
         return array('stat'=>'404', 'err'=>array('code'=>'ciniki.products.161', 'msg'=>'The file you requested does not exist.'));
     }
 
+    $thumbnail_format = 'square-cropped';
+    $thumbnail_padding_color = '#ffffff';
+    if( isset($settings['page-pdfcatalogs-thumbnail-format']) && $settings['page-pdfcatalogs-thumbnail-format'] == 'square-padded' ) {
+        $thumbnail_format = $settings['page-pdfcatalogs-thumbnail-format'];
+        if( isset($settings['page-pdfcatalogs-thumbnail-padding-color']) && $settings['page-pdfcatalogs-thumbnail-padding-color'] != '' ) {
+            $thumbnail_padding_color = $settings['page-pdfcatalogs-thumbnail-padding-color'];
+        } 
+    }
+
     //
     // Check if catalog to be displayed
     //
@@ -135,7 +144,9 @@ function ciniki_products_web_processRequestPDFCatalogs(&$ciniki, $settings, $bus
         if( count($rc['catalogs']) == 1 ) {
             $catalog_permalink = $rc['catalogs'][0]['permalink'];
         } else {
-            $page['blocks'][] = array('type'=>'imagelist', 'base_url'=>$args['base_url'], 'list'=>$rc['catalogs']);
+            $page['blocks'][] = array('type'=>'imagelist', 'base_url'=>$args['base_url'], 'list'=>$rc['catalogs'],
+                'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color,
+                );
 
         }
     }

@@ -41,8 +41,23 @@ function ciniki_products_hooks_webOptions(&$ciniki, $business_id, $args) {
 
     $pages = array();
 
-    if( ($ciniki['business']['modules']['ciniki.products']['flags']&0x80) > 0 ) {
-        $pages['ciniki.pdfcatalogs'] = array('name'=>'Catalogs', 'options'=>array());
+    if( ciniki_core_checkModuleFlags('ciniki.products', 0x80) ) {
+        $pages['ciniki.pdfcatalogs'] = array('name'=>'Catalogs', 'options'=>array(
+            array('label'=>'Thumbnail Format',
+                'setting'=>'page-pdfcatalogs-thumbnail-format', 
+                'type'=>'toggle',
+                'value'=>(isset($settings['page-pdfcatalogs-thumbnail-format'])?$settings['page-pdfcatalogs-thumbnail-format']:'square-cropped'),
+                'toggles'=>array(
+                    array('value'=>'square-cropped', 'label'=>'Cropped'),
+                    array('value'=>'square-padded', 'label'=>'Padded'),
+                    ),
+                ),
+            array('label'=>'Thumbnail Padding Color',
+                'setting'=>'page-pdfcatalogs-thumbnail-padding-color', 
+                'type'=>'colour',
+                'value'=>(isset($settings['page-pdfcatalogs-thumbnail-padding-color'])?$settings['page-pdfcatalogs-thumbnail-padding-color']:'#ffffff'),
+                ),
+            ));
     }
 
     $pages['ciniki.products'] = array('name'=>'Products', 'options'=>array(

@@ -41,7 +41,7 @@ function ciniki_products_hooks_webOptions(&$ciniki, $business_id, $args) {
 
     $pages = array();
 
-    if( ciniki_core_checkModuleFlags('ciniki.products', 0x80) ) {
+    if( ciniki_core_checkModuleFlags($ciniki, 'ciniki.products', 0x80) ) {
         $pages['ciniki.pdfcatalogs'] = array('name'=>'Catalogs', 'options'=>array(
             array('label'=>'Thumbnail Format',
                 'setting'=>'page-pdfcatalogs-thumbnail-format', 

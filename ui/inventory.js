@@ -386,6 +386,7 @@ function ciniki_products_inventory() {
             args['supplier_id'] = this.list._type;
         }
         args['reserved'] = 'yes';
+        args['status'] = 10;
         M.api.openFile('ciniki.products.productList', args);
     }
 

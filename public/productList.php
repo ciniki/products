@@ -25,6 +25,7 @@ function ciniki_products_productList($ciniki) {
         'subcategory'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Sub-Category'),
         'tag'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Tag'),
         'supplier_id'=>array('required'=>'no', 'name'=>'Supplier'),
+        'status'=>array('required'=>'no', 'name'=>'Status'),
         'type_id'=>array('required'=>'no', 'name'=>'Type'),
         'reserved'=>array('required'=>'no', 'name'=>'Reserved Quantities'),
         'output'=>array('required'=>'no', 'name'=>'Output Type'),
@@ -57,6 +58,10 @@ function ciniki_products_productList($ciniki) {
     $intl_currency = $rc['settings']['intl-default-currency'];
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
+    $status_sql = '';
+    if( isset($args['status']) && $args['status'] == 10 ) {
+        $status_sql = "AND ciniki_products.status = 10 ";
+    }
 
     if( isset($args['category']) && $args['category'] != '' 
         && isset($args['subcategory']) && $args['subcategory'] != '' 
@@ -75,6 +80,7 @@ function ciniki_products_productList($ciniki) {
                 . ") "
             . "LEFT JOIN ciniki_products ON ("
                 . "t2.product_id = ciniki_products.id "
+                . $status_sql
                 . "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
                 . ") "
             . "WHERE t1.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
@@ -103,6 +109,7 @@ function ciniki_products_productList($ciniki) {
                 . "AND ciniki_product_tags.tag_type = 10 "
                 . ") "
             . "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . $status_sql
             . "AND ISNULL(tag_name) "
             . "ORDER BY ciniki_products.name "
             . "";
@@ -127,9 +134,10 @@ function ciniki_products_productList($ciniki) {
             . "FROM ciniki_product_tags "
             . "LEFT JOIN ciniki_products ON ("
                 . "ciniki_product_tags.product_id = ciniki_products.id "
+                . $status_sql
                 . "AND ciniki_product_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
                 . ") "
-            . "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE ciniki_product_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
             . "AND ciniki_product_tags.permalink = '" . ciniki_core_dbQuote($ciniki, $args['category']) . "' "
             . "ORDER BY ciniki_product_tags.tag_name, ciniki_products.name "
             . "";
@@ -155,6 +163,7 @@ function ciniki_products_productList($ciniki) {
             . "FROM ciniki_products "
             . "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
             . "AND supplier_id = '" . ciniki_core_dbQuote($ciniki, $args['supplier_id']) . "' "
+            . $status_sql
             . "ORDER BY name "
             . "";
         $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
@@ -179,6 +188,7 @@ function ciniki_products_productList($ciniki) {
             . "FROM ciniki_products "
             . "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
             . "AND type_id = '" . ciniki_core_dbQuote($ciniki, $args['type_id']) . "' "
+            . $status_sql
             . "ORDER BY name "
             . "";
         $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
@@ -201,6 +211,7 @@ function ciniki_products_productList($ciniki) {
             . "IF((inventory_flags&0x01)=1,inventory_current_num,'') AS inventory_current_num "
             . "FROM ciniki_products "
             . "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . $status_sql
             . "ORDER BY code, name "
             . "";
         $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(

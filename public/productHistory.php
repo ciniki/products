@@ -52,6 +52,12 @@ function ciniki_products_productHistory($ciniki) {
         return $rc;
     }
 
+    if( $args['field'] == 'inventory_current_num' ) {
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbGetModuleHistoryNotes');
+        return ciniki_core_dbGetModuleHistoryNotes($ciniki, 'ciniki.products', 'ciniki_product_history', 
+            $args['business_id'], 'ciniki_products', $args['product_id'], $args['field']);
+    }
+
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbGetModuleHistory');
     return ciniki_core_dbGetModuleHistory($ciniki, 'ciniki.products', 'ciniki_product_history', 
         $args['business_id'], 'ciniki_products', $args['product_id'], $args['field']);

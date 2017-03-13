@@ -72,6 +72,7 @@ function ciniki_products_objects($ciniki) {
             ),
         'details'=>array('key'=>'product_id', 'table'=>'ciniki_product_details'),
         'history_table'=>'ciniki_product_history',
+        'history_notes'=>'yes',
         );
     $objects['tag'] = array(
         'name'=>'Tag',

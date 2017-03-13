@@ -1,0 +1,6 @@
+#
+# This file will upgrade the database table wineproductions to version 1.02.
+#
+ALTER TABLE ciniki_product_history MODIFY COLUMN new_value varchar(30000) not null;
+ALTER TABLE ciniki_product_history ADD COLUMN notes varchar(1000) not null AFTER log_date;
+ALTER TABLE ciniki_product_history COMMENT='v1.02';

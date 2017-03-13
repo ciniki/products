@@ -44,6 +44,7 @@ function ciniki_products_productUpdate(&$ciniki) {
         'inventory_current_num'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Current Inventory Number'), 
         'inventory_reorder_num'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Current Reorder Level'), 
         'inventory_reorder_quantity'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Current Reorder Quantity'), 
+        'history_notes'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'name'=>'Inventory Notes'),
         'price'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'currency', 'name'=>'Price'), 
         'cost'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'currency', 'name'=>'Cost'), 
         'msrp'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'currency', 'name'=>'MSRP'), 
@@ -142,8 +143,7 @@ function ciniki_products_productUpdate(&$ciniki) {
     // Update the product
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
-    $rc = ciniki_core_objectUpdate($ciniki, $args['business_id'], 'ciniki.products.product', 
-        $args['product_id'], $args, 0x04);
+    $rc = ciniki_core_objectUpdate($ciniki, $args['business_id'], 'ciniki.products.product', $args['product_id'], $args, 0x04, $args['history_notes']);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -168,40 +168,6 @@ function ciniki_products_productUpdate(&$ciniki) {
             }
         }
     }
-
-    //
-    // Update the details
-    //
-//  $detail_fields = array(
-//      'wine_type'=>'wine_type',
-//      'kit_length'=>'kit_length',
-//      'winekit_oak'=>'winekit_oak',
-//      'winekit_body'=>'winekit_body',
-//      'winekit_sweetness'=>'winekit_sweetness',
-//      );
-//  foreach($detail_fields as $field => $detail_field) {
-//      if( isset($args[$field]) ) {
-//          $strsql = "INSERT INTO ciniki_product_details (business_id, product_id, "
-//              . "detail_key, detail_value, date_added, last_updated) VALUES ("
-//              . "'" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "', "
-//              . "'" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "', "
-//              . "'" . ciniki_core_dbQuote($ciniki, $detail_field) . "', "
-//              . "'" . ciniki_core_dbQuote($ciniki, $args[$field]) . "', "
-//              . "UTC_TIMESTAMP(), UTC_TIMESTAMP() "
-//              . ") "
-//              . "ON DUPLICATE KEY UPDATE detail_value = '" . ciniki_core_dbQuote($ciniki, $args[$field]) . "' "
-//              . ", last_updated = UTC_TIMESTAMP() "
-//              . "";
-//          $rc = ciniki_core_dbInsert($ciniki, $strsql, 'ciniki.products');
-//          if( $rc['stat'] != 'ok' ) { 
-//              ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
-//              return $rc;
-//          }
-//          $rc = ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.products', 
-//              'ciniki_product_history', $args['business_id'], 
-//              2, 'ciniki_product_details', $args['product_id'], $detail_field, $args[$field]);
-//      }
-//  }
 
     //
     // Update the categories

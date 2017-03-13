@@ -41,6 +41,8 @@
 #
 # log_date:         The UTC date and time the change happened.
 #
+# notes:            The notes/reason for the change.
+#
 create table ciniki_product_history (
     id bigint not null auto_increment,
     uuid char(36) not null,
@@ -51,10 +53,11 @@ create table ciniki_product_history (
     table_name varchar(50) not null,
     table_key varchar(50) not null,
     table_field varchar(50) not null,
-    new_value varchar(65000) not null,
+    new_value varchar(30000) not null,
     log_date datetime not null,
+    notes varchar(1000) not null,
     primary key (id),
     index (user_id), 
     index (business_id, table_name, table_key, table_field),
     index (log_date)
-) ENGINE=InnoDB, COMMENT='v1.01';
+) ENGINE=InnoDB, COMMENT='v1.02';

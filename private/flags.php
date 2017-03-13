@@ -21,7 +21,7 @@ function ciniki_products_flags($ciniki, $modules) {
     $flags[] = array('flag'=>array('bit'=>'4', 'name'=>'Suppliers'));
     // 0x10
     $flags[] = array('flag'=>array('bit'=>'5', 'name'=>'Promotional Products'));
-//    $flags[] = array('flag'=>array('bit'=>'6', 'name'=>''));
+    $flags[] = array('flag'=>array('bit'=>'6', 'name'=>'Inventory Notes'));
 //  $flags[] = array('flag'=>array('bit'=>'7', 'name'=>''));
     $flags[] = array('flag'=>array('bit'=>'8', 'name'=>'PDF Catalogs'));
     // 0x0100

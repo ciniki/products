@@ -11,6 +11,10 @@
 // =======
 //
 function ciniki_products_hooks_inventoryRemove($ciniki, $business_id, $args) {
+    
+    if( !isset($args['history_notes']) ) {
+        $args['history_notes'] = '';
+    }
 
     //
     // Remove product inventory
@@ -55,7 +59,7 @@ function ciniki_products_hooks_inventoryRemove($ciniki, $business_id, $args) {
             //
             $new_quantity = $product['inventory_current_num'] - $args['quantity'];
             $rc = ciniki_core_objectUpdate($ciniki, $business_id, 'ciniki.products.product', $product['id'], 
-                array('inventory_current_num'=>$new_quantity), 0x04);
+                array('inventory_current_num'=>$new_quantity), 0x04, $args['history_notes']);
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
             }

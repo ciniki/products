@@ -36,9 +36,9 @@
 # min_quantity:     The minimum quantity required for this price.  Typically this 
 #                   will be 1, but can be used to offer bulk discounts.
 #
-# amount:               The amount to charge for a single unit.
-# discount_amount:      The dollar amount to discount a single unit.
-# discount_percentage:  The percentage to discount a single unit.
+# unit_amount:               The amount to charge for a single unit.
+# unit_discount_amount:      The dollar amount to discount a single unit.
+# unit_discount_percentage:  The percentage to discount a single unit.
 #
 # taxtype_id:           The ID of the tax type in the ciniki.taxes module.
 #

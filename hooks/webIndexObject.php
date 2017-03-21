@@ -64,7 +64,7 @@ function ciniki_products_hooks_webIndexObject($ciniki, $business_id, $args) {
             'synopsis'=>$rc['item']['short_description'],
             'object'=>'ciniki.products.product',
             'object_id'=>$rc['item']['id'],
-            'primary_words'=>$rc['item']['name'],
+            'primary_words'=>$rc['item']['code'] . ' ' . $rc['item']['name'],
             'secondary_words'=>$rc['item']['short_description'],
             'tertiary_words'=>$rc['item']['long_description'],
             'weight'=>10000,

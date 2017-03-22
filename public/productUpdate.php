@@ -152,6 +152,14 @@ function ciniki_products_productUpdate(&$ciniki) {
     // Check if the inventory was being updated, and then update orders containing this item
     //
     if( isset($args['inventory_current_num']) && $args['inventory_current_num'] != '' ) {
+        //
+        // Check if notes required
+        //
+        if( ciniki_core_checkModuleFlags($ciniki, 'ciniki.products', 0x20) ) {
+            if( !isset($args['history_notes']) || $args['history_notes'] == '' ) {
+                return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.169', 'msg'=>'You must specify the inventory notes when changing inventory quantity.', 'err'=>$rc['err']));
+            }
+        }
         foreach($modules as $module => $m) {
             list($pkg, $mod) = explode('.', $module);
             $rc = ciniki_core_loadMethod($ciniki, $pkg, $mod, 'hooks', 'inventoryUpdated');
@@ -167,6 +175,7 @@ function ciniki_products_productUpdate(&$ciniki) {
                 }
             }
         }
+
     }
 
     //

@@ -31,6 +31,8 @@
 #
 # tag_name:         The name of the tag, list or category.
 #
+# permalink:        The permalink made from the tag_name.
+#
 # date_added:       The UTC date and time the tag was added.
 # last_updated:     The UTC date and time the tag was last updated.
 #

@@ -66,7 +66,7 @@ function ciniki_products_productSearch($ciniki) {
         $strsql .= "OR barcode LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' ";
     }
     $strsql .= ") "
-        . "ORDER BY name DESC ";
+        . "ORDER BY code, name ";
     if( isset($args['limit']) && is_numeric($args['limit']) && $args['limit'] > 0 ) {
         $strsql .= "LIMIT " . ciniki_core_dbQuote($ciniki, $args['limit']) . " ";   // is_numeric verified
     } else {

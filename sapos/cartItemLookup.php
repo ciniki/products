@@ -67,7 +67,59 @@ function ciniki_products_sapos_cartItemLookup($ciniki, $business_id, $customer, 
             return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.136', 'msg'=>'No product found.'));        
         }
         $product = array_pop($rc['products']);
+    }
 
+    elseif( $args['object'] == 'ciniki.products.product' && isset($args['object_id']) && $args['object_id'] > 0 ) {
+        $strsql = "SELECT ciniki_products.id, "
+            . "ciniki_products.parent_id, "
+//          . "IF(ciniki_products.code<>'',CONCAT_WS(' - ', ciniki_products.code, ciniki_products.name), ciniki_products.name) AS name, "
+            . "ciniki_products.code, "
+            . "ciniki_products.name, "
+            . "ciniki_products.flags AS product_flags, "
+//            . "ciniki_product_prices.id AS price_id, "
+//            . "ciniki_product_prices.name AS price_name, "
+            . "0 AS pricepoint_id, "
+            . "0x01 AS available_to, "
+            . "ciniki_products.price AS unit_amount, "
+            . "ciniki_products.unit_discount_amount, "
+            . "ciniki_products.unit_discount_percentage, "
+            . "inventory_flags, inventory_current_num, "
+            . "ciniki_products.taxtype_id, "
+            . "ciniki_product_types.object_def "
+            . "FROM ciniki_products "
+//            . "LEFT JOIN ciniki_products ON ("
+//                . "ciniki_product_prices.product_id = ciniki_products.id "
+//                . "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+//                . "AND ciniki_products.id = '" . ciniki_core_dbQuote($ciniki, $args['object_id']) . "' "
+//                . ") "
+            . "LEFT JOIN ciniki_product_types ON ("
+                . "ciniki_products.type_id = ciniki_product_types.id "
+                . "AND ciniki_product_types.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                . ") "
+            . "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND ciniki_products.id = '" . ciniki_core_dbQuote($ciniki, $args['object_id']) . "' "
+//            . "WHERE ciniki_product_prices.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+//            . "AND ciniki_product_prices.id = '" . ciniki_core_dbQuote($ciniki, $args['price_id']) . "' "
+            . "";
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
+        $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
+            array('container'=>'products', 'fname'=>'id',
+                'fields'=>array('id', 'parent_id', 'code', 'description'=>'name', 'product_flags',
+                    'pricepoint_id', 'available_to',
+                    'unit_amount', 'unit_discount_amount', 'unit_discount_percentage',
+                    'inventory_flags', 'inventory_current_num', 
+                    'taxtype_id')),
+            ));
+        if( $rc['stat'] != 'ok' ) {
+            return $rc;
+        }
+        if( !isset($rc['products']) || count($rc['products']) < 1 ) {
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.136', 'msg'=>'No product found.'));        
+        }
+        $product = array_pop($rc['products']);
+    }
+
+    if( isset($product) ) {
         //
         // Check the pricepoint_id is valid for this customer, only if specified
         //
@@ -101,7 +153,8 @@ function ciniki_products_sapos_cartItemLookup($ciniki, $business_id, $customer, 
         //
         // Check the available_to is correct for the specified customer
         //
-        if( ($product['available_to']|0xF0) > 0 ) {
+        if( ($product['available_to']&0xF0) > 0 ) {
+            error_log($customer['price_flags']);
             if( ($product['available_to']&$customer['price_flags']) == 0 ) {
                 return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.141', 'msg'=>"I'm sorry, but this product is not available to you."));
             }

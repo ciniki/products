@@ -1,8 +1,8 @@
-The product type management will be done in the database and custom for each business.
-This allows maximum flexibility and customizable for each business.
+The product type management will be done in the database and custom for each tenant.
+This allows maximum flexibility and customizable for each tenant.
 
 
-business_product_type=>array(
+tenant_product_type=>array(
     name=>array('single'=>'', 'plural'=>''),
     parent=>array(
         products=>array(

@@ -13,6 +13,6 @@ ALTER TABLE ciniki_products ADD COLUMN long_description varchar(20000) not null 
 ALTER TABLE ciniki_products ADD COLUMN start_date datetime not null after long_description;
 ALTER TABLE ciniki_products ADD COLUMN end_date datetime not null after start_date;
 ALTER TABLE ciniki_products ADD COLUMN webflags tinyint unsigned not null after end_date;
-CREATE UNIQUE INDEX permalink ON ciniki_products (business_id, permalink);
+CREATE UNIQUE INDEX permalink ON ciniki_products (tnid, permalink);
 UPDATE ciniki_products SET status = 10 WHERE status = 1;
 ALTER TABLE ciniki_products COMMENT='v1.06';

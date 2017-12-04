@@ -10,7 +10,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business to get the details for.
+// tnid:         The ID of the tenant to get the details for.
 // catalog_image_id:          The ID of the pdf catalog images to get the history for.
 // field:                   The field to get the history for.
 //
@@ -27,7 +27,7 @@ function ciniki_products_pdfcatalogImageHistory($ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'),
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'),
         'catalog_image_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'PDF Catalog Images'),
         'field'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'field'),
         ));
@@ -37,15 +37,15 @@ function ciniki_products_pdfcatalogImageHistory($ciniki) {
     $args = $rc['args'];
 
     //
-    // Check access to business_id as owner, or sys admin
+    // Check access to tnid as owner, or sys admin
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.pdfcatalogImageHistory');
+    $rc = ciniki_products_checkAccess($ciniki, $args['tnid'], 'ciniki.products.pdfcatalogImageHistory');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
 
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbGetModuleHistory');
-    return ciniki_core_dbGetModuleHistory($ciniki, 'ciniki.products', 'ciniki_products_history', $args['business_id'], 'ciniki_product_pdfcatalog_images', $args['catalog_image_id'], $args['field']);
+    return ciniki_core_dbGetModuleHistory($ciniki, 'ciniki.products', 'ciniki_products_history', $args['tnid'], 'ciniki_product_pdfcatalog_images', $args['catalog_image_id'], $args['field']);
 }
 ?>

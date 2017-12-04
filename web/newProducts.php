@@ -8,19 +8,19 @@
 // ---------
 // ciniki:
 // settings:        The web settings structure.
-// business_id:     The ID of the business to get images for.
+// tnid:     The ID of the tenant to get images for.
 // limit:           The maximum number of images to return.
 //
 // Returns
 // -------
 //
-function ciniki_products_web_newProducts($ciniki, $settings, $business_id, $limit) {
+function ciniki_products_web_newProducts($ciniki, $settings, $tnid, $limit) {
 
     $strsql = "SELECT ciniki_products.id, "
         . "name AS title, permalink, primary_image_id AS image_id, "
         . "short_description AS description, 'yes' AS is_details "
         . "FROM ciniki_products "
-        . "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "WHERE ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND ciniki_products.primary_image_id > 0 "
         . "AND start_date < UTC_TIMESTAMP() "
         . "AND (end_date = '0000-00-00 00:00:00' OR end_date > UTC_TIMESTAMP()) "

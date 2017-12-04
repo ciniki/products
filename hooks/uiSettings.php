@@ -7,12 +7,12 @@
 // Arguments
 // ---------
 // ciniki:
-// business_id:     The ID of the business to get events for.
+// tnid:     The ID of the tenant to get events for.
 //
 // Returns
 // -------
 //
-function ciniki_products_hooks_uiSettings($ciniki, $business_id, $args) {
+function ciniki_products_hooks_uiSettings($ciniki, $tnid, $args) {
 
     $settings = array();
 
@@ -21,7 +21,7 @@ function ciniki_products_hooks_uiSettings($ciniki, $business_id, $args) {
     //
     $strsql = "SELECT id, name_s, name_p, object_def "
         . "FROM ciniki_product_types "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "ORDER BY name_s "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
@@ -45,7 +45,7 @@ function ciniki_products_hooks_uiSettings($ciniki, $business_id, $args) {
     //
     // Check if full owner
     //
-    if( isset($ciniki['business']['modules']['ciniki.products'])
+    if( isset($ciniki['tenant']['modules']['ciniki.products'])
         && (isset($args['permissions']['owners'])
             || isset($args['permissions']['employees'])
             || isset($args['permissions']['resellers'])
@@ -81,7 +81,7 @@ function ciniki_products_hooks_uiSettings($ciniki, $business_id, $args) {
     //
     // Check if only a sales rep 
     //
-    if( isset($ciniki['business']['modules']['ciniki.products'])
+    if( isset($ciniki['tenant']['modules']['ciniki.products'])
         && !isset($args['permissions']['owners']) 
         && !isset($args['permissions']['employees']) 
         && !isset($args['permissions']['resellers'])

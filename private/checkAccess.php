@@ -13,19 +13,19 @@
 // Arguments
 // ---------
 // ciniki:
-// business_id:         The ID of the business to check access for.
+// tnid:         The ID of the tenant to check access for.
 // method:              The requested method.
 // product_id:          The ID of the product requested.
 // 
 // Returns
 // -------
 //
-function ciniki_products_checkAccess(&$ciniki, $business_id, $method, $product_id=0) {
+function ciniki_products_checkAccess(&$ciniki, $tnid, $method, $product_id=0) {
     //
-    // Check if the business is active and the module is enabled
+    // Check if the tenant is active and the module is enabled
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'checkModuleAccess');
-    $rc = ciniki_businesses_checkModuleAccess($ciniki, $business_id, 'ciniki', 'products');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'checkModuleAccess');
+    $rc = ciniki_tenants_checkModuleAccess($ciniki, $tnid, 'ciniki', 'products');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -43,27 +43,27 @@ function ciniki_products_checkAccess(&$ciniki, $business_id, $method, $product_i
     }
 
     //
-    // Check if the business is active and the module is enabled
+    // Check if the tenant is active and the module is enabled
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'getUserPermissions');
-    $rc = ciniki_businesses_getUserPermissions($ciniki, $business_id);
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'getUserPermissions');
+    $rc = ciniki_tenants_getUserPermissions($ciniki, $tnid);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
     $perms = $rc['perms'];
 
     //
-    // Check the session user is a business owner
+    // Check the session user is a tenant owner
     //
-    if( $business_id <= 0 ) {
-        // If no business_id specified, then fail
+    if( $tnid <= 0 ) {
+        // If no tnid specified, then fail
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.18', 'msg'=>'Access denied'));
     }
 
     // 
     // Owners and Employees have access to everything
     //
-    if( ($ciniki['business']['user']['perms']&0x03) > 0 ) {
+    if( ($ciniki['tenant']['user']['perms']&0x03) > 0 ) {
         return array('stat'=>'ok', 'modules'=>$modules, 'perms'=>$perms);
     }
 
@@ -89,17 +89,17 @@ function ciniki_products_checkAccess(&$ciniki, $business_id, $method, $product_i
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
     //
-    // Find any users which are owners of the requested business_id
+    // Find any users which are owners of the requested tnid
     //
-    $strsql = "SELECT business_id, user_id FROM ciniki_business_users "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+    $strsql = "SELECT tnid, user_id FROM ciniki_tenant_users "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND user_id = '" . ciniki_core_dbQuote($ciniki, $ciniki['session']['user']['id']) . "' "
         . "AND package = 'ciniki' "
         . "AND status = 10 "
         . "AND (permission_group = 'owners' OR permission_group = 'employees') "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbRspQuery');
-    $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.businesses', 'user');
+    $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.tenants', 'user');
     if( $rc['stat'] != 'ok' ) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.20', 'msg'=>'Access denied', 'err'=>$rc['err']));
     }
@@ -114,16 +114,16 @@ function ciniki_products_checkAccess(&$ciniki, $business_id, $method, $product_i
     }
 
     // 
-    // At this point, we have ensured the user is a part of the business.
+    // At this point, we have ensured the user is a part of the tenant.
     //
 
     //
-    // Check the product is attached to the business
+    // Check the product is attached to the tenant
     //
     if( $product_id > 0 ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
-        $strsql = "SELECT business_id, id FROM ciniki_products "
-            . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        $strsql = "SELECT tnid, id FROM ciniki_products "
+            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND id = '" . ciniki_core_dbQuote($ciniki, $product_id) . "' "
             . "";
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbRspQuery');
@@ -132,7 +132,7 @@ function ciniki_products_checkAccess(&$ciniki, $business_id, $method, $product_i
             return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.23', 'msg'=>'Access denied', 'err'=>$rc['err']));
         }
         if( $rc['num_rows'] != 1 
-            || $rc['products'][0]['product']['business_id'] != $business_id
+            || $rc['products'][0]['product']['tnid'] != $tnid
             || $rc['products'][0]['product']['id'] != $product_id ) {
             return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.24', 'msg'=>'Access denied'));
         }

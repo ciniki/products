@@ -10,7 +10,7 @@
 // Returns
 // =======
 //
-function ciniki_products_sapos_itemUpdate($ciniki, $business_id, $invoice_id, $item) {
+function ciniki_products_sapos_itemUpdate($ciniki, $tnid, $invoice_id, $item) {
 
     if( isset($item['object']) && $item['object'] == 'ciniki.products.product' && isset($item['object_id']) ) {
         //
@@ -18,7 +18,7 @@ function ciniki_products_sapos_itemUpdate($ciniki, $business_id, $invoice_id, $i
         //
         $strsql = "SELECT id, inventory_flags, inventory_current_num "
             . "FROM ciniki_products "
-            . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND id = '" . ciniki_core_dbQuote($ciniki, $item['object_id']) . "' "
             . "";
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'product');
@@ -41,7 +41,7 @@ function ciniki_products_sapos_itemUpdate($ciniki, $business_id, $invoice_id, $i
             //
             $strsql = "UPDATE ciniki_products "
                 . "SET inventory_current_num = inventory_current_num + '" . ciniki_core_dbQuote($ciniki, $quantity_diff) . "' "
-                . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                 . "AND id = '" . ciniki_core_dbQuote($ciniki, $item['object_id']) . "' "
                 . "";
             ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbUpdate');
@@ -55,7 +55,7 @@ function ciniki_products_sapos_itemUpdate($ciniki, $business_id, $invoice_id, $i
                 . "inventory_flags, "
                 . "inventory_current_num "
                 . "FROM ciniki_products "
-                . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                 . "AND id = '" . ciniki_core_dbQuote($ciniki, $item['object_id']) . "' "
                 . "";
             $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'product');
@@ -71,7 +71,7 @@ function ciniki_products_sapos_itemUpdate($ciniki, $business_id, $invoice_id, $i
             // Update the history
             //
             ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbAddModuleHistory');
-            ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.products', 'ciniki_product_history', $business_id,
+            ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.products', 'ciniki_product_history', $tnid,
                 2, 'ciniki_products', $product['id'], 'inventory_current_num', $product['inventory_current_num']);
         } 
 */

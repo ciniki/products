@@ -33,7 +33,7 @@ function ciniki_products_typeObjectDefUpdate($ciniki, $object_def, $args) {
         'flags',
         'status',
         'barcode',
-        'supplier_business_id',
+        'supplier_tnid',
         'supplier_product_id',
         'price',
         'unit_discount_amount',

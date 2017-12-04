@@ -11,7 +11,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business the product belongs to.
+// tnid:         The ID of the tenant the product belongs to.
 // ref_id:              The ID of the product reference to update.
 // object_id:           The ID of the object.
 // 
@@ -25,7 +25,7 @@ function ciniki_products_refUpdate(&$ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'ref_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Product Reference'), 
         'object_id'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Object'), 
         )); 
@@ -36,10 +36,10 @@ function ciniki_products_refUpdate(&$ciniki) {
 
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.refUpdate', 0); 
+    $rc = ciniki_products_checkAccess($ciniki, $args['tnid'], 'ciniki.products.refUpdate', 0); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -50,7 +50,7 @@ function ciniki_products_refUpdate(&$ciniki) {
     $strsql = "SELECT id, product_id, object, object_id "
         . "FROM ciniki_product_refs "
         . "WHERE id = '" . ciniki_core_dbQuote($ciniki, $args['ref_id']) . "' "
-        . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'ref');
     if( $rc['stat'] != 'ok' ) {
@@ -79,7 +79,7 @@ function ciniki_products_refUpdate(&$ciniki) {
             . "WHERE product_id = '" . ciniki_core_dbQuote($ciniki, $product_id) . "' "
             . "AND object = '" . ciniki_core_dbQuote($ciniki, $object) . "' "
             . "AND object_id = '" . ciniki_core_dbQuote($ciniki, $args['object_id']) . "' "
-            . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "";
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'ref');
         if( $rc['stat'] != 'ok' ) {
@@ -94,7 +94,7 @@ function ciniki_products_refUpdate(&$ciniki) {
     // Update the existing product reference
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
-    $rc = ciniki_core_objectUpdate($ciniki, $args['business_id'], 'ciniki.products.ref',
+    $rc = ciniki_core_objectUpdate($ciniki, $args['tnid'], 'ciniki.products.ref',
         $args['ref_id'], $args, 0x07);
     if( $rc['stat'] != 'ok' ) {
         return $rc;

@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business to get the relationship from.
+// tnid:         The ID of the tenant to get the relationship from.
 // relationship_id:     The ID of the relationship to get.
 // 
 // Returns
@@ -20,7 +20,7 @@ function ciniki_products_categoryUpdate($ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'category_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Category'),
         'name'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Name'),
         'subname'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Sub Name'),
@@ -41,10 +41,10 @@ function ciniki_products_categoryUpdate($ciniki) {
     
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.categoryUpdate', 0); 
+    $rc = ciniki_products_checkAccess($ciniki, $args['tnid'], 'ciniki.products.categoryUpdate', 0); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -53,7 +53,7 @@ function ciniki_products_categoryUpdate($ciniki) {
     // Update the category
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
-    $rc = ciniki_core_objectUpdate($ciniki, $args['business_id'], 'ciniki.products.category', 
+    $rc = ciniki_core_objectUpdate($ciniki, $args['tnid'], 'ciniki.products.category', 
         $args['category_id'], $args);
     return $rc;
 }

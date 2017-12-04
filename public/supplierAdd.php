@@ -2,7 +2,7 @@
 //
 // Description
 // -----------
-// This method will add a supplier to the business.
+// This method will add a supplier to the tenant.
 //
 // Arguments
 // ---------
@@ -17,7 +17,7 @@ function ciniki_products_supplierAdd(&$ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'name'=>array('required'=>'yes', 'trimblanks'=>'yes', 'blank'=>'no', 'name'=>'Name'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
@@ -27,10 +27,10 @@ function ciniki_products_supplierAdd(&$ciniki) {
 
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.supplierAdd', 0); 
+    $rc = ciniki_products_checkAccess($ciniki, $args['tnid'], 'ciniki.products.supplierAdd', 0); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -39,7 +39,7 @@ function ciniki_products_supplierAdd(&$ciniki) {
     // Add the supplier
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
-    $rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.products.supplier', $args, 0x07);
+    $rc = ciniki_core_objectAdd($ciniki, $args['tnid'], 'ciniki.products.supplier', $args, 0x07);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }

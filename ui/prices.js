@@ -44,7 +44,7 @@ function ciniki_products_prices() {
             };  
         this.edit.fieldValue = function(s, i, d) { return this.data[i]; }
         this.edit.fieldHistoryArgs = function(s, i) {
-            return {'method':'ciniki.products.priceHistory', 'args':{'business_id':M.curBusinessID, 
+            return {'method':'ciniki.products.priceHistory', 'args':{'tnid':M.curTenantID, 
                 'price_id':this.price_id, 'product_id':this.product_id, 'field':i}};
         }
         this.edit.sectionData = function(s) {
@@ -76,12 +76,12 @@ function ciniki_products_prices() {
         //
         // Setup the tax types
         //
-        if( M.curBusiness.modules['ciniki.taxes'] != null ) {
+        if( M.curTenant.modules['ciniki.taxes'] != null ) {
             this.edit.sections.price.fields.taxtype_id.active = 'yes';
             this.edit.sections.price.fields.taxtype_id.options = {'0':'No Taxes'};
-            if( M.curBusiness.taxes != null && M.curBusiness.taxes.settings.types != null ) {
-                for(i in M.curBusiness.taxes.settings.types) {
-                    this.edit.sections.price.fields.taxtype_id.options[M.curBusiness.taxes.settings.types[i].type.id] = M.curBusiness.taxes.settings.types[i].type.name;
+            if( M.curTenant.taxes != null && M.curTenant.taxes.settings.types != null ) {
+                for(i in M.curTenant.taxes.settings.types) {
+                    this.edit.sections.price.fields.taxtype_id.options[M.curTenant.taxes.settings.types[i].type.id] = M.curTenant.taxes.settings.types[i].type.name;
                 }
             }
         } else {
@@ -93,9 +93,9 @@ function ciniki_products_prices() {
         // Setup the visible fields
         //
         var ptype = null;
-        for(i in M.curBusiness.products.settings.types) {
-            if( M.curBusiness.products.settings.types[i].type.id == args.type_id ) {
-                var ptype = M.curBusiness.products.settings.types[i].type;
+        for(i in M.curTenant.products.settings.types) {
+            if( M.curTenant.products.settings.types[i].type.id == args.type_id ) {
+                var ptype = M.curTenant.products.settings.types[i].type;
                 break;
             }
         }
@@ -120,14 +120,14 @@ function ciniki_products_prices() {
         //
         // Setup the pricepoint field
         //
-        if( M.curBusiness.modules['ciniki.customers'] != null
-            && (M.curBusiness.modules['ciniki.customers'].flags&0x1000) > 0 
+        if( M.curTenant.modules['ciniki.customers'] != null
+            && (M.curTenant.modules['ciniki.customers'].flags&0x1000) > 0 
             ) {
-            if( M.curBusiness.customers.settings != null 
-                && M.curBusiness.customers.settings.pricepoints != null 
+            if( M.curTenant.customers.settings != null 
+                && M.curTenant.customers.settings.pricepoints != null 
                 ) {
                 this.edit.sections.price.fields.pricepoint_id.options = {'0':'None'};
-                var pp = M.curBusiness.customers.settings.pricepoints;
+                var pp = M.curTenant.customers.settings.pricepoints;
                 for(i in pp) {
                     this.edit.sections.price.fields.pricepoint_id.options[pp[i].pricepoint.id] = pp[i].pricepoint.name;
                 }
@@ -139,7 +139,7 @@ function ciniki_products_prices() {
         //
         this.edit.sections.price.fields.webflags.flags = {'1':{'name':'Hidden'}};
         this.edit.sections.price.fields.available_to.flags = {};
-        if( (M.curBusiness.modules['ciniki.customers'].flags&0x0112) > 0 ) {
+        if( (M.curTenant.modules['ciniki.customers'].flags&0x0112) > 0 ) {
             this.edit.sections.price.fields.available_to.flags['1'] = {'name':'Public'};
 //          this.edit.sections.price.fields.available_to.visible = 'yes';
             this.edit.sections.price.fields.available_to.flags['5'] = {'name':'Customers'};
@@ -147,15 +147,15 @@ function ciniki_products_prices() {
         } else {
 //          this.edit.sections.price.fields.available_to.visible = 'no';
         }
-        if( (M.curBusiness.modules['ciniki.customers'].flags&0x02) > 0 ) {
+        if( (M.curTenant.modules['ciniki.customers'].flags&0x02) > 0 ) {
             this.edit.sections.price.fields.available_to.flags['6'] = {'name':'Members'};
             this.edit.sections.price.fields.webflags.flags['6'] = {'name':'Show Members Price'};
         }
-        if( (M.curBusiness.modules['ciniki.customers'].flags&0x10) > 0 ) {
+        if( (M.curTenant.modules['ciniki.customers'].flags&0x10) > 0 ) {
             this.edit.sections.price.fields.available_to.flags['7'] = {'name':'Dealers'};
             this.edit.sections.price.fields.webflags.flags['7'] = {'name':'Show Dealers Price'};
         }
-        if( (M.curBusiness.modules['ciniki.customers'].flags&0x100) > 0 ) {
+        if( (M.curTenant.modules['ciniki.customers'].flags&0x100) > 0 ) {
             this.edit.sections.price.fields.available_to.flags['8'] = {'name':'Distributors'};
             this.edit.sections.price.fields.webflags.flags['8'] = {'name':'Show Distributors Price'};
         }
@@ -174,7 +174,7 @@ function ciniki_products_prices() {
         // Check if this is editing a existing price or adding a new one
         if( this.edit.price_id > 0 ) {
             this.edit.sections._buttons.buttons.delete.visible = 'yes';
-            M.api.getJSONCb('ciniki.products.priceGet', {'business_id':M.curBusinessID, 
+            M.api.getJSONCb('ciniki.products.priceGet', {'tnid':M.curTenantID, 
                 'price_id':this.edit.price_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
@@ -199,7 +199,7 @@ function ciniki_products_prices() {
             var c = this.edit.serializeForm('no');
             if( c != '' ) {
                 M.api.postJSONCb('ciniki.products.priceUpdate', 
-                    {'business_id':M.curBusinessID, 
+                    {'tnid':M.curTenantID, 
                     'price_id':M.ciniki_products_prices.edit.price_id}, c,
                     function(rsp) {
                         if( rsp.stat != 'ok' ) {
@@ -214,7 +214,7 @@ function ciniki_products_prices() {
         } else {
             var c = this.edit.serializeForm('yes');
             M.api.postJSONCb('ciniki.products.priceAdd', 
-                {'business_id':M.curBusinessID, 'product_id':this.edit.product_id}, c, function(rsp) {
+                {'tnid':M.curTenantID, 'product_id':this.edit.product_id}, c, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;
@@ -227,7 +227,7 @@ function ciniki_products_prices() {
     this.deletePrice = function() {
         if( confirm("Are you sure you want to remove this price?") ) {
             M.api.getJSONCb('ciniki.products.priceDelete', 
-                {'business_id':M.curBusinessID, 
+                {'tnid':M.curTenantID, 
                 'price_id':this.edit.price_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);

@@ -14,7 +14,7 @@ function ciniki_products_supplierDelete(&$ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'supplier_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Supplier'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
@@ -24,19 +24,19 @@ function ciniki_products_supplierDelete(&$ciniki) {
     
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.supplierDelete', 0); 
+    $rc = ciniki_products_checkAccess($ciniki, $args['tnid'], 'ciniki.products.supplierDelete', 0); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
 
     //
-    // get the active modules for the business
+    // get the active modules for the tenant
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'getActiveModules');
-    $rc = ciniki_businesses_getActiveModules($ciniki, $args['business_id']); 
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'getActiveModules');
+    $rc = ciniki_tenants_getActiveModules($ciniki, $args['tnid']); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }
@@ -53,7 +53,7 @@ function ciniki_products_supplierDelete(&$ciniki) {
     // Get the uuid of the product to be deleted
     //
     $strsql = "SELECT uuid FROM ciniki_product_suppliers "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND id = '" . ciniki_core_dbQuote($ciniki, $args['supplier_id']) . "' "
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'supplier');
@@ -70,7 +70,7 @@ function ciniki_products_supplierDelete(&$ciniki) {
     //
     $strsql = "SELECT 'products', COUNT(*) "
         . "FROM ciniki_products "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND supplier_id = '" . ciniki_core_dbQuote($ciniki, $args['supplier_id']) . "' "
         . "";
     $rc = ciniki_core_dbCount($ciniki, $strsql, 'ciniki.products', 'num');
@@ -85,7 +85,7 @@ function ciniki_products_supplierDelete(&$ciniki) {
     // Remove the supplier
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectDelete');
-    $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.products.supplier',
+    $rc = ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.products.supplier',
         $args['supplier_id'], $uuid, 0x07);
     if( $rc['stat'] != 'ok' ) {
         return $rc;

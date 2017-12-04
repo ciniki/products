@@ -19,7 +19,7 @@ function ciniki_products_productCategorySearch($ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'start_needle'=>array('required'=>'yes', 'blank'=>'yes', 'name'=>'Search String'), 
         'limit'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'25', 'name'=>'Limit'), 
         )); 
@@ -30,10 +30,10 @@ function ciniki_products_productCategorySearch($ciniki) {
     
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.productCategorySearch', 0); 
+    $rc = ciniki_products_checkAccess($ciniki, $args['tnid'], 'ciniki.products.productCategorySearch', 0); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -43,7 +43,7 @@ function ciniki_products_productCategorySearch($ciniki) {
 
     $strsql = "SELECT DISTINCT category AS name "
         . "FROM ciniki_products "
-        . "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND ciniki_products.category != '' "
         . "";
     if( isset($args['start_needle']) && $args['start_needle'] != '' ) {

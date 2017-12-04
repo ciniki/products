@@ -21,7 +21,7 @@ function ciniki_products_inventory() {
         };
     this.menu.liveSearchCb = function(s, i, value) {
         if( s == 'search' && value != '' ) { 
-            M.api.getJSONBgCb('ciniki.products.productSearch', {'business_id':M.curBusinessID, 
+            M.api.getJSONBgCb('ciniki.products.productSearch', {'tnid':M.curTenantID, 
                 'start_needle':value, 'status':10, 'limit':'10', 'reserved':'yes', 'inventoried':'yes'}, function(rsp) { 
                     M.ciniki_products_inventory.menu.liveSearchShow('search', null, M.gE(M.ciniki_products_inventory.menu.panelUID + '_' + s), rsp.products); 
             }); 
@@ -40,8 +40,8 @@ function ciniki_products_inventory() {
         return ''; 
     }   
     this.menu.liveSearchResultRowFn = function(s, f, i, j, d) { 
-        if( M.curBusiness.permissions.owners != null 
-            || M.curBusiness.permissions.employees != null 
+        if( M.curTenant.permissions.owners != null 
+            || M.curTenant.permissions.employees != null 
             || (M.userPerms&0x01) == 1 
             ) {
             return 'M.ciniki_products_inventory.edit.open(\'M.ciniki_products_inventory.showMenu();\',\'' + d.product.id + '\');';
@@ -144,8 +144,8 @@ function ciniki_products_inventory() {
         }
     };
     this.list.rowFn = function(s, i, d) {
-        if( M.curBusiness.permissions.owners != null 
-            || M.curBusiness.permissions.employees != null 
+        if( M.curTenant.permissions.owners != null 
+            || M.curTenant.permissions.employees != null 
             || (M.userPerms&0x01) == 1 
             ) {
             return 'M.ciniki_products_inventory.edit.open(\'M.ciniki_products_inventory.showList();\',\'' + d.product.id + '\');';
@@ -186,12 +186,12 @@ function ciniki_products_inventory() {
         return this.data[i];
     };
     this.edit.fieldHistoryArgs = function(s, i) {
-        return {'method':'ciniki.products.productHistory', 'args':{'business_id':M.curBusinessID,
+        return {'method':'ciniki.products.productHistory', 'args':{'tnid':M.curTenantID,
             'product_id':this.product_id, 'field':i}};
     }
     this.edit.open = function(cb, pid) {
         if( pid != null ) { this.product_id = pid; }
-        M.api.getJSONCb('ciniki.products.productGet', {'business_id':M.curBusinessID, 'product_id':this.product_id}, function(rsp) {
+        M.api.getJSONCb('ciniki.products.productGet', {'tnid':M.curTenantID, 'product_id':this.product_id}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -207,7 +207,7 @@ function ciniki_products_inventory() {
         var c = this.serializeForm('no');
         this.last_history_notes = this.formValue('history_notes');
         if( c != '' ) {
-            M.api.postJSONCb('ciniki.products.productUpdate', {'business_id':M.curBusinessID, 'product_id':M.ciniki_products_inventory.edit.product_id}, c, function(rsp) {
+            M.api.postJSONCb('ciniki.products.productUpdate', {'tnid':M.curTenantID, 'product_id':M.ciniki_products_inventory.edit.product_id}, c, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -247,7 +247,7 @@ function ciniki_products_inventory() {
     };
     this.search.open = function(cb, search_str) {
         if( search_str != null ) { this.search_str = search_str; }
-        M.api.getJSONCb('ciniki.products.productSearch', {'business_id':M.curBusinessID, 
+        M.api.getJSONCb('ciniki.products.productSearch', {'tnid':M.curTenantID, 
             'start_needle':this.search_str, 'limit':'101', 'reserved':'yes'}, function(rsp) { 
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
@@ -288,7 +288,7 @@ function ciniki_products_inventory() {
         } 
 
         // Check if inventory enabled
-        if( (M.curBusiness.modules['ciniki.products'].flags&0x04) > 0 ) {
+        if( (M.curTenant.modules['ciniki.products'].flags&0x04) > 0 ) {
             this.menu.sections.search.livesearchcols = 4;
             this.menu.sections.search.headerValues = ['Product', 'Inventory', 'Reserved', 'Backordered'];
             this.list.sections.products.num_cols = 4;
@@ -300,7 +300,7 @@ function ciniki_products_inventory() {
             this.list.sections.products.headerValues = null;
         }
     
-        var perms = M.curBusiness.permissions;
+        var perms = M.curTenant.permissions;
     
         if( perms.owners != null || perms.employees != null || (M.userPerms&0x01) == 1 ) {
             this.list.addButton('download', 'Export', 'M.ciniki_products_inventory.downloadList();');
@@ -321,11 +321,11 @@ function ciniki_products_inventory() {
     }
 
     //
-    // Grab the stats for the business from the database and present the list of products.
+    // Grab the stats for the tenant from the database and present the list of products.
     //
     this.showMenu = function(cb) {
         M.api.getJSONCb('ciniki.products.productStats', 
-            {'business_id':M.curBusinessID, 'status':10}, function(rsp) {
+            {'tnid':M.curTenantID, 'status':10}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -342,7 +342,7 @@ function ciniki_products_inventory() {
     //
     this.showCategory = function(cb, c) {
         if( c != null ) { this.category.category_permalink = c; }
-        M.api.getJSONCb('ciniki.products.categoryDetails', {'business_id':M.curBusinessID,
+        M.api.getJSONCb('ciniki.products.categoryDetails', {'tnid':M.curTenantID,
             'category':this.category.category_permalink}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
@@ -366,7 +366,7 @@ function ciniki_products_inventory() {
                     }
                 }
                 if( rsp.products != null && rsp.products.length > 0 ) {
-                    if( (M.curBusiness.modules['ciniki.products'].flags&0x04) > 0 ) {
+                    if( (M.curTenant.modules['ciniki.products'].flags&0x04) > 0 ) {
                         p.sections['products'] = {'label':plist_label, 'type':'simplegrid', 'num_cols':4,
                             'headerValues':['Product', 'Inventory', 'Reserved', 'Backordered'], 
                             };
@@ -386,7 +386,7 @@ function ciniki_products_inventory() {
     // Show the list of products for a category
     //
     this.showList = function(cb, listtype, type, title, type2) {
-        var args = {'business_id':M.curBusinessID};
+        var args = {'tnid':M.curTenantID};
         if( listtype != null ) {
             this.list._listtype = listtype;
             this.list._type = unescape(type);
@@ -424,7 +424,7 @@ function ciniki_products_inventory() {
     };
 
     this.downloadList = function() {
-        var args = {'business_id':M.curBusinessID, 'output':'excel'};
+        var args = {'tnid':M.curTenantID, 'output':'excel'};
         if( this.list._listtype == 'category' ) {
             args['category'] = this.list._type;
         } else if( this.list._listtype == 'subcategory' ) {

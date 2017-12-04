@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business to remove the item from.
+// tnid:         The ID of the tenant to remove the item from.
 // file_id:             The ID of the file to remove.
 // 
 // Returns
@@ -21,7 +21,7 @@ function ciniki_products_fileDelete(&$ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'file_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'File'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
@@ -31,30 +31,30 @@ function ciniki_products_fileDelete(&$ciniki) {
     
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.fileDelete', 0); 
+    $rc = ciniki_products_checkAccess($ciniki, $args['tnid'], 'ciniki.products.fileDelete', 0); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
 
     //
-    // Get the business storage directory
+    // Get the tenant storage directory
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'hooks', 'storageDir');
-    $rc = ciniki_businesses_hooks_storageDir($ciniki, $args['business_id'], array());
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'hooks', 'storageDir');
+    $rc = ciniki_tenants_hooks_storageDir($ciniki, $args['tnid'], array());
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
-    $business_storage_dir = $rc['storage_dir'];
+    $tenant_storage_dir = $rc['storage_dir'];
 
     //
     // Get the uuid of the products item to be deleted
     //
     $strsql = "SELECT uuid "
         . "FROM ciniki_product_files "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND id = '" . ciniki_core_dbQuote($ciniki, $args['file_id']) . "' "
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'file');
@@ -69,12 +69,12 @@ function ciniki_products_fileDelete(&$ciniki) {
     //
     // Move the file to ciniki-storage
     //
-    $storage_filename = $business_storage_dir . '/ciniki.products/files/' . $uuid[0] . '/' . $uuid;
+    $storage_filename = $tenant_storage_dir . '/ciniki.products/files/' . $uuid[0] . '/' . $uuid;
     if( file_exists($storage_filename) ) {
         unlink($storage_filename);
     }
 
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectDelete');
-    return ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.products.file', $args['file_id'], $uuid, 0x07);
+    return ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.products.file', $args['file_id'], $uuid, 0x07);
 }
 ?>

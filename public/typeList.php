@@ -17,7 +17,7 @@ function ciniki_products_typeList($ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -26,10 +26,10 @@ function ciniki_products_typeList($ciniki) {
 
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.typeList'); 
+    $rc = ciniki_products_checkAccess($ciniki, $args['tnid'], 'ciniki.products.typeList'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -53,7 +53,7 @@ function ciniki_products_typeList($ciniki) {
         . "status, status AS status_text, "
         . "name_s, name_p "
         . "FROM ciniki_product_types "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "ORDER BY name_s ";
     $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
         array('container'=>'types', 'fname'=>'id', 'name'=>'type',

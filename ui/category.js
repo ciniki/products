@@ -64,7 +64,7 @@ function ciniki_products_category() {
             }},
         };
         this.edit.fieldHistoryArgs = function(s, i) {
-            return {'method':'ciniki.products.categoryHistory', 'args':{'business_id':M.curBusinessID,
+            return {'method':'ciniki.products.categoryHistory', 'args':{'tnid':M.curTenantID,
                 'category_id':this.category_id, 'field':i}};
         };
         this.edit.addDropImage = function(iid) {
@@ -106,7 +106,7 @@ function ciniki_products_category() {
             this.edit.subcategory_permalink = '';
         }
         if( subcategory != null ) { this.edit.subcategory_permalink = subcategory; }
-        M.api.getJSONCb('ciniki.products.categoryGet', {'business_id':M.curBusinessID,
+        M.api.getJSONCb('ciniki.products.categoryGet', {'tnid':M.curTenantID,
             'category':this.edit.category_permalink,
             'subcategory':this.edit.subcategory_permalink}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
@@ -131,7 +131,7 @@ function ciniki_products_category() {
         if( this.edit.category_id > 0 ) {
             var c = this.edit.serializeForm('no');
             if( c != '' ) { 
-                M.api.postJSONCb('ciniki.products.categoryUpdate', {'business_id':M.curBusinessID,
+                M.api.postJSONCb('ciniki.products.categoryUpdate', {'tnid':M.curTenantID,
                     'category_id':this.edit.category_id}, c, function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
@@ -144,7 +144,7 @@ function ciniki_products_category() {
             }
         } else {
             var c = this.edit.serializeForm('yes');
-            M.api.postJSONCb('ciniki.products.categoryAdd', {'business_id':M.curBusinessID,
+            M.api.postJSONCb('ciniki.products.categoryAdd', {'tnid':M.curTenantID,
                 'category':this.edit.category_permalink,
                 'subcategory':this.edit.subcategory_permalink}, c, function(rsp) {
                     if( rsp.stat != 'ok' ) {

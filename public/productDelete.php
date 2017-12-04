@@ -14,7 +14,7 @@ function ciniki_products_productDelete(&$ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'product_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Product'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
@@ -24,19 +24,19 @@ function ciniki_products_productDelete(&$ciniki) {
     
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.productDelete', 0); 
+    $rc = ciniki_products_checkAccess($ciniki, $args['tnid'], 'ciniki.products.productDelete', 0); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
 
     //
-    // get the active modules for the business
+    // get the active modules for the tenant
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'getActiveModules');
-    $rc = ciniki_businesses_getActiveModules($ciniki, $args['business_id']); 
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'getActiveModules');
+    $rc = ciniki_tenants_getActiveModules($ciniki, $args['tnid']); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }
@@ -54,7 +54,7 @@ function ciniki_products_productDelete(&$ciniki) {
     // Get the uuid of the product to be deleted
     //
     $strsql = "SELECT uuid FROM ciniki_products "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'product');
@@ -72,7 +72,7 @@ function ciniki_products_productDelete(&$ciniki) {
     if( isset($modules['ciniki.wineproductions']) ) {
         $strsql = "SELECT 'wineproductions', COUNT(*) "
             . "FROM ciniki_wineproductions "
-            . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND product_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
             . "";
         $rc = ciniki_core_dbCount($ciniki, $strsql, 'ciniki.products', 'num');
@@ -90,7 +90,7 @@ function ciniki_products_productDelete(&$ciniki) {
     if( isset($modules['ciniki.sapos']) ) {
         $strsql = "SELECT 'invoices', COUNT(*) "
             . "FROM ciniki_sapos_invoice_items "
-            . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND object = 'ciniki.products.product' "
             . "AND object_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
             . "";
@@ -119,7 +119,7 @@ function ciniki_products_productDelete(&$ciniki) {
         . "WHERE (product_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
             . "OR related_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
             . ") "
-        . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'relationship');
     if( $rc['stat'] != 'ok' ) {
@@ -129,7 +129,7 @@ function ciniki_products_productDelete(&$ciniki) {
     if( isset($rc['rows']) ) {
         $relationships = $rc['rows'];
         foreach($relationships as $relationship) {
-            $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.products.relationship',
+            $rc = ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.products.relationship',
                 $relationship['id'], $relationship['uuid'], 0x04);
             if( $rc['stat'] != 'ok' ) {
                 ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
@@ -142,7 +142,7 @@ function ciniki_products_productDelete(&$ciniki) {
     // Delete the product details
     //
     $strsql = "DELETE FROM ciniki_product_details "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND product_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
         . "";
     $rc = ciniki_core_dbDelete($ciniki, $strsql, 'ciniki.products');
@@ -155,7 +155,7 @@ function ciniki_products_productDelete(&$ciniki) {
     //
     // Delete the product
     //
-    $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.products.product',
+    $rc = ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.products.product',
         $args['product_id'], $uuid, 0x04);
     if( $rc['stat'] != 'ok' ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
@@ -171,11 +171,11 @@ function ciniki_products_productDelete(&$ciniki) {
     }
 
     //
-    // Update the last_change date in the business modules
+    // Update the last_change date in the tenant modules
     // Ignore the result, as we don't want to stop user updates if this fails.
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
-    ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'products');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'updateModuleChangeDate');
+    ciniki_tenants_updateModuleChangeDate($ciniki, $args['tnid'], 'ciniki', 'products');
 
     $ciniki['syncqueue'][] = array('push'=>'ciniki.products.product', 
         'args'=>array('delete_uuid'=>$uuid, 'delete_id'=>$args['product_id']));

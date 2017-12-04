@@ -2,13 +2,13 @@
 //
 // Description
 // -----------
-// This method will add a new pdf catalog for the business.
+// This method will add a new pdf catalog for the tenant.
 //
 // Arguments
 // ---------
 // api_key:
 // auth_token:
-// business_id:        The ID of the business to add the PDF Catalog to.
+// tnid:        The ID of the tenant to add the PDF Catalog to.
 //
 // Returns
 // -------
@@ -20,7 +20,7 @@ function ciniki_products_pdfcatalogAdd(&$ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'),
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'),
         'name'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Name'),
         'permalink'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Permalink'),
         'sequence'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Sequence'),
@@ -36,23 +36,23 @@ function ciniki_products_pdfcatalogAdd(&$ciniki) {
     $args = $rc['args'];
 
     //
-    // Check access to business_id as owner
+    // Check access to tnid as owner
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.pdfcatalogAdd');
+    $rc = ciniki_products_checkAccess($ciniki, $args['tnid'], 'ciniki.products.pdfcatalogAdd');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
 
     //
-    // Get the business storage directory
+    // Get the tenant storage directory
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'hooks', 'storageDir');
-    $rc = ciniki_businesses_hooks_storageDir($ciniki, $args['business_id'], array());
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'hooks', 'storageDir');
+    $rc = ciniki_tenants_hooks_storageDir($ciniki, $args['tnid'], array());
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
-    $business_storage_dir = $rc['storage_dir'];
+    $tenant_storage_dir = $rc['storage_dir'];
 
     //
     // Setup permalink
@@ -67,7 +67,7 @@ function ciniki_products_pdfcatalogAdd(&$ciniki) {
     //
     $strsql = "SELECT id, name, permalink "
         . "FROM ciniki_product_pdfcatalogs "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND permalink = '" . ciniki_core_dbQuote($ciniki, $args['permalink']) . "' "
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'item');
@@ -132,7 +132,7 @@ function ciniki_products_pdfcatalogAdd(&$ciniki) {
     //
     // Move the file to ciniki-storage
     //
-    $storage_filename = $business_storage_dir . '/ciniki.products/pdfcatalogs/' . $args['uuid'][0] . '/' . $args['uuid'];
+    $storage_filename = $tenant_storage_dir . '/ciniki.products/pdfcatalogs/' . $args['uuid'][0] . '/' . $args['uuid'];
     if( !is_dir(dirname($storage_filename)) ) {
         if( !mkdir(dirname($storage_filename), 0700, true) ) {
             return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.74', 'msg'=>'Unable to add file'));
@@ -143,7 +143,7 @@ function ciniki_products_pdfcatalogAdd(&$ciniki) {
     // Add the pdf catalog to the database
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
-    $rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.products.pdfcatalog', $args, 0x04);
+    $rc = ciniki_core_objectAdd($ciniki, $args['tnid'], 'ciniki.products.pdfcatalog', $args, 0x04);
     if( $rc['stat'] != 'ok' ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
         return $rc;
@@ -166,17 +166,17 @@ function ciniki_products_pdfcatalogAdd(&$ciniki) {
     }
 
     //
-    // Update the last_change date in the business modules
+    // Update the last_change date in the tenant modules
     // Ignore the result, as we don't want to stop user updates if this fails.
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
-    ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'products');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'updateModuleChangeDate');
+    ciniki_tenants_updateModuleChangeDate($ciniki, $args['tnid'], 'ciniki', 'products');
 
     //
     // Update the web index if enabled
     //
 //    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'hookExec');
-//    ciniki_core_hookExec($ciniki, $args['business_id'], 'ciniki', 'web', 'indexObject', array('object'=>'ciniki.products.pdfcatalog', 'object_id'=>$catalog_id));
+//    ciniki_core_hookExec($ciniki, $args['tnid'], 'ciniki', 'web', 'indexObject', array('object'=>'ciniki.products.pdfcatalog', 'object_id'=>$catalog_id));
 
     return array('stat'=>'ok', 'id'=>$catalog_id);
 }

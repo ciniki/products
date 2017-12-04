@@ -22,7 +22,7 @@ function ciniki_products_productAdd(&$ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'parent_id'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'0', 'name'=>'Parent'), 
         'name'=>array('required'=>'yes', 'trimblanks'=>'yes', 'blank'=>'no', 'name'=>'Name'),
         'code'=>array('required'=>'no', 'trimblanks'=>'yes', 'blank'=>'yes', 'default'=>'', 'name'=>'Code'),
@@ -98,10 +98,10 @@ function ciniki_products_productAdd(&$ciniki) {
 
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.productAdd', 0); 
+    $rc = ciniki_products_checkAccess($ciniki, $args['tnid'], 'ciniki.products.productAdd', 0); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }
@@ -122,7 +122,7 @@ function ciniki_products_productAdd(&$ciniki) {
         && isset($args['type_name_s']) ) {
         $strsql = "SELECT id "
             . "FROM ciniki_product_types "
-            . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND name_s = '" . ciniki_core_dbQuote($ciniki, $args['type_name_s']) . "' "
             . "";
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'type');
@@ -150,7 +150,7 @@ function ciniki_products_productAdd(&$ciniki) {
     $strsql = "SELECT id "
         . "FROM ciniki_products "
         . "WHERE permalink = '" . ciniki_core_dbQuote($ciniki, $args['permalink']) . "' "
-        . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'product');
     if( $rc['stat'] != 'ok' ) {
@@ -178,7 +178,7 @@ function ciniki_products_productAdd(&$ciniki) {
     // Add the product
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
-    $rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.products.product', $args, 0x04);
+    $rc = ciniki_core_objectAdd($ciniki, $args['tnid'], 'ciniki.products.product', $args, 0x04);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -196,9 +196,9 @@ function ciniki_products_productAdd(&$ciniki) {
 //      );
 //  foreach($detail_fields as $field => $detail_field) {
 //      if( isset($args[$field]) && $args[$field] != '' ) {
-//          $strsql = "INSERT INTO ciniki_product_details (business_id, product_id, "
+//          $strsql = "INSERT INTO ciniki_product_details (tnid, product_id, "
 //              . "detail_key, detail_value, date_added, last_updated) VALUES ("
-//              . "'" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "', "
+//              . "'" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "', "
 //              . "'" . ciniki_core_dbQuote($ciniki, $product_id) . "', "
 //              . "'" . ciniki_core_dbQuote($ciniki, $detail_field) . "', "
 //              . "'" . ciniki_core_dbQuote($ciniki, $args[$field]) . "', "
@@ -210,7 +210,7 @@ function ciniki_products_productAdd(&$ciniki) {
 //              return $rc;
 //          }
 //          $rc = ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.products', 
-//              'ciniki_product_history', $args['business_id'], 
+//              'ciniki_product_history', $args['tnid'], 
 //              1, 'ciniki_product_details', $product_id, $detail_field, $args[$field]);
 //      }
 //  }
@@ -220,7 +220,7 @@ function ciniki_products_productAdd(&$ciniki) {
     //
     if( isset($args['categories']) ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsUpdate');
-        $rc = ciniki_core_tagsUpdate($ciniki, 'ciniki.products', 'tag', $args['business_id'],
+        $rc = ciniki_core_tagsUpdate($ciniki, 'ciniki.products', 'tag', $args['tnid'],
             'ciniki_product_tags', 'ciniki_product_history',
             'product_id', $product_id, 10, $args['categories']);
         if( $rc['stat'] != 'ok' ) {
@@ -235,7 +235,7 @@ function ciniki_products_productAdd(&$ciniki) {
     for($i=11;$i<30;$i++) {
         if( isset($args['subcategories-'.$i]) ) {
             ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsUpdate');
-            $rc = ciniki_core_tagsUpdate($ciniki, 'ciniki.products', 'tag', $args['business_id'],
+            $rc = ciniki_core_tagsUpdate($ciniki, 'ciniki.products', 'tag', $args['tnid'],
                 'ciniki_product_tags', 'ciniki_product_history',
                 'product_id', $product_id, $i, $args['subcategories-'.$i]);
             if( $rc['stat'] != 'ok' ) {
@@ -250,7 +250,7 @@ function ciniki_products_productAdd(&$ciniki) {
     //
     if( isset($args['tags']) ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsUpdate');
-        $rc = ciniki_core_tagsUpdate($ciniki, 'ciniki.products', 'tag', $args['business_id'],
+        $rc = ciniki_core_tagsUpdate($ciniki, 'ciniki.products', 'tag', $args['tnid'],
             'ciniki_product_tags', 'ciniki_product_history',
             'product_id', $product_id, 40, $args['tags']);
         if( $rc['stat'] != 'ok' ) {
@@ -268,11 +268,11 @@ function ciniki_products_productAdd(&$ciniki) {
     }
 
     //
-    // Update the last_change date in the business modules
+    // Update the last_change date in the tenant modules
     // Ignore the result, as we don't want to stop user updates if this fails.
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
-    ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'products');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'updateModuleChangeDate');
+    ciniki_tenants_updateModuleChangeDate($ciniki, $args['tnid'], 'ciniki', 'products');
 
     $ciniki['syncqueue'][] = array('push'=>'ciniki.products.product', 'args'=>array('id'=>$product_id));
 
@@ -280,7 +280,7 @@ function ciniki_products_productAdd(&$ciniki) {
     // Update the web index if enabled
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'hookExec');
-    ciniki_core_hookExec($ciniki, $args['business_id'], 'ciniki', 'web', 'indexObject', array('object'=>'ciniki.products.product', 'object_id'=>$product_id));
+    ciniki_core_hookExec($ciniki, $args['tnid'], 'ciniki', 'web', 'indexObject', array('object'=>'ciniki.products.product', 'object_id'=>$product_id));
 
     return array('stat'=>'ok', 'id'=>$product_id);
 }

@@ -10,7 +10,7 @@
 // Returns
 // =======
 //
-function ciniki_products_sapos_cartItemsDetails($ciniki, $business_id, $args) {
+function ciniki_products_sapos_cartItemsDetails($ciniki, $tnid, $args) {
 
     if( !isset($args['object']) || $args['object'] == '' 
         || !isset($args['object_ids']) || $args['object_ids'] == '' ) {
@@ -26,7 +26,7 @@ function ciniki_products_sapos_cartItemsDetails($ciniki, $business_id, $args) {
             . "permalink, "
             . "inventory_current_num AS quantity "
             . "FROM ciniki_products "
-            . "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "WHERE ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND ciniki_products.id IN (" . ciniki_core_dbQuoteIDs($ciniki, $args['object_ids']) . ") "
             . "";
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');

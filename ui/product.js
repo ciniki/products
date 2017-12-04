@@ -102,7 +102,7 @@ function ciniki_products_product() {
         };
         this.product.addDropImage = function(iid) {
             var rsp = M.api.getJSON('ciniki.products.imageAdd',
-                {'business_id':M.curBusinessID, 'image_id':iid, 'product_id':M.ciniki_products_product.product.product_id, 'webflags':1});
+                {'tnid':M.curTenantID, 'image_id':iid, 'product_id':M.ciniki_products_product.product.product_id, 'webflags':1});
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -119,7 +119,7 @@ function ciniki_products_product() {
         };
         this.product.addDropImageRefresh = function() {
             if( M.ciniki_products_product.product.product_id > 0 ) {
-                var rsp = M.api.getJSONCb('ciniki.products.productGet', {'business_id':M.curBusinessID, 
+                var rsp = M.api.getJSONCb('ciniki.products.productGet', {'tnid':M.curTenantID, 
                     'product_id':M.ciniki_products_product.product.product_id, 'images':'yes'}, function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
@@ -147,8 +147,8 @@ function ciniki_products_product() {
                         && (this.object_def.prices.available_to['ui_hide'] == null || this.object_def.prices.available_to['ui-hide'] != 'yes' ) ) {
                         atxt = '';
                     }
-                    if( M.curBusiness.modules['ciniki.customers'] != null 
-                        && (M.curBusiness.modules['ciniki.customers'].flags&0x1000) ) {
+                    if( M.curTenant.modules['ciniki.customers'] != null 
+                        && (M.curTenant.modules['ciniki.customers'].flags&0x1000) ) {
                         if( d.price.pricepoint_id == 0 ) {
                             txt += 'None';
                         } else {
@@ -257,11 +257,11 @@ function ciniki_products_product() {
 
     this.showProduct = function(cb, pid, list) {
         this.product.reset();
-//      this.product.sections.similar.visible=(M.curBusiness.modules['ciniki.products'].flags&0x01)==1?'yes':'no';
-//      this.product.sections.recipes.visible=(M.curBusiness.modules['ciniki.products'].flags&0x02)==2?'yes':'no';
+//      this.product.sections.similar.visible=(M.curTenant.modules['ciniki.products'].flags&0x01)==1?'yes':'no';
+//      this.product.sections.recipes.visible=(M.curTenant.modules['ciniki.products'].flags&0x02)==2?'yes':'no';
         if( pid != null ) { this.product.product_id = pid; }
         if( list != null ) { this.product.prevnext.list = list; }
-        M.api.getJSONCb('ciniki.products.productGet', {'business_id':M.curBusinessID,
+        M.api.getJSONCb('ciniki.products.productGet', {'tnid':M.curTenantID,
             'product_id':this.product.product_id, 'prices':'yes',
             'files':'yes', 'images':'yes', 'audio':'yes', 'similar':'yes', 'recipes':'yes'}, function(rsp) {
                 if( rsp.stat != 'ok' ) {

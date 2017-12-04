@@ -2,13 +2,13 @@
 //
 // Description
 // -----------
-// This method will add a new class for the business.
+// This method will add a new class for the tenant.
 //
 // Arguments
 // ---------
 // api_key:
 // auth_token:
-// business_id:     The ID of the business to add the class to.
+// tnid:     The ID of the tenant to add the class to.
 //
 // Returns
 // -------
@@ -20,7 +20,7 @@ function ciniki_products_typeAdd(&$ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'status'=>array('required'=>'no', 'blank'=>'no', 'default'=>'10', 'name'=>'Status'), 
         'name_s'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Name'), 
         'name_p'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Plural'), 
@@ -31,10 +31,10 @@ function ciniki_products_typeAdd(&$ciniki) {
     $args = $rc['args'];
     
     //
-    // Check access to business_id as owner
+    // Check access to tnid as owner
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-    $ac = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.typeAdd');
+    $ac = ciniki_products_checkAccess($ciniki, $args['tnid'], 'ciniki.products.typeAdd');
     if( $ac['stat'] != 'ok' ) {
         return $ac;
     }
@@ -56,7 +56,7 @@ function ciniki_products_typeAdd(&$ciniki) {
     // Add the product type to the database
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
-    $rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.products.type', $args, 0x04);
+    $rc = ciniki_core_objectAdd($ciniki, $args['tnid'], 'ciniki.products.type', $args, 0x04);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }

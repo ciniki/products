@@ -7,12 +7,12 @@
 // Arguments
 // ---------
 // ciniki:
-// business_id:     The ID of the business to get events for.
+// tnid:     The ID of the tenant to get events for.
 //
 // Returns
 // -------
 //
-function ciniki_products_hooks_webIndexObject($ciniki, $business_id, $args) {
+function ciniki_products_hooks_webIndexObject($ciniki, $tnid, $args) {
 
     if( !isset($args['object']) || $args['object'] == '' ) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.12', 'msg'=>'No object specified'));
@@ -35,7 +35,7 @@ function ciniki_products_hooks_webIndexObject($ciniki, $business_id, $args) {
         $strsql = "SELECT id, code, name, permalink, price, webflags, status, "
             . "primary_image_id, short_description, long_description "
             . "FROM ciniki_products "
-            . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND id = '" . ciniki_core_dbQuote($ciniki, $args['object_id']) . "' "
             . "";
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'item');
@@ -76,7 +76,7 @@ function ciniki_products_hooks_webIndexObject($ciniki, $business_id, $args) {
         //
         $strsql = "SELECT DISTINCT tag_type, tag_name "
             . "FROM ciniki_product_tags "
-            . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND product_id = '" . ciniki_core_dbQuote($ciniki, $args['object_id']) . "' "
             . "";
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'tag');

@@ -13,7 +13,7 @@ function ciniki_products_productDuplicates($ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'type'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Type'), 
         ));
     if( $rc['stat'] != 'ok' ) {
@@ -22,10 +22,10 @@ function ciniki_products_productDuplicates($ciniki) {
     $args = $rc['args'];
     
     //
-    // Check access to business_id
+    // Check access to tnid
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-    $ac = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.productDuplicates', 0);
+    $ac = ciniki_products_checkAccess($ciniki, $args['tnid'], 'ciniki.products.productDuplicates', 0);
     if( $ac['stat'] != 'ok' ) {
         return $ac;
     }
@@ -39,8 +39,8 @@ function ciniki_products_productDuplicates($ciniki) {
     $strsql = "SELECT p1.id AS p1_id, p1.name AS p1_name, " 
         . "p2.id AS p2_id, p2.name AS p2_name "
         . "FROM ciniki_products AS p1, ciniki_products AS p2 "
-        . "WHERE p1.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-        . "AND p2.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE p1.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+        . "AND p2.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND p1.id < p2.id ";
     if( isset($args['type']) && $args['type'] == 'soundex' ) {
         $strsql .= "AND SOUNDEX(p1.name) = SOUNDEX(p2.name) ";

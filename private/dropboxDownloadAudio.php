@@ -6,7 +6,7 @@
 // Arguments
 // ---------
 // ciniki:
-// business_id:         The business ID to check the session user against.
+// tnid:         The tenant ID to check the session user against.
 // method:              The requested method.
 //
 // Returns
@@ -16,7 +16,7 @@
 //require_once($ciniki['config']['ciniki.core']['lib_dir'] . '/dropbox/lib/Dropbox/autoload.php');
 //use \Dropbox as dbx;
 
-function ciniki_products_dropboxDownloadAudio(&$ciniki, $business_id, $client, $product, $details) {
+function ciniki_products_dropboxDownloadAudio(&$ciniki, $tnid, $client, $product, $details) {
 
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
@@ -33,7 +33,7 @@ function ciniki_products_dropboxDownloadAudio(&$ciniki, $business_id, $client, $
         //
         // Load the existing audio to see if there is new versions
         //
-        $rc = ciniki_audio_hooks_dropboxFileRevs($ciniki, $business_id, array('path'=>$file['path']));
+        $rc = ciniki_audio_hooks_dropboxFileRevs($ciniki, $tnid, array('path'=>$file['path']));
         if( $rc['stat'] != 'ok' ) {
             return $rc;
         }
@@ -119,7 +119,7 @@ function ciniki_products_dropboxDownloadAudio(&$ciniki, $business_id, $client, $
         //
         // Insert the files
         //
-        $rc = ciniki_audio_hooks_insertFromFile($ciniki, $business_id, array(
+        $rc = ciniki_audio_hooks_insertFromFile($ciniki, $tnid, array(
             'filename'=>$wav_filename,
             'name'=>$name,
             'checksum'=>$checksum,
@@ -132,7 +132,7 @@ function ciniki_products_dropboxDownloadAudio(&$ciniki, $business_id, $client, $
         }
         $wav_audio_id = $rc['id'];
 
-        $rc = ciniki_audio_hooks_insertFromFile($ciniki, $business_id, array(
+        $rc = ciniki_audio_hooks_insertFromFile($ciniki, $tnid, array(
             'filename'=>$mp3_filename,
             'name'=>$name,
             'checksum'=>$checksum,
@@ -145,7 +145,7 @@ function ciniki_products_dropboxDownloadAudio(&$ciniki, $business_id, $client, $
         }
         $mp3_audio_id = $rc['id'];
 
-        $rc = ciniki_audio_hooks_insertFromFile($ciniki, $business_id, array(
+        $rc = ciniki_audio_hooks_insertFromFile($ciniki, $tnid, array(
             'filename'=>$ogg_filename,
             'name'=>$name,
             'checksum'=>$checksum,
@@ -183,7 +183,7 @@ function ciniki_products_dropboxDownloadAudio(&$ciniki, $business_id, $client, $
 
         if( $audio_id == 0 ) {
             $permalink = ciniki_core_makePermalink($ciniki, $name);
-            $rc = ciniki_core_objectAdd($ciniki, $business_id, 'ciniki.products.audio', array(
+            $rc = ciniki_core_objectAdd($ciniki, $tnid, 'ciniki.products.audio', array(
                 'product_id'=>$product['id'],
                 'name'=>$name,
                 'permalink'=>$permalink,
@@ -198,7 +198,7 @@ function ciniki_products_dropboxDownloadAudio(&$ciniki, $business_id, $client, $
                 return $rc;
             }
         } elseif( count($update_args) > 0 ) {
-            $rc = ciniki_core_objectUpdate($ciniki, $business_id, 'ciniki.products.audio', $audio_id, $update_args, 0x04);
+            $rc = ciniki_core_objectUpdate($ciniki, $tnid, 'ciniki.products.audio', $audio_id, $update_args, 0x04);
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
             }

@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:     The ID of the business the requested file belongs to.
+// tnid:     The ID of the tenant the requested file belongs to.
 // file_id:         The ID of the file to be downloaded.
 //
 // Returns
@@ -21,7 +21,7 @@ function ciniki_products_fileDownload($ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'file_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'File'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
@@ -31,23 +31,23 @@ function ciniki_products_fileDownload($ciniki) {
     
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.fileDownload', 0); 
+    $rc = ciniki_products_checkAccess($ciniki, $args['tnid'], 'ciniki.products.fileDownload', 0); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
 
     //
-    // Get the business storage directory
+    // Get the tenant storage directory
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'hooks', 'storageDir');
-    $rc = ciniki_businesses_hooks_storageDir($ciniki, $args['business_id'], array());
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'hooks', 'storageDir');
+    $rc = ciniki_tenants_hooks_storageDir($ciniki, $args['tnid'], array());
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
-    $business_storage_dir = $rc['storage_dir'];
+    $tenant_storage_dir = $rc['storage_dir'];
 
     //
     // Get the uuid for the file
@@ -57,7 +57,7 @@ function ciniki_products_fileDownload($ciniki) {
         . "ciniki_product_files.binary_content "
         . "FROM ciniki_product_files "
         . "WHERE id = '" . ciniki_core_dbQuote($ciniki, $args['file_id']) . "' "
-        . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'file');
@@ -73,7 +73,7 @@ function ciniki_products_fileDownload($ciniki) {
     //
     // Build the storage filename
     //
-    $storage_filename = $business_storage_dir . '/ciniki.products/files/' . $uuid[0] . '/' . $uuid;
+    $storage_filename = $tenant_storage_dir . '/ciniki.products/files/' . $uuid[0] . '/' . $uuid;
     if( file_exists($storage_filename) ) {
         $binary_content = file_get_contents($storage_filename);
     } elseif( $rc['file']['binary_content'] != '' ) {

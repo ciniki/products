@@ -21,11 +21,11 @@ function ciniki_products_addWineKit(&$ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'name'=>array('required'=>'yes', 'trimblanks'=>'yes', 'blank'=>'no', 'name'=>'Name'),
         'type'=>array('required'=>'no', 'default'=>'0', 'trimblanks'=>'yes', 'blank'=>'yes', 'name'=>'Type'),
         'barcode'=>array('required'=>'no', 'default'=>'', 'trimblanks'=>'yes', 'blank'=>'yes', 'name'=>'Barcode'), 
-        'supplier_business_id'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'name'=>'Supplier'), 
+        'supplier_tnid'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'name'=>'Supplier'), 
         'supplier_product_id'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'name'=>'Supplier Product'), 
         'price'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'name'=>'Price'), 
         'cost'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'name'=>'Cost'), 
@@ -40,10 +40,10 @@ function ciniki_products_addWineKit(&$ciniki) {
 
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.addWineKit', 0); 
+    $rc = ciniki_products_checkAccess($ciniki, $args['tnid'], 'ciniki.products.addWineKit', 0); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -75,17 +75,17 @@ function ciniki_products_addWineKit(&$ciniki) {
     //
     // Add the product to the database
     //
-    $strsql = "INSERT INTO ciniki_products (uuid, business_id, name, type, "
+    $strsql = "INSERT INTO ciniki_products (uuid, tnid, name, type, "
         . "source, flags, status, "
-        . "barcode, supplier_business_id, supplier_product_id, "
+        . "barcode, supplier_tnid, supplier_product_id, "
         . "price, cost, msrp, "
         . "date_added, last_updated) VALUES ("
         . "'" . ciniki_core_dbQuote($ciniki, $args['uuid']) . "', "
-        . "'" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "', "
+        . "'" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "', "
         . "'" . ciniki_core_dbQuote($ciniki, $args['name']) . "', "
         . "64, 0, 0, 1, "
         . "'" . ciniki_core_dbQuote($ciniki, $args['barcode']) . "', "
-        . "'" . ciniki_core_dbQuote($ciniki, $args['supplier_business_id']) . "', "
+        . "'" . ciniki_core_dbQuote($ciniki, $args['supplier_tnid']) . "', "
         . "'" . ciniki_core_dbQuote($ciniki, $args['supplier_product_id']) . "', "
         . "'" . ciniki_core_dbQuote($ciniki, $args['price']) . "', "
         . "'" . ciniki_core_dbQuote($ciniki, $args['cost']) . "', "
@@ -113,7 +113,7 @@ function ciniki_products_addWineKit(&$ciniki) {
         'source',
         'type',
         'barcode',
-        'supplier_business_id',
+        'supplier_tnid',
         'supplier_product_id',
         'price',
         'cost',
@@ -121,7 +121,7 @@ function ciniki_products_addWineKit(&$ciniki) {
         );
     foreach($changelog_fields as $field) {
         if( isset($args[$field]) && $args[$field] != '' ) {
-            $rc = ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.products', 'ciniki_product_history', $args['business_id'], 
+            $rc = ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.products', 'ciniki_product_history', $args['tnid'], 
                 1, 'ciniki_products', $product_id, $field, $args[$field]);
         }
     }
@@ -147,7 +147,7 @@ function ciniki_products_addWineKit(&$ciniki) {
                 return $rc;
             }
             $rc = ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.products', 
-                'ciniki_product_history', $args['business_id'], 
+                'ciniki_product_history', $args['tnid'], 
                 1, 'ciniki_product_details', $product_id, $detail_field, $args[$field]);
         }
     }
@@ -161,11 +161,11 @@ function ciniki_products_addWineKit(&$ciniki) {
     }
 
     //
-    // Update the last_change date in the business modules
+    // Update the last_change date in the tenant modules
     // Ignore the result, as we don't want to stop user updates if this fails.
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
-    ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'products');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'updateModuleChangeDate');
+    ciniki_tenants_updateModuleChangeDate($ciniki, $args['tnid'], 'ciniki', 'products');
 
     $ciniki['syncqueue'][] = array('push'=>'ciniki.products.product',
         'args'=>array('id'=>$product_id));

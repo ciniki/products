@@ -42,7 +42,7 @@ function ciniki_products_pdfcatalogs() {
         return '';
     };
     this.catalog.fieldHistoryArgs = function(s, i) {
-        return {'method':'ciniki.products.pdfcatalogHistory', 'args':{'business_id':M.curBusinessID,
+        return {'method':'ciniki.products.pdfcatalogHistory', 'args':{'tnid':M.curTenantID,
             'catalog_id':this.catalog_id, 'field':i}};
     }
     this.catalog.thumbFn = function(s, i, d) {
@@ -60,7 +60,7 @@ function ciniki_products_pdfcatalogs() {
         this.reset();
         if( cid != null) { this.catalog_id = cid; }
         this.sections._buttons.buttons.delete.visible = (this.catalog_id > 0 ? 'yes' : 'no');
-        M.api.getJSONCb('ciniki.products.pdfcatalogGet', {'business_id':M.curBusinessID, 'catalog_id':this.catalog_id}, function(rsp) {
+        M.api.getJSONCb('ciniki.products.pdfcatalogGet', {'tnid':M.curTenantID, 'catalog_id':this.catalog_id}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -76,7 +76,7 @@ function ciniki_products_pdfcatalogs() {
             this.sections._buttons.buttons.delete.visible = 'yes';
             var c = this.serializeForm('no');
             if( c != '' ) {
-                M.api.postJSONCb('ciniki.products.pdfcatalogUpdate', {'business_id':M.curBusinessID, 'catalog_id':this.catalog_id}, c,
+                M.api.postJSONCb('ciniki.products.pdfcatalogUpdate', {'tnid':M.curTenantID, 'catalog_id':this.catalog_id}, c,
                     function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
@@ -89,7 +89,7 @@ function ciniki_products_pdfcatalogs() {
             }
         } else {
             var c = this.serializeFormData('yes');
-            M.api.postJSONFormData('ciniki.products.pdfcatalogAdd', {'business_id':M.curBusinessID}, c, function(rsp) {
+            M.api.postJSONFormData('ciniki.products.pdfcatalogAdd', {'tnid':M.curTenantID}, c, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -100,7 +100,7 @@ function ciniki_products_pdfcatalogs() {
     }
     this.catalog.remove = function() {
         if( confirm("Are you sure you want to remove this catalog?") ) {
-            M.api.getJSONCb('ciniki.products.pdfcatalogDelete', {'business_id':M.curBusinessID,
+            M.api.getJSONCb('ciniki.products.pdfcatalogDelete', {'tnid':M.curTenantID,
                 'catalog_id':this.catalog_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
@@ -139,7 +139,7 @@ function ciniki_products_pdfcatalogs() {
         return '';
     };
     this.image.fieldHistoryArgs = function(s, i) {
-        return {'method':'ciniki.products.pdfcatalogImageHistory', 'args':{'business_id':M.curBusinessID,
+        return {'method':'ciniki.products.pdfcatalogImageHistory', 'args':{'tnid':M.curTenantID,
             'catalog_image_id':this.catalog_image_id, 'field':i}};
     }
     this.image.addDropImage = function(iid) {
@@ -150,7 +150,7 @@ function ciniki_products_pdfcatalogs() {
         this.reset();
         if( iid != null) { this.catalog_image_id = iid; }
         this.sections._buttons.buttons.delete.visible = (this.catalog_image_id > 0 ? 'yes' : 'no');
-        M.api.getJSONCb('ciniki.products.pdfcatalogImageGet', {'business_id':M.curBusinessID, 'catalog_image_id':this.catalog_image_id}, function(rsp) {
+        M.api.getJSONCb('ciniki.products.pdfcatalogImageGet', {'tnid':M.curTenantID, 'catalog_image_id':this.catalog_image_id}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -165,7 +165,7 @@ function ciniki_products_pdfcatalogs() {
         if( this.catalog_image_id > 0 ) {
             var c = this.serializeForm('no');
             if( c != '' ) {
-                M.api.postJSONCb('ciniki.products.pdfcatalogImageUpdate', {'business_id':M.curBusinessID, 'catalog_image_id':this.catalog_image_id}, c,
+                M.api.postJSONCb('ciniki.products.pdfcatalogImageUpdate', {'tnid':M.curTenantID, 'catalog_image_id':this.catalog_image_id}, c,
                     function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
@@ -178,7 +178,7 @@ function ciniki_products_pdfcatalogs() {
             }
         } else {
             var c = this.serializeForm('yes');
-            M.api.postJSONCb('ciniki.products.pdfcatalogImageAdd', {'business_id':M.curBusinessID, 'catalog_image_id':this.catalog_image_id}, c,
+            M.api.postJSONCb('ciniki.products.pdfcatalogImageAdd', {'tnid':M.curTenantID, 'catalog_image_id':this.catalog_image_id}, c,
                 function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
@@ -190,7 +190,7 @@ function ciniki_products_pdfcatalogs() {
     }
     this.image.remove = function() {
         if( confirm("Are you sure you want to remove this image?") ) {
-            M.api.getJSONCb('ciniki.products.pdfcatalogImageDelete', {'business_id':M.curBusinessID,
+            M.api.getJSONCb('ciniki.products.pdfcatalogImageDelete', {'tnid':M.curTenantID,
                 'catalog_image_id':this.catalog_image_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);

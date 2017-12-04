@@ -12,15 +12,15 @@
 // Returns
 // -------
 //
-function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $args) {
+function ciniki_products_web_processRequest(&$ciniki, $settings, $tnid, $args) {
 
-    if( !isset($ciniki['business']['modules']['ciniki.products']) ) {
+    if( !isset($ciniki['tenant']['modules']['ciniki.products']) ) {
         return array('stat'=>'404', 'err'=>array('code'=>'ciniki.products.156', 'msg'=>"I'm sorry, the page you requested does not exist."));
     }
 
     if( isset($args['module_page']) && $args['module_page'] == 'ciniki.products.pdfcatalogs' ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'web', 'processRequestPDFCatalogs');
-        return ciniki_products_web_processRequestPDFCatalogs($ciniki, $settings, $business_id, $args);
+        return ciniki_products_web_processRequestPDFCatalogs($ciniki, $settings, $tnid, $args);
     }
 
     $page = array(
@@ -37,13 +37,13 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
     if( isset($args['uri_split']) ) {
         $num_uri = count($args['uri_split']);
     }
-    if( isset($ciniki['business']['modules']['ciniki.products'])
+    if( isset($ciniki['tenant']['modules']['ciniki.products'])
         && isset($num_uri)
         && isset($args['uri_split'][$num_uri-3]) && $args['uri_split'][$num_uri-3] != ''
         && isset($args['uri_split'][$num_uri-2]) && $args['uri_split'][$num_uri-2] == 'download'
         && isset($args['uri_split'][$num_uri-1]) && $args['uri_split'][$num_uri-1] != '' ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'web', 'fileDownload');
-        $rc = ciniki_products_web_fileDownload($ciniki, $ciniki['request']['business_id'], 
+        $rc = ciniki_products_web_fileDownload($ciniki, $ciniki['request']['tnid'], 
             $ciniki['request']['uri_split'][$num_uri-3], $ciniki['request']['uri_split'][$num_uri-1]);
         if( $rc['stat'] == 'ok' ) {
             header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
@@ -85,7 +85,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
     //
     $strsql = "SELECT id, name_s, name_p, object_def "
         . "FROM ciniki_product_types "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "ORDER BY id "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
@@ -143,7 +143,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
             //
             $strsql = "SELECT DISTINCT tag_name "
                 . "FROM ciniki_product_tags "
-                . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                 . "AND permalink = '" . ciniki_core_dbQuote($ciniki, $permalink) . "' "
                 . "AND tag_type = 10 "
                 . "LIMIT 1 " // Only grab the first one
@@ -164,7 +164,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                     . "tag_type, display, subcategorydisplay, productdisplay, "
                     . "primary_image_id, synopsis, description "
                     . "FROM ciniki_product_categories "
-                    . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                    . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                     . "AND category = '" . ciniki_core_dbQuote($ciniki, $category_permalink) . "' "
                     . "AND subcategory = '' "
                     . "";
@@ -213,7 +213,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
             // Add breadcrumbs, set page_title
             $strsql = "SELECT DISTINCT tag_name "
                 . "FROM ciniki_product_tags "
-                . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                 . "AND permalink = '" . ciniki_core_dbQuote($ciniki, $permalink) . "' ";
             if( isset($category['tag_type']) && $category['tag_type'] > 0 ) {
                 $strsql .= "AND tag_type = '" . ciniki_core_dbQuote($ciniki, $category['tag_type']) . "' ";
@@ -238,7 +238,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                     . "tag_type, display, subcategorydisplay, productdisplay, "
                     . "primary_image_id, synopsis, description "
                     . "FROM ciniki_product_categories "
-                    . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                    . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                     . "AND category = '" . ciniki_core_dbQuote($ciniki, $category_permalink) . "' "
                     . "AND subcategory = '" . ciniki_core_dbQuote($ciniki, $subcategory_permalink) . "' "
                     . "";
@@ -326,7 +326,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
             . "FROM ciniki_product_tags AS t1 "
             . "INNER JOIN ciniki_product_tags AS t2 ON ("
                 . "t1.product_id = t2.product_id "
-                . "AND t2.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' ";
+                . "AND t2.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' ";
          if( isset($category['tag_type']) && $category['tag_type'] > 0 ) {
             $strsql .= "AND t2.tag_type = '" . ciniki_core_dbQuote($ciniki, $category['tag_type']) . "' ";
          } else {
@@ -336,15 +336,15 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
             . "LEFT JOIN ciniki_product_categories ON ("
                 . "t1.permalink = ciniki_product_categories.category "
                 . "AND t2.permalink = ciniki_product_categories.subcategory "
-                . "AND ciniki_product_categories.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                . "AND ciniki_product_categories.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                 . ") "
             . "LEFT JOIN ciniki_products ON ("
                 . "t2.product_id = ciniki_products.id "
                 . "AND ciniki_products.parent_id = 0 "
                 . "AND (ciniki_products.webflags&0x01) > 0 "
-                . "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                . "AND ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                 . ") "
-            . "WHERE t1.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "WHERE t1.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND t1.permalink = '" . ciniki_core_dbQuote($ciniki, $category_permalink) . "' "
             . "AND t1.tag_type = 10 "
             . "GROUP BY type_id, t2.tag_type, t2.tag_name "
@@ -445,10 +445,10 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                     $strsql = "SELECT t2.permalink AS subcat, ciniki_products.primary_image_id "
                         . "FROM ciniki_product_tags AS t1, ciniki_products, ciniki_product_tags AS t2 "
                         . "WHERE t1.tag_type = 10 "
-                        . "AND t1.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                        . "AND t1.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                         . "AND t1.product_id = ciniki_products.id "
                         . "AND t1.permalink = '" . ciniki_core_dbQuote($ciniki, $category_permalink) . "' "
-                        . "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                        . "AND ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                         . "AND ciniki_products.primary_image_id > 0 "
                         . "AND ciniki_products.start_date < UTC_TIMESTAMP() "
                         . "AND (ciniki_products.end_date = '0000-00-00 00:00:00' "
@@ -456,7 +456,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                             . ") "
                         . "AND (ciniki_products.webflags&0x01) > 0 "
                         . "AND ciniki_products.id = t2.product_id "
-                        . "AND t2.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                        . "AND t2.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                         . "AND t2.tag_type > 10 "
                         . "AND t2.tag_type < 30 "
                         . "ORDER BY t1.permalink, t2.permalink, ciniki_products.date_added "
@@ -515,9 +515,9 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
         $strsql = "SELECT t1.permalink, MAX(ciniki_products.primary_image_id) AS image_id "
             . "FROM ciniki_product_tags AS t1, ciniki_products "
             . "WHERE t1.tag_type = 10 "
-            . "AND t1.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND t1.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND t1.product_id = ciniki_products.id "
-            . "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND ciniki_products.primary_image_id > 0 "
             . "AND ciniki_products.start_date < UTC_TIMESTAMP() "
             . "AND (ciniki_products.end_date = '0000-00-00 00:00:00' "
@@ -554,14 +554,14 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                 . "AND ciniki_products.start_date < UTC_TIMESTAMP() "
                 . "AND (ciniki_products.end_date = '0000-00-00 00:00:00' OR ciniki_products.end_date > UTC_TIMESTAMP()) "
                 . "AND (ciniki_products.webflags&0x01) > 0 "
-                . "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                . "AND ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                 . ") "
             . "LEFT JOIN ciniki_product_categories ON ("
                 . "ciniki_product_tags.permalink = ciniki_product_categories.category "
                 . "AND ciniki_product_categories.subcategory = '' "
-                . "AND ciniki_product_categories.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                . "AND ciniki_product_categories.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                 . ") "
-            . "WHERE ciniki_product_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "WHERE ciniki_product_tags.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND ciniki_product_tags.tag_type = 10 "
             . "AND ciniki_product_tags.tag_name <> '' "
             . "GROUP BY ciniki_product_tags.tag_name "
@@ -609,7 +609,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
             // Get the list of subcategory products
             //
             ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'web', 'processRequestSubCategoryProducts');
-            $rc = ciniki_products_web_processRequestSubCategoryProducts($ciniki, $settings, $business_id, $category, $subcategory);
+            $rc = ciniki_products_web_processRequestSubCategoryProducts($ciniki, $settings, $tnid, $category, $subcategory);
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
             }
@@ -619,7 +619,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
             // Get the list of category products
             //
             ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'web', 'processRequestCategoryProducts');
-            $rc = ciniki_products_web_processRequestCategoryProducts($ciniki, $settings, $business_id, $category, null);
+            $rc = ciniki_products_web_processRequestCategoryProducts($ciniki, $settings, $tnid, $category, null);
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
             }
@@ -665,7 +665,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                 // Get the list of products with their prices and audio samples.
                 //
                 ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'web', 'processRequestProductsDetails');
-                $rc = ciniki_products_web_processRequestProductsDetails($ciniki, $settings, $business_id, $products, 
+                $rc = ciniki_products_web_processRequestProductsDetails($ciniki, $settings, $tnid, $products, 
                     array('audio'=>'yes', 'object_defs'=>$object_defs));
                 if( $rc['stat'] != 'ok' ) {
                     return $rc;
@@ -673,7 +673,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                 $page['blocks'][] = array('type'=>'audiopricelist', 'section'=>'products', 'title'=>'Products', 'base_url'=>$base_url, 'list'=>$rc['products']);
 
                 ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'web', 'processRequestProductsDetails');
-                $rc = ciniki_products_web_processRequestProductsDetails($ciniki, $settings, $business_id, $products, 
+                $rc = ciniki_products_web_processRequestProductsDetails($ciniki, $settings, $tnid, $products, 
                     array('prices'=>'required', 'object_defs'=>$object_defs));
                 if( $rc['stat'] != 'ok' ) {
                     return $rc;
@@ -696,7 +696,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                 // Get the list of products with their prices and audio samples.
                 //
                 ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'web', 'processRequestProductsDetails');
-                $rc = ciniki_products_web_processRequestProductsDetails($ciniki, $settings, $business_id, $products, 
+                $rc = ciniki_products_web_processRequestProductsDetails($ciniki, $settings, $tnid, $products, 
                     array('audio'=>'yes', 'prices'=>'yes', 'object_defs'=>$object_defs));
                 if( $rc['stat'] != 'ok' ) {
                     return $rc;
@@ -717,7 +717,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                 // Get the list of audio samples from products, remove any products that don't have audio
                 //
                 ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'web', 'processRequestProductsDetails');
-                $rc = ciniki_products_web_processRequestProductsDetails($ciniki, $settings, $business_id, $products, 
+                $rc = ciniki_products_web_processRequestProductsDetails($ciniki, $settings, $tnid, $products, 
                     array('audio'=>'required', 'object_defs'=>$object_defs));
                 if( $rc['stat'] != 'ok' ) {
                     return $rc;
@@ -729,7 +729,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                 //
                 // Get the list of products and their prices
                 //
-                $rc = ciniki_products_web_processRequestProductsDetails($ciniki, $settings, $business_id, $products, 
+                $rc = ciniki_products_web_processRequestProductsDetails($ciniki, $settings, $tnid, $products, 
                     array('prices'=>'required', 'object_defs'=>$object_defs));
                 if( $rc['stat'] != 'ok' ) {
                     return $rc;
@@ -752,7 +752,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
                 // Get the list of products for this subcategory
                 //
                 ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'web', 'processRequestProductsDetails');
-                $rc = ciniki_products_web_processRequestProductsDetails($ciniki, $settings, $business_id, $products, 
+                $rc = ciniki_products_web_processRequestProductsDetails($ciniki, $settings, $tnid, $products, 
                     array('image'=>'yes', 'prices'=>'yes', 'object_defs'=>$object_defs));
                 if( $rc['stat'] != 'ok' ) {
                     return $rc;
@@ -776,7 +776,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
         // Get the product information
         //
         ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'web', 'productDetails');
-        $rc = ciniki_products_web_productDetails($ciniki, $settings, $ciniki['request']['business_id'], 
+        $rc = ciniki_products_web_productDetails($ciniki, $settings, $ciniki['request']['tnid'], 
             array('product_permalink'=>$product_permalink));
         if( $rc['stat'] != 'ok' ) {
             return $rc;
@@ -889,7 +889,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $business_id, $
 /*                $image_permalink = $ciniki['request']['uri_split'][5];
                 $ciniki['response']['head']['links']['canonical']['href'] .= '/gallery/' . $image_permalink;
                 ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'processGalleryImage');
-                $rc = ciniki_web_processGalleryImage($ciniki, $settings, $ciniki['request']['business_id'],
+                $rc = ciniki_web_processGalleryImage($ciniki, $settings, $ciniki['request']['tnid'],
                     array('item'=>$product,
                         'gallery_url'=>$ciniki['request']['base_url'] . "/products/category/$category_permalink/product/$product_permalink/gallery",
                         'article_title'=>$article_title .= " - <a href='" . $ciniki['request']['base_url'] 

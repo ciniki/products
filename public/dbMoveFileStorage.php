@@ -17,7 +17,7 @@ function ciniki_products_dbMoveFileStorage($ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'clear'=>array('required'=>'no', 'default'=>'no', 'name'=>'Clear DB Blob Content'),
         ));
     if( $rc['stat'] != 'ok' ) {
@@ -26,23 +26,23 @@ function ciniki_products_dbMoveFileStorage($ciniki) {
     $args = $rc['args'];
     
     //
-    // Check access to business_id as owner, or sys admin
+    // Check access to tnid as owner, or sys admin
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.dbMoveFileStorage');
+    $rc = ciniki_products_checkAccess($ciniki, $args['tnid'], 'ciniki.products.dbMoveFileStorage');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
 
     //
-    // Get the business storage directory
+    // Get the tenant storage directory
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'hooks', 'storageDir');
-    $rc = ciniki_businesses_hooks_storageDir($ciniki, $args['business_id'], array());
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'hooks', 'storageDir');
+    $rc = ciniki_tenants_hooks_storageDir($ciniki, $args['tnid'], array());
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
-    $business_storage_dir = $rc['storage_dir'];
+    $tenant_storage_dir = $rc['storage_dir'];
     
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
@@ -52,7 +52,7 @@ function ciniki_products_dbMoveFileStorage($ciniki) {
 
     $strsql = "SELECT id, uuid, binary_content "
         . "FROM ciniki_product_files "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND binary_content <> '' "
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'image');
@@ -68,7 +68,7 @@ function ciniki_products_dbMoveFileStorage($ciniki) {
     //
     $files = $rc['rows'];
     foreach($files as $file) {
-        $storage_filename = $business_storage_dir . '/ciniki.products/files/' . $file['uuid'][0] . '/' . $file['uuid'];
+        $storage_filename = $tenant_storage_dir . '/ciniki.products/files/' . $file['uuid'][0] . '/' . $file['uuid'];
         if( !is_dir(dirname($storage_filename)) ) {
             if( !mkdir(dirname($storage_filename), 0700, true) ) {
                 return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.50', 'msg'=>'Unable to add file'));
@@ -78,7 +78,7 @@ function ciniki_products_dbMoveFileStorage($ciniki) {
             file_put_contents($storage_filename, $file['binary_content']);
         }
         if( isset($args['clear']) && $args['clear'] == 'yes' && file_exists($storage_filename) ) {
-            $rc = ciniki_core_objectUpdate($ciniki, $args['business_id'], 'ciniki.products.file', $file['id'], array('binary_content'=>''));
+            $rc = ciniki_core_objectUpdate($ciniki, $args['tnid'], 'ciniki.products.file', $file['id'], array('binary_content'=>''));
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
             }

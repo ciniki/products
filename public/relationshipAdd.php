@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business the product belongs to.
+// tnid:         The ID of the tenant the product belongs to.
 // product_id:          The ID of the product to add the relationship to.
 // relationship_type:   The type of relationship between the product_id and
 //                      the related_id.  
@@ -32,7 +32,7 @@ function ciniki_products_relationshipAdd(&$ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'product_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Product'), 
         'relationship_type'=>array('required'=>'no', 'blank'=>'no', 'default'=>'10',
             'validlist'=>array('10','11'), 'name'=>'Relationship Type'), 
@@ -48,10 +48,10 @@ function ciniki_products_relationshipAdd(&$ciniki) {
 
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.relationshipAdd', $args['product_id']); 
+    $rc = ciniki_products_checkAccess($ciniki, $args['tnid'], 'ciniki.products.relationshipAdd', $args['product_id']); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -70,7 +70,7 @@ function ciniki_products_relationshipAdd(&$ciniki) {
                 . "AND relationship_type = 10 "
                 . "AND related_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
             . ")) "
-            . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'relationship');
     if( $rc['stat'] != 'ok' ) {
@@ -91,6 +91,6 @@ function ciniki_products_relationshipAdd(&$ciniki) {
     // Add the relationship
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
-    return ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.products.relationship', $args, 0x07);
+    return ciniki_core_objectAdd($ciniki, $args['tnid'], 'ciniki.products.relationship', $args, 0x07);
 }
 ?>

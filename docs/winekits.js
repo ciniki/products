@@ -102,7 +102,7 @@ function ciniki_products_winekits() {
     }
 
     //
-    // Grab the stats for the business from the database and present the list of products.
+    // Grab the stats for the tenant from the database and present the list of products.
     //
     this.showMain = function() {
         this.main.refresh();
@@ -114,7 +114,7 @@ function ciniki_products_winekits() {
     }
 
     this.loadWineKits = function() {
-        var rsp = M.api.getJSONCb('ciniki.products.listWineKits',{'business_id':M.curBusinessID}, function(rsp) {
+        var rsp = M.api.getJSONCb('ciniki.products.listWineKits',{'tnid':M.curTenantID}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -129,7 +129,7 @@ function ciniki_products_winekits() {
             this.edit.cb = cb;
         }
         M.ciniki_products_winekits.edit.product_id = pID;
-        var rsp = M.api.getJSONCb('ciniki.products.get',{'business_id':M.curBusinessID, 'product_id':pID}, function(rsp) {
+        var rsp = M.api.getJSONCb('ciniki.products.get',{'tnid':M.curTenantID, 'product_id':pID}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -145,7 +145,7 @@ function ciniki_products_winekits() {
         var c = this.edit.serializeForm('no');
         if( c != '' ) {
             var rsp = M.api.postJSONCb('ciniki.products.updateWineKit', 
-                {'business_id':M.curBusinessID, 'product_id':M.ciniki_products_winekits.edit.product_id}, c, function(rsp) {
+                {'tnid':M.curTenantID, 'product_id':M.ciniki_products_winekits.edit.product_id}, c, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;

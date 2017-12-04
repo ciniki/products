@@ -20,7 +20,7 @@ function ciniki_products_productExportExcel($ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -29,10 +29,10 @@ function ciniki_products_productExportExcel($ciniki) {
 
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.productExportExcel', 0); 
+    $rc = ciniki_products_checkAccess($ciniki, $args['tnid'], 'ciniki.products.productExportExcel', 0); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -40,8 +40,8 @@ function ciniki_products_productExportExcel($ciniki) {
     //
     // Load currency and timezone settings
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'intlSettings');
-    $rc = ciniki_businesses_intlSettings($ciniki, $args['business_id']);
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'intlSettings');
+    $rc = ciniki_tenants_intlSettings($ciniki, $args['tnid']);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -68,7 +68,7 @@ function ciniki_products_productExportExcel($ciniki) {
     $types = array();
     $strsql = "SELECT id, name_s, name_p, object_def "
         . "FROM ciniki_product_types "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "";
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
         array('container'=>'types', 'fname'=>'id', 
@@ -102,7 +102,7 @@ function ciniki_products_productExportExcel($ciniki) {
     $suppliers = array();
     $strsql = "SELECT id, name "
         . "FROM ciniki_product_suppliers "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "";
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
         array('container'=>'suppliers', 'fname'=>'id', 
@@ -120,10 +120,10 @@ function ciniki_products_productExportExcel($ciniki) {
     //
     $pricepoints = array();
     $use_pricepoints = 'no';
-    if( ($ciniki['business']['modules']['ciniki.customers']['flags']&0x1000) > 0 ) {
+    if( ($ciniki['tenant']['modules']['ciniki.customers']['flags']&0x1000) > 0 ) {
         $strsql = "SELECT id, name, code "
             . "FROM ciniki_customer_pricepoints "
-            . "WHERE ciniki_customer_pricepoints.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE ciniki_customer_pricepoints.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "";
         $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.customers', array(
             array('container'=>'pricepoints', 'fname'=>'id', 
@@ -149,7 +149,7 @@ function ciniki_products_productExportExcel($ciniki) {
             . "taxtype_id, start_date, end_date, "
             . "IF((ciniki_product_prices.webflags&0x01)=1,'Hidden','Visible') AS visible "
             . "FROM ciniki_product_prices "
-            . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "ORDER BY product_id "
             . "";
         if( $use_pricepoints == 'yes' ) {
@@ -232,7 +232,7 @@ function ciniki_products_productExportExcel($ciniki) {
         . "IF((ciniki_products.webflags&0x01)=1,'Hidden','Visible') AS visible, "
         . "IF((ciniki_products.webflags&0x02)=2,'Yes','No') AS sellonline "
         . "FROM ciniki_products "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "";
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
         array('container'=>'products', 'fname'=>'id', 

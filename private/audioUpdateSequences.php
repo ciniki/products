@@ -12,7 +12,7 @@
 // =======
 // <rsp stat="ok" />
 //
-function ciniki_products_audioUpdateSequences($ciniki, $business_id, $product_id, $new_seq, $old_seq) {
+function ciniki_products_audioUpdateSequences($ciniki, $tnid, $product_id, $new_seq, $old_seq) {
 
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbUpdate');
 
@@ -21,7 +21,7 @@ function ciniki_products_audioUpdateSequences($ciniki, $business_id, $product_id
     //
     $strsql = "SELECT id, sequence AS number "
         . "FROM ciniki_product_audio "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND product_id = '" . ciniki_core_dbQuote($ciniki, $product_id) . "' "
         . "";
     // Use the last_updated to determine which is in the proper position for duplicate numbers
@@ -46,7 +46,7 @@ function ciniki_products_audioUpdateSequences($ciniki, $business_id, $product_id
                 $strsql = "UPDATE ciniki_product_audio SET "
                     . "sequence = '" . ciniki_core_dbQuote($ciniki, $cur_number) . "' "
                     . ", last_updated = UTC_TIMESTAMP() "
-                    . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                    . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                     . "AND id = '" . ciniki_core_dbQuote($ciniki, $seq['id']) . "' "
                     . "";
                 $rc = ciniki_core_dbUpdate($ciniki, $strsql, 'ciniki.products');
@@ -54,7 +54,7 @@ function ciniki_products_audioUpdateSequences($ciniki, $business_id, $product_id
                     ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
                 }
                 ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.products', 
-                    'ciniki_product_history', $business_id, 
+                    'ciniki_product_history', $tnid, 
                     2, 'ciniki_product_audio', $seq['id'], 'sequence', $cur_number);
                 $ciniki['syncqueue'][] = array('push'=>'ciniki.products.audio', 
                     'args'=>array('id'=>$seq['id']));

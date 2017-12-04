@@ -46,7 +46,7 @@ function ciniki_products_audio() {
             return ''; 
         };
         this.edit.fieldHistoryArgs = function(s, i) {
-            return {'method':'ciniki.products.audioHistory', 'args':{'business_id':M.curBusinessID, 
+            return {'method':'ciniki.products.audioHistory', 'args':{'tnid':M.curTenantID, 
                 'product_audio_id':this.product_audio_id, 'field':i}};
         };
         this.edit.addDropFile = function(s, i, iid, file) {
@@ -69,7 +69,7 @@ function ciniki_products_audio() {
         };
         this.edit.addDropFileRefresh = function() {
 //          if( M.ciniki_products_audio.edit.product_audio_id > 0 ) {
-//              M.api.getJSONCb('ciniki.products.audioGet', {'business_id':M.curBusinessID, 
+//              M.api.getJSONCb('ciniki.products.audioGet', {'tnid':M.curTenantID, 
 //                  'product_audio_id':M.ciniki_products_audio.edit.product_audio_id, 'audio':'yes'}, function(rsp) {
 ////                        if( rsp.stat != 'ok' ) {
 //                          M.api.err(rsp);
@@ -81,7 +81,7 @@ function ciniki_products_audio() {
 //                  });
 //          } else {
 // FIXME: Add code to update audio section
-//              M.api.getJSONCb('ciniki.audio.get', {'business_id':M.curBusinessID, 
+//              M.api.getJSONCb('ciniki.audio.get', {'tnid':M.curTenantID, 
 //                  'audio_id':M.ciniki_products_audio.edit.product_id, 'audio':'yes'}, function(rsp) {
 //                      if( rsp.stat != 'ok' ) {
 //                          M.api.err(rsp);
@@ -123,7 +123,7 @@ function ciniki_products_audio() {
         if( eid != null ) { this.edit.product_id = eid; }
         if( this.edit.product_audio_id > 0 ) {
             var rsp = M.api.getJSONCb('ciniki.products.audioGet', 
-                {'business_id':M.curBusinessID, 'product_audio_id':this.edit.product_audio_id}, function(rsp) {
+                {'tnid':M.curTenantID, 'product_audio_id':this.edit.product_audio_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;
@@ -146,7 +146,7 @@ function ciniki_products_audio() {
             var c = this.edit.serializeFormData('no');
             if( c != '' ) {
                 var rsp = M.api.postJSONFormData('ciniki.products.audioUpdate', 
-                    {'business_id':M.curBusinessID, 
+                    {'tnid':M.curTenantID, 
                     'product_audio_id':this.edit.product_audio_id}, c,
                         function(rsp) {
                             if( rsp.stat != 'ok' ) {
@@ -162,7 +162,7 @@ function ciniki_products_audio() {
         } else {
             var c = this.edit.serializeFormData('yes');
             var rsp = M.api.postJSONFormData('ciniki.products.audioAdd', 
-                {'business_id':M.curBusinessID, 'product_id':this.edit.product_id}, c,
+                {'tnid':M.curTenantID, 'product_id':this.edit.product_id}, c,
                     function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
@@ -176,7 +176,7 @@ function ciniki_products_audio() {
 
     this.deleteAudio = function() {
         if( confirm('Are you sure you want to delete this audio?') ) {
-            var rsp = M.api.getJSONCb('ciniki.products.audioDelete', {'business_id':M.curBusinessID, 
+            var rsp = M.api.getJSONCb('ciniki.products.audioDelete', {'tnid':M.curTenantID, 
                 'product_audio_id':this.edit.product_audio_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);

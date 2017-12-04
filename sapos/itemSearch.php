@@ -10,7 +10,7 @@
 // Returns
 // =======
 //
-function ciniki_products_sapos_itemSearch($ciniki, $business_id, $args) {
+function ciniki_products_sapos_itemSearch($ciniki, $tnid, $args) {
 
     if( !isset($args['start_needle']) || $args['start_needle'] == '' ) {
         return array('stat'=>'ok', 'items'=>array());
@@ -32,10 +32,10 @@ function ciniki_products_sapos_itemSearch($ciniki, $business_id, $args) {
     //
     // Check if pricepoints are enabled
     //
-    if( isset($ciniki['business']['modules']['ciniki.customers'])
-        && ($ciniki['business']['modules']['ciniki.customers']['flags']&0x1000) > 0 ) {
+    if( isset($ciniki['tenant']['modules']['ciniki.customers'])
+        && ($ciniki['tenant']['modules']['ciniki.customers']['flags']&0x1000) > 0 ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'customers', 'private', 'pricepoints');
-        $rc = ciniki_customers_pricepoints($ciniki, $business_id);
+        $rc = ciniki_customers_pricepoints($ciniki, $tnid);
         if( $rc['stat'] != 'ok' ) {
             return $rc;
         }
@@ -48,7 +48,7 @@ function ciniki_products_sapos_itemSearch($ciniki, $business_id, $args) {
     // FIXME: Query for the taxes for products
     //
 //  ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQueryDash');
-//  $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_product_settings', 'business_id', $business_id,
+//  $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_product_settings', 'tnid', $tnid,
 //      'ciniki.artcatalog', 'taxes', 'taxes');
 //  if( $rc['stat'] != 'ok' ) {
 //      return $rc;
@@ -90,10 +90,10 @@ function ciniki_products_sapos_itemSearch($ciniki, $business_id, $args) {
         . "FROM ciniki_products "
         . "LEFT JOIN ciniki_product_prices ON ("
             . "ciniki_products.id = ciniki_product_prices.product_id "
-            . "AND ciniki_product_prices.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND ciniki_product_prices.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . (isset($args['pricepoint_id'])&&$args['pricepoint_id']>0?"AND ciniki_product_prices.pricepoint_id = '" . ciniki_core_dbQuote($ciniki, $args['pricepoint_id']) . "' ":'')
             . ") "
-        . "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "WHERE ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND (ciniki_products.name LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
             . "OR ciniki_products.name LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
             . "OR ciniki_products.code LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
@@ -136,14 +136,14 @@ function ciniki_products_sapos_itemSearch($ciniki, $business_id, $args) {
     //
     // Get the reserved quantities for each product
     //
-    if( isset($ciniki['business']['modules']['ciniki.sapos']) && count($product_ids) > 0 ) {
+    if( isset($ciniki['tenant']['modules']['ciniki.sapos']) && count($product_ids) > 0 ) {
         $cur_invoice_id = 0;
         if( isset($args['invoice_id']) && $args['invoice_id'] > 0 ) {
             $cur_invoice_id = $args['invoice_id'];
         }
         $product_ids = array_unique($product_ids);
         ciniki_core_loadMethod($ciniki, 'ciniki', 'sapos', 'private', 'getReservedQuantities');
-        $rc = ciniki_sapos_getReservedQuantities($ciniki, $business_id, 
+        $rc = ciniki_sapos_getReservedQuantities($ciniki, $tnid, 
             'ciniki.products.product', $product_ids, $cur_invoice_id);
         if( $rc['stat'] != 'ok' ) {
             return $rc;

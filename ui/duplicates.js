@@ -93,7 +93,7 @@ function ciniki_products_duplicates() {
             return this.data[i];
         };
         this.match2.cellValue = function(s, i, j, d) {
-            if( s == 'details' || s == 'business' || s == 'phones' ) {
+            if( s == 'details' || s == 'tenant' || s == 'phones' ) {
                 if( j == 0 ) { return d.label; }
                 if( j == 1 ) { return d.value; }
             }
@@ -195,7 +195,7 @@ function ciniki_products_duplicates() {
     };
 
     //
-    // Grab the stats for the business from the database and present the list of products.
+    // Grab the stats for the tenant from the database and present the list of products.
     //
     this.showList = function(cb, type) {
         if( type != null ) {
@@ -204,7 +204,7 @@ function ciniki_products_duplicates() {
         //
         // Grab list of recently updated products
         //
-        var rsp = M.api.getJSONCb('ciniki.products.productDuplicates', {'business_id':M.curBusinessID,
+        var rsp = M.api.getJSONCb('ciniki.products.productDuplicates', {'tnid':M.curTenantID,
             'type':this.list.find_type}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
@@ -225,7 +225,7 @@ function ciniki_products_duplicates() {
         this.match1.sections._buttons.buttons.delete.visible = 'yes';
         this.match2.sections._buttons.buttons.delete.visible = 'yes';
         M.startLoad();
-        var rsp = M.api.getJSONCb('ciniki.products.productGet', {'business_id':M.curBusinessID, 
+        var rsp = M.api.getJSONCb('ciniki.products.productGet', {'tnid':M.curTenantID, 
             'product_id':this.match1.product_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.stopLoad();
@@ -243,7 +243,7 @@ function ciniki_products_duplicates() {
     };
 
     this.showMatchFinish = function(cb) {
-        M.api.getJSONCb('ciniki.products.productGet', {'business_id':M.curBusinessID, 
+        M.api.getJSONCb('ciniki.products.productGet', {'tnid':M.curTenantID, 
             'product_id':this.match2.product_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.stopLoad();
@@ -265,13 +265,13 @@ function ciniki_products_duplicates() {
                 p1.sections.pastwineproduction.visible = 'no';
                 p2.sections.pastwineproduction.visible = 'no';
 
-                if( M.curBusiness.modules['ciniki.wineproduction'] != null ) {
+                if( M.curTenant.modules['ciniki.wineproduction'] != null ) {
                     p1.sections.currentwineproduction.visible = 'yes';
                     p2.sections.currentwineproduction.visible = 'yes';
                     p1.sections.pastwineproduction.visible = 'yes';
                     p2.sections.pastwineproduction.visible = 'yes';
                     // Get wine production
-                    var rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 
+                    var rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 
                         'product_id':p1.product_id});
                     if( rsp.stat != 'ok' ) {
                         M.stopLoad();
@@ -294,7 +294,7 @@ function ciniki_products_duplicates() {
                     }
 
                     // Get second product wine production
-                    var rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 
+                    var rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 
                         'product_id':p2.product_id});
                     if( rsp.stat != 'ok' ) {
                         M.stopLoad();
@@ -324,7 +324,7 @@ function ciniki_products_duplicates() {
     };
 
     this.mergeProduct = function(pid1, pid2) {
-        var rsp = M.api.getJSONCb('ciniki.products.productMerge', {'business_id':M.curBusinessID, 
+        var rsp = M.api.getJSONCb('ciniki.products.productMerge', {'tnid':M.curTenantID, 
             'primary_product_id':pid1, 'secondary_product_id':pid2}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
@@ -338,7 +338,7 @@ function ciniki_products_duplicates() {
         if( pid != null && pid > 0 ) {
             if( confirm("Are you sure you want to remove this product?") ) {
                 var rsp = M.api.getJSONCb('ciniki.products.productDelete', 
-                    {'business_id':M.curBusinessID, 'product_id':pid}, function(rsp) {
+                    {'tnid':M.curTenantID, 'product_id':pid}, function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
                             return false;

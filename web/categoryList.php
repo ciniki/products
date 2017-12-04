@@ -8,7 +8,7 @@
 // ---------
 // ciniki:
 // settings:        The web settings structure.
-// business_id:     The ID of the business to get events for.
+// tnid:     The ID of the tenant to get events for.
 //
 // Returns
 // -------
@@ -18,7 +18,7 @@
 //      ...
 // </categories>
 //
-function ciniki_products_web_categoryList($ciniki, $settings, $business_id) {
+function ciniki_products_web_categoryList($ciniki, $settings, $tnid) {
 
     $strsql = "SELECT ciniki_product_tags.tag_name AS name, "
         . "IFNULL(ciniki_product_categories.name, '') AS cat_name, "
@@ -37,14 +37,14 @@ function ciniki_products_web_categoryList($ciniki, $settings, $business_id) {
                 . "OR ciniki_products.end_date > UTC_TIMESTAMP()"
                 . ") "
             . "AND (ciniki_products.webflags&0x01) > 0 "
-            . "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . ") "
         . "LEFT JOIN ciniki_product_categories ON ("
             . "ciniki_product_tags.permalink = ciniki_product_categories.category "
             . "AND ciniki_product_categories.subcategory = '' "
-            . "AND ciniki_product_categories.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND ciniki_product_categories.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . ") "
-        . "WHERE ciniki_product_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "WHERE ciniki_product_tags.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND ciniki_product_tags.tag_type = 10 "
         . "AND ciniki_product_tags.tag_name <> '' "
         . "GROUP BY ciniki_product_tags.tag_name "
@@ -93,11 +93,11 @@ function ciniki_products_web_categoryList($ciniki, $settings, $business_id) {
         if( $cat['image_id'] == 0 ) {
             $strsql = "SELECT ciniki_products.primary_image_id "
                 . "FROM ciniki_product_tags, ciniki_products, ciniki_images "
-                . "WHERE ciniki_product_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                . "WHERE ciniki_product_tags.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                 . "AND ciniki_product_tags.permalink = '" . ciniki_core_dbQuote($ciniki, $cat['permalink']) . "' "
                 . "AND ciniki_product_tags.product_id = ciniki_products.id "
                 . "AND ciniki_products.parent_id = 0 "
-                . "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                . "AND ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                 . "AND ciniki_products.start_date < UTC_TIMESTAMP() "
                 . "AND (ciniki_products.end_date = '0000-00-00 00:00:00' "
                     . "OR ciniki_products.end_date > UTC_TIMESTAMP()"

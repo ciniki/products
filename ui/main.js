@@ -47,13 +47,13 @@ function ciniki_products_main() {
                 'addFn':'M.startApp(\'ciniki.products.pdfcatalogs\',null,\'M.ciniki_products_main.showMenu();\',\'mc\',{\'catalog_id\':\'0\'});',
                 },
             'suppliers':{'label':'Suppliers', 'type':'simplegrid', 'num_cols':1,
-                'visible':function() { return ((M.curBusiness.modules['ciniki.products'].flags&0x08)>0 && M.ciniki_products_main.menu.sections._tabs.selected == 'suppliers') ? 'yes' : 'no'; },
+                'visible':function() { return ((M.curTenant.modules['ciniki.products'].flags&0x08)>0 && M.ciniki_products_main.menu.sections._tabs.selected == 'suppliers') ? 'yes' : 'no'; },
                 'headerValues':null,
                 },
             };
         this.menu.liveSearchCb = function(s, i, value) {
             if( s == 'search' && value != '' ) { 
-                M.api.getJSONBgCb('ciniki.products.productSearch', {'business_id':M.curBusinessID, 
+                M.api.getJSONBgCb('ciniki.products.productSearch', {'tnid':M.curTenantID, 
                     'start_needle':value, 'status':10, 'limit':'10', 'reserved':'yes'}, function(rsp) { 
                         M.ciniki_products_main.menu.liveSearchShow('search', null, M.gE(M.ciniki_products_main.menu.panelUID + '_' + s), rsp.products); 
                 }); 
@@ -285,7 +285,7 @@ function ciniki_products_main() {
             return 'M.startApp(\'ciniki.products.product\',null,\'M.ciniki_products_main.toolsaudio.open();\',\'mc\',{\'product_id\':\'' + d.product_id + '\'});';
         };
         this.toolsaudio.open = function(cb) {
-            M.api.getJSONCb('ciniki.products.audioList', {'business_id':M.curBusinessID}, function(rsp) {
+            M.api.getJSONCb('ciniki.products.audioList', {'tnid':M.curTenantID}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -297,7 +297,7 @@ function ciniki_products_main() {
             });
         };
         this.toolsaudio.download = function(aid, name) {
-            M.api.openFile('ciniki.audio.download', {'business_id':M.curBusinessID, 'audio_id':aid});
+            M.api.openFile('ciniki.audio.download', {'tnid':M.curTenantID, 'audio_id':aid});
         };
         this.toolsaudio.addClose('Back');
     }
@@ -334,7 +334,7 @@ function ciniki_products_main() {
         }
 
         // Check if inventory enabled
-        if( (M.curBusiness.modules['ciniki.products'].flags&0x04) > 0 ) {
+        if( (M.curTenant.modules['ciniki.products'].flags&0x04) > 0 ) {
             this.menu.sections.products.num_cols = 2;
             this.menu.sections.products.headerValues = ['Product', 'Inv [Rsv]'];
             this.menu.sections.search.livesearchcols = 2;
@@ -354,7 +354,7 @@ function ciniki_products_main() {
 
         this.menu.data.tools = {};
 //      this.menu.sections.tools.visible = 'no';
-        if( (M.curBusiness.modules['ciniki.products'].flags&0x04) > 0 ) {
+        if( (M.curTenant.modules['ciniki.products'].flags&0x04) > 0 ) {
 //          this.menu.sections.tools.visible = 'yes';
             this.menu.data.tools['duplicates_exact'] = {'label':'Inventory', 'fn':'M.startApp(\'ciniki.products.inventory\', null, \'M.ciniki_products_main.showMenu();\');'};
         }
@@ -367,12 +367,12 @@ function ciniki_products_main() {
     }
 
     //
-    // Grab the stats for the business from the database and present the list of products.
+    // Grab the stats for the tenant from the database and present the list of products.
     //
     this.showMenu = function(cb, category) {
         if( category != null ) { this.menu.sections._tabs.selected = category; }
         if( this.menu.sections._tabs.selected == 'catalogs' ) {
-            M.api.getJSONCb('ciniki.products.pdfcatalogList', {'business_id':M.curBusinessID}, function(rsp) {
+            M.api.getJSONCb('ciniki.products.pdfcatalogList', {'tnid':M.curTenantID}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -386,7 +386,7 @@ function ciniki_products_main() {
                 p.show(cb);
             });
         } else {
-            M.api.getJSONCb('ciniki.products.productStats', {'business_id':M.curBusinessID, 'status':10, 'reserved':'yes'}, function(rsp) {
+            M.api.getJSONCb('ciniki.products.productStats', {'tnid':M.curTenantID, 'status':10, 'reserved':'yes'}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -422,7 +422,7 @@ function ciniki_products_main() {
     //
     this.showCategory = function(cb, c) {
         if( c != null ) { this.category.category_permalink = c; }
-        M.api.getJSONCb('ciniki.products.categoryDetails', {'business_id':M.curBusinessID,
+        M.api.getJSONCb('ciniki.products.categoryDetails', {'tnid':M.curTenantID,
             'category':this.category.category_permalink}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
@@ -468,7 +468,7 @@ function ciniki_products_main() {
     // Show the list of products for a category
     //
     this.showList = function(cb, listtype, type, title, type2) {
-        var args = {'business_id':M.curBusinessID};
+        var args = {'tnid':M.curTenantID};
         if( listtype != null ) {
             this.list._listtype = listtype;
             this.list._type = unescape(type);
@@ -519,7 +519,7 @@ function ciniki_products_main() {
     //
     this.showSearch = function(cb, search_str) {
         if( search_str != null ) { this.search.search_str = search_str; }
-        M.api.getJSONCb('ciniki.products.productSearch', {'business_id':M.curBusinessID, 
+        M.api.getJSONCb('ciniki.products.productSearch', {'tnid':M.curTenantID, 
             'start_needle':this.search.search_str, 'limit':'101', 'reserved':'yes'}, function(rsp) { 
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
@@ -533,7 +533,7 @@ function ciniki_products_main() {
     };
 
     this.downloadExcel = function() {
-        M.api.openFile('ciniki.products.productExportExcel', {'business_id':M.curBusinessID});
+        M.api.openFile('ciniki.products.productExportExcel', {'tnid':M.curTenantID});
     };
 
 }

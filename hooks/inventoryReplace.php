@@ -10,7 +10,7 @@
 // Returns
 // =======
 //
-function ciniki_products_hooks_inventoryReplace($ciniki, $business_id, $args) {
+function ciniki_products_hooks_inventoryReplace($ciniki, $tnid, $args) {
 
     if( !isset($args['history_notes']) ) {
         $args['history_notes'] = '';
@@ -27,7 +27,7 @@ function ciniki_products_hooks_inventoryReplace($ciniki, $business_id, $args) {
             . "inventory_flags, "
             . "inventory_current_num "
             . "FROM ciniki_products "
-            . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND id = '" . ciniki_core_dbQuote($ciniki, $args['object_id']) . "' "
             . "";
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'product');
@@ -48,7 +48,7 @@ function ciniki_products_hooks_inventoryReplace($ciniki, $business_id, $args) {
                 return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.10', 'msg'=>'Unable to find product'));
             }
             $new_quantity = $product['inventory_current_num'] + $args['quantity'];
-            $rc = ciniki_core_objectUpdate($ciniki, $business_id, 'ciniki.products.product', $product['id'], 
+            $rc = ciniki_core_objectUpdate($ciniki, $tnid, 'ciniki.products.product', $product['id'], 
                 array('inventory_current_num'=>$new_quantity), 0x04, $args['history_notes']);
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
@@ -57,12 +57,12 @@ function ciniki_products_hooks_inventoryReplace($ciniki, $business_id, $args) {
             //
             // Hook into other modules and update for backordered quantities
             //
-            foreach($ciniki['business']['modules'] as $module => $m) {
+            foreach($ciniki['tenant']['modules'] as $module => $m) {
                 list($pkg, $mod) = explode('.', $module);
                 $rc = ciniki_core_loadMethod($ciniki, $pkg, $mod, 'hooks', 'inventoryUpdated');
                 if( $rc['stat'] == 'ok' ) {
                     $fn = $rc['function_call'];
-                    $rc = $fn($ciniki, $business_id, array(
+                    $rc = $fn($ciniki, $tnid, array(
                         'object'=>'ciniki.products.product',
                         'object_id'=>$product['id'],
                         'new_inventory_level'=>$new_quantity,

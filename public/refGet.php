@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business to get the relationship from.
+// tnid:         The ID of the tenant to get the relationship from.
 // relationship_id:     The ID of the relationship to get.
 // 
 // Returns
@@ -20,7 +20,7 @@ function ciniki_products_refGet($ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'ref_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Object Reference'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
@@ -30,10 +30,10 @@ function ciniki_products_refGet($ciniki) {
     
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.refGet', 0); 
+    $rc = ciniki_products_checkAccess($ciniki, $args['tnid'], 'ciniki.products.refGet', 0); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -47,7 +47,7 @@ function ciniki_products_refGet($ciniki) {
         . "ciniki_product_refs.object_id "
         . "FROM ciniki_product_refs "
         . "WHERE ciniki_product_refs.id = '" . ciniki_core_dbQuote($ciniki, $args['ref_id']) . "' "
-        . "AND ciniki_product_refs.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "AND ciniki_product_refs.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "";
 
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
@@ -68,7 +68,7 @@ function ciniki_products_refGet($ciniki) {
         $strsql = "SELECT name "
             . "FROM ciniki_recipes "
             . "WHERE id = '" . ciniki_core_dbQuote($ciniki, $ref['object_id']) . "' "
-            . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "";
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.recipes', 'recipe');
         if( $rc['stat'] != 'ok' ) {

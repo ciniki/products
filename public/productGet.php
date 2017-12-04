@@ -16,7 +16,7 @@ function ciniki_products_productGet($ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'product_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Product'),
         'prices'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Prices'),
         'files'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Files'),
@@ -35,10 +35,10 @@ function ciniki_products_productGet($ciniki) {
     
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.productGet', $args['product_id']); 
+    $rc = ciniki_products_checkAccess($ciniki, $args['tnid'], 'ciniki.products.productGet', $args['product_id']); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -51,7 +51,7 @@ function ciniki_products_productGet($ciniki) {
     // Load the product
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'productLoad');
-    $rc = ciniki_products_productLoad($ciniki, $args['business_id'], $args['product_id'], $args); 
+    $rc = ciniki_products_productLoad($ciniki, $args['tnid'], $args['product_id'], $args); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -65,7 +65,7 @@ function ciniki_products_productGet($ciniki) {
         // Get the available tags
         //
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsList');
-        $rc = ciniki_core_tagsList($ciniki, 'ciniki.products', $args['business_id'], 
+        $rc = ciniki_core_tagsList($ciniki, 'ciniki.products', $args['tnid'], 
             'ciniki_product_tags', 10);
         if( $rc['stat'] != 'ok' ) {
             return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.94', 'msg'=>'Unable to get list of categories', 'err'=>$rc['err']));
@@ -84,18 +84,18 @@ function ciniki_products_productGet($ciniki) {
         //
         $strsql = "SELECT DISTINCT t2.tag_type, t2.tag_name "
             . "FROM ciniki_product_tags AS t1, ciniki_product_tags AS t2 "
-            . "WHERE t1.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE t1.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND t1.tag_type = 10 "
             . "AND t1.tag_name IN (" . ciniki_core_dbQuoteList($ciniki, explode('::', (isset($rsp['product']['categories'])?$rsp['product']['categories']:''))) . ") "
             . "AND t1.product_id = t2.product_id "
-            . "AND t2.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "AND t2.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND t2.tag_type > 10 AND t2.tag_type < 30 "
             . "ORDER BY t2.tag_type, t2.tag_name "
             . "";
         
 /*      $strsql = "SELECT DISTINCT tag_type, tag_name "
             . "FROM ciniki_product_tags "
-            . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND tag_type > 10 AND tag_type < 30 "
             . "ORDER BY tag_type, tag_name "
             . ""; */
@@ -121,7 +121,7 @@ function ciniki_products_productGet($ciniki) {
         // Get the available tags
         //
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsList');
-        $rc = ciniki_core_tagsList($ciniki, 'ciniki.products', $args['business_id'], 
+        $rc = ciniki_core_tagsList($ciniki, 'ciniki.products', $args['tnid'], 
             'ciniki_product_tags', 40);
         if( $rc['stat'] != 'ok' ) {
             return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.95', 'msg'=>'Unable to get list of tags', 'err'=>$rc['err']));

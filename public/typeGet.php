@@ -16,7 +16,7 @@ function ciniki_products_typeGet($ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'type_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Type'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
@@ -26,10 +26,10 @@ function ciniki_products_typeGet($ciniki) {
     
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.typeGet'); 
+    $rc = ciniki_products_checkAccess($ciniki, $args['tnid'], 'ciniki.products.typeGet'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -55,7 +55,7 @@ function ciniki_products_typeGet($ciniki) {
         . "name_p, "
         . "object_def "
         . "FROM ciniki_product_types "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND id = '" . ciniki_core_dbQuote($ciniki, $args['type_id']) . "' "
         . "";
         

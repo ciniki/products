@@ -12,7 +12,7 @@
 // Returns
 // -------
 //
-function ciniki_products_web_processRequestPDFCatalogs(&$ciniki, $settings, $business_id, $args) {
+function ciniki_products_web_processRequestPDFCatalogs(&$ciniki, $settings, $tnid, $args) {
 
     $page = array(
         'title'=>$args['page_title'],
@@ -28,19 +28,19 @@ function ciniki_products_web_processRequestPDFCatalogs(&$ciniki, $settings, $bus
     if( isset($args['uri_split']) ) {
         $num_uri = count($args['uri_split']);
     }
-    if( isset($ciniki['business']['modules']['ciniki.products'])
+    if( isset($ciniki['tenant']['modules']['ciniki.products'])
         && isset($args['uri_split'][0]) && $args['uri_split'][0] == 'download'
         && isset($args['uri_split'][1]) && $args['uri_split'][1] != '' ) {
         $catalog_permalink = preg_replace("/\.pdf.*$/", '', $args['uri_split'][1]);
         //
-        // Get the business storage directory
+        // Get the tenant storage directory
         //
-        ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'hooks', 'storageDir');
-        $rc = ciniki_businesses_hooks_storageDir($ciniki, $business_id, array());
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'hooks', 'storageDir');
+        $rc = ciniki_tenants_hooks_storageDir($ciniki, $tnid, array());
         if( $rc['stat'] != 'ok' ) {
             return $rc;
         }
-        $business_storage_dir = $rc['storage_dir'];
+        $tenant_storage_dir = $rc['storage_dir'];
 
         $strsql = "SELECT ciniki_product_pdfcatalogs.id, "
             . "ciniki_product_pdfcatalogs.uuid, "
@@ -48,7 +48,7 @@ function ciniki_products_web_processRequestPDFCatalogs(&$ciniki, $settings, $bus
             . "ciniki_product_pdfcatalogs.permalink, "
             . "ciniki_product_pdfcatalogs.flags "
             . "FROM ciniki_product_pdfcatalogs "
-            . "WHERE ciniki_product_pdfcatalogs.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "WHERE ciniki_product_pdfcatalogs.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND (flags&0x03) = 0x03 "
             . "AND ciniki_product_pdfcatalogs.permalink = '" . ciniki_core_dbQuote($ciniki, $catalog_permalink) . "' "
             . "";
@@ -60,7 +60,7 @@ function ciniki_products_web_processRequestPDFCatalogs(&$ciniki, $settings, $bus
             return array('stat'=>'404', 'err'=>array('code'=>'ciniki.products.158', 'msg'=>"I'm sorry, we could not find the file you were looking for. Please try again or contact us for help."));
         }
         $catalog = $rc['catalog'];
-        $storage_filename = $business_storage_dir . '/ciniki.products/pdfcatalogs/' . $catalog['uuid'][0] . '/' . $catalog['uuid'];
+        $storage_filename = $tenant_storage_dir . '/ciniki.products/pdfcatalogs/' . $catalog['uuid'][0] . '/' . $catalog['uuid'];
 
         if( !file_exists($storage_filename) ) {
             return array('stat'=>'404', 'err'=>array('code'=>'ciniki.products.159', 'msg'=>"I'm sorry, we could not find the file you were looking for. Please try again or contact us for help."));
@@ -125,7 +125,7 @@ function ciniki_products_web_processRequestPDFCatalogs(&$ciniki, $settings, $bus
             . "ciniki_product_pdfcatalogs.synopsis, "
             . "'yes' AS is_details "
             . "FROM ciniki_product_pdfcatalogs "
-            . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND status = 30 "
             . "AND (flags&0x01) > 0 "
             . "ORDER BY sequence, name "
@@ -166,7 +166,7 @@ function ciniki_products_web_processRequestPDFCatalogs(&$ciniki, $settings, $bus
             . "ciniki_product_pdfcatalogs.synopsis, "
             . "ciniki_product_pdfcatalogs.description "
             . "FROM ciniki_product_pdfcatalogs "
-            . "WHERE ciniki_product_pdfcatalogs.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "WHERE ciniki_product_pdfcatalogs.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND (flags&0x01) > 0 "
             . "AND ciniki_product_pdfcatalogs.permalink = '" . ciniki_core_dbQuote($ciniki, $catalog_permalink) . "' "
             . "";
@@ -197,7 +197,7 @@ function ciniki_products_web_processRequestPDFCatalogs(&$ciniki, $settings, $bus
             . "CONCAT_WS(' ', 'Page', ciniki_product_pdfcatalog_images.page_number) AS title "
             . "FROM ciniki_product_pdfcatalog_images "
             . "WHERE ciniki_product_pdfcatalog_images.catalog_id = '" . ciniki_core_dbQuote($ciniki, $catalog['id']) . "' "
-            . "AND ciniki_product_pdfcatalog_images.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND ciniki_product_pdfcatalog_images.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "ORDER BY ciniki_product_pdfcatalog_images.page_number "
             . "";
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');

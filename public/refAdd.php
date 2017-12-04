@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business the product belongs to.
+// tnid:         The ID of the tenant the product belongs to.
 // product_id:          The ID of the product to add the reference to.
 // object:              The object of the reference.
 // object_id:           The ID of the object reference.
@@ -23,7 +23,7 @@ function ciniki_products_refAdd(&$ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'product_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Product'), 
         'object'=>array('required'=>'yes', 'blank'=>'no', 
             'validlist'=>array('ciniki.recipes.recipe'),
@@ -37,10 +37,10 @@ function ciniki_products_refAdd(&$ciniki) {
 
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.refAdd', $args['product_id']); 
+    $rc = ciniki_products_checkAccess($ciniki, $args['tnid'], 'ciniki.products.refAdd', $args['product_id']); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -49,7 +49,7 @@ function ciniki_products_refAdd(&$ciniki) {
     // Check the referenced object exists
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectCheckExists');
-    $rc = ciniki_core_objectCheckExists($ciniki, $args['business_id'], $args['object'], $args['object_id']);
+    $rc = ciniki_core_objectCheckExists($ciniki, $args['tnid'], $args['object'], $args['object_id']);
     if( $rc['stat'] == 'noexist' ) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.105', 'msg'=>'Object does not exist'));
     }
@@ -62,7 +62,7 @@ function ciniki_products_refAdd(&$ciniki) {
     //
     $strsql = "SELECT id "
         . "FROM ciniki_product_refs "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND product_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
         . "AND object = '" . ciniki_core_dbQuote($ciniki, $args['object']) . "' "
         . "AND object_id = '" . ciniki_core_dbQuote($ciniki, $args['object_id']) . "' "
@@ -79,6 +79,6 @@ function ciniki_products_refAdd(&$ciniki) {
     // Add the relationship
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
-    return ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.products.ref', $args, 0x07);
+    return ciniki_core_objectAdd($ciniki, $args['tnid'], 'ciniki.products.ref', $args, 0x07);
 }
 ?>

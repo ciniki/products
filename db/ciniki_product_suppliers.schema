@@ -1,19 +1,19 @@
 #
 # Description
 # -----------
-# The suppliers for products for a business.
+# The suppliers for products for a tenant.
 #
 # Fields
 # ------
 # id:               The unique id number for each supplier in the database.
 # uuid:             The Universal Unique ID for the supplier.
 #
-# business_id:      The business the supplier is attached to.  
-#                   can only be assigned to one business at a time.
+# tnid:             The tenant the supplier is attached to.  
+#                   can only be assigned to one tenant at a time.
 #
 # name:             The name of the supplier.
 #
-# supplier_business_id:     The ID of the business if the supplier is setup in ciniki.businesses.
+# supplier_tnid:            The ID of the tenant if the supplier is setup in ciniki.tenants.
 #
 # date_added:       The date and time the product was added to the database.
 #
@@ -22,12 +22,12 @@
 create table ciniki_product_suppliers (
     id int not null auto_increment,
     uuid char(36) not null,
-    business_id int not null,
+    tnid int not null,
     name varchar(100) not null,
-    supplier_business_id int not null,
+    supplier_tnid int not null,
     date_added datetime not null,
     last_updated datetime not null,
     primary key (id),
-    index (business_id, uuid, last_updated),
-    index (supplier_business_id)
+    index (tnid, uuid, last_updated),
+    index (supplier_tnid)
 ) ENGINE='InnoDB', COMMENT='v1.01';

@@ -7,7 +7,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business to add the product to.
+// tnid:         The ID of the tenant to add the product to.
 // name:                The name of the product.  
 //
 // Returns
@@ -20,7 +20,7 @@ function ciniki_products_audioUpdate(&$ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'product_audio_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Product Image'), 
         'audio_id'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Image'),
         'name'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Title'), 
@@ -39,10 +39,10 @@ function ciniki_products_audioUpdate(&$ciniki) {
 
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.audioUpdate', 0); 
+    $rc = ciniki_products_checkAccess($ciniki, $args['tnid'], 'ciniki.products.audioUpdate', 0); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }
@@ -52,7 +52,7 @@ function ciniki_products_audioUpdate(&$ciniki) {
     //
     $strsql = "SELECT product_id, sequence, uuid, mp3_audio_id, wav_audio_id, ogg_audio_id "
         . "FROM ciniki_product_audio "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND id = '" . ciniki_core_dbQuote($ciniki, $args['product_audio_id']) . "' "
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'item');
@@ -76,7 +76,7 @@ function ciniki_products_audioUpdate(&$ciniki) {
         // Make sure the permalink is unique
         //
         $strsql = "SELECT id, name, permalink FROM ciniki_product_audio "
-            . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND product_id = '" . ciniki_core_dbQuote($ciniki, $item['product_id']) . "' "
             . "AND permalink = '" . ciniki_core_dbQuote($ciniki, $args['permalink']) . "' "
             . "AND id <> '" . ciniki_core_dbQuote($ciniki, $args['product_audio_id']) . "' "
@@ -106,7 +106,7 @@ function ciniki_products_audioUpdate(&$ciniki) {
     // Update the product in the database
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
-    $rc = ciniki_core_objectUpdate($ciniki, $args['business_id'], 'ciniki.products.audio', $args['product_audio_id'], $args, 0x04);
+    $rc = ciniki_core_objectUpdate($ciniki, $args['tnid'], 'ciniki.products.audio', $args['product_audio_id'], $args, 0x04);
     if( $rc['stat'] != 'ok' ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
         return $rc;
@@ -117,7 +117,7 @@ function ciniki_products_audioUpdate(&$ciniki) {
     //
     if( isset($args['sequence']) ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'audioUpdateSequences');
-        $rc = ciniki_products_audioUpdateSequences($ciniki, $args['business_id'], $item['product_id'],
+        $rc = ciniki_products_audioUpdateSequences($ciniki, $args['tnid'], $item['product_id'],
             $args['sequence'], $item['sequence']);
         if( $rc['stat'] != 'ok' ) {
             ciniki_core_dbTransactionRollback($ciniki, 'ciniki.products');
@@ -134,11 +134,11 @@ function ciniki_products_audioUpdate(&$ciniki) {
     }
 
     //
-    // Update the last_change date in the business modules
+    // Update the last_change date in the tenant modules
     // Ignore the result, as we don't want to stop user updates if this fails.
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
-    ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'products');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'updateModuleChangeDate');
+    ciniki_tenants_updateModuleChangeDate($ciniki, $args['tnid'], 'ciniki', 'products');
 
     return array('stat'=>'ok');
 }

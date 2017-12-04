@@ -7,7 +7,7 @@
 # ------
 # id:               The unique id number for the pdf catalog.
 # uuid:             The Universal Unique ID.
-# business_id:      The ID of the business the catalog is attached to.
+# tnid:             The ID of the tenant the catalog is attached to.
 #
 # name:             The name of the catalog.
 # permalink:        The permalink for the catalog.
@@ -39,7 +39,7 @@
 create table ciniki_product_pdfcatalogs (
     id int not null auto_increment,
     uuid char(36) not null,
-    business_id int not null,
+    tnid int not null,
     name varchar(250) not null,
     permalink varchar(250) not null,
     sequence tinyint unsigned not null,
@@ -52,5 +52,5 @@ create table ciniki_product_pdfcatalogs (
     date_added datetime not null,
     last_updated datetime not null,
     primary key (id),
-    index sync (business_id, uuid, last_updated)
+    index sync (tnid, uuid, last_updated)
 ) ENGINE='InnoDB', COMMENT='v1.01';

@@ -6,7 +6,7 @@
 // Arguments
 // ---------
 // ciniki:
-// business_id:         The business ID to check the session user against.
+// tnid:         The tenant ID to check the session user against.
 // method:              The requested method.
 //
 // Returns
@@ -14,7 +14,7 @@
 // <rsp stat='ok' />
 //
 
-function ciniki_products_processPDFCatalog(&$ciniki, $business_id, $catalog_id) {
+function ciniki_products_processPDFCatalog(&$ciniki, $tnid, $catalog_id) {
 
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbUUID');
@@ -34,7 +34,7 @@ function ciniki_products_processPDFCatalog(&$ciniki, $business_id, $catalog_id) 
     $strsql = "SELECT id, uuid, status, permalink "
         . "FROM ciniki_product_pdfcatalogs "
         . "WHERE id = '" . ciniki_core_dbQuote($ciniki, $catalog_id) . "' "
-        . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND status = 10 "
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'catalog');
@@ -51,7 +51,7 @@ function ciniki_products_processPDFCatalog(&$ciniki, $business_id, $catalog_id) 
     //
     $strsql = "UPDATE ciniki_product_pdfcatalogs SET status = 20 "
         . "WHERE id = '" . ciniki_core_dbQuote($ciniki, $catalog_id) . "' "
-        . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND status = 10 "
         . "";
     $rc = ciniki_core_dbUpdate($ciniki, $strsql, 'ciniki.products');
@@ -63,17 +63,17 @@ function ciniki_products_processPDFCatalog(&$ciniki, $business_id, $catalog_id) 
     }
 
     //
-    // Get the business storage directory
+    // Get the tenant storage directory
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'hooks', 'storageDir');
-    $rc = ciniki_businesses_hooks_storageDir($ciniki, $business_id, array());
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'hooks', 'storageDir');
+    $rc = ciniki_tenants_hooks_storageDir($ciniki, $tnid, array());
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
-    $business_storage_dir = $rc['storage_dir'];
+    $tenant_storage_dir = $rc['storage_dir'];
     //
     // Check the file exists
-    $storage_filename = $business_storage_dir . '/ciniki.products/pdfcatalogs/' . $catalog['uuid'][0] . '/' . $catalog['uuid'];
+    $storage_filename = $tenant_storage_dir . '/ciniki.products/pdfcatalogs/' . $catalog['uuid'][0] . '/' . $catalog['uuid'];
     if( !file_exists($storage_filename) ) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.35', 'msg'=>'Unable to open pdf.'));
     }
@@ -113,7 +113,7 @@ function ciniki_products_processPDFCatalog(&$ciniki, $business_id, $catalog_id) 
         //
         // Add the image
         //
-        $rc = ciniki_images_hooks_insertFromImagick($ciniki, $business_id, array(
+        $rc = ciniki_images_hooks_insertFromImagick($ciniki, $tnid, array(
             'image'=>$imagick,
             'original_filename'=>$catalog['permalink'] . '-' . ($page_number+1) . '.jpg',
             'name'=>'',
@@ -128,7 +128,7 @@ function ciniki_products_processPDFCatalog(&$ciniki, $business_id, $catalog_id) 
         //
         // Add the pdfcatalog image
         //
-        $rc = ciniki_core_objectAdd($ciniki, $business_id, 'ciniki.products.pdfcatalogimage', array(
+        $rc = ciniki_core_objectAdd($ciniki, $tnid, 'ciniki.products.pdfcatalogimage', array(
             'catalog_id'=>$catalog_id,
             'page_number'=>($page_number+1),
             'image_id'=>$image_id,
@@ -143,7 +143,7 @@ function ciniki_products_processPDFCatalog(&$ciniki, $business_id, $catalog_id) 
     //
     // Update the pdf catalog status to lock
     //
-    $rc = ciniki_core_objectUpdate($ciniki, $business_id, 'ciniki.products.pdfcatalog', $catalog_id, array(
+    $rc = ciniki_core_objectUpdate($ciniki, $tnid, 'ciniki.products.pdfcatalog', $catalog_id, array(
         'status'=>30,
         'num_pages'=>$num_pages,
         ));

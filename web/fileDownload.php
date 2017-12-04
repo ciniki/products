@@ -7,17 +7,17 @@
 // Returns
 // -------
 //
-function ciniki_products_web_fileDownload($ciniki, $business_id, $product_permalink, $file_permalink) {
+function ciniki_products_web_fileDownload($ciniki, $tnid, $product_permalink, $file_permalink) {
 
     //
-    // Get the business storage directory
+    // Get the tenant storage directory
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'hooks', 'storageDir');
-    $rc = ciniki_businesses_hooks_storageDir($ciniki, $business_id, array());
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'hooks', 'storageDir');
+    $rc = ciniki_tenants_hooks_storageDir($ciniki, $tnid, array());
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
-    $business_storage_dir = $rc['storage_dir'];
+    $tenant_storage_dir = $rc['storage_dir'];
 
     //
     // Get the file details
@@ -29,10 +29,10 @@ function ciniki_products_web_fileDownload($ciniki, $business_id, $product_permal
         . "ciniki_product_files.extension, "
         . "ciniki_product_files.binary_content "
         . "FROM ciniki_products, ciniki_product_files "
-        . "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "WHERE ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND ciniki_products.permalink = '" . ciniki_core_dbQuote($ciniki, $product_permalink) . "' "
         . "AND ciniki_products.id = ciniki_product_files.product_id "
-        . "AND ciniki_product_files.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "AND ciniki_product_files.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND CONCAT_WS('.', ciniki_product_files.permalink, ciniki_product_files.extension) = '" . ciniki_core_dbQuote($ciniki, $file_permalink) . "' "
         . "AND (ciniki_product_files.webflags&0x01) > 0 "       // Make sure file is to be visible
         . "";
@@ -48,7 +48,7 @@ function ciniki_products_web_fileDownload($ciniki, $business_id, $product_permal
     //
     // Get the storage filename
     //
-    $storage_filename = $business_storage_dir . '/ciniki.products/files/' . $rc['file']['uuid'][0] . '/' . $rc['file']['uuid'];
+    $storage_filename = $tenant_storage_dir . '/ciniki.products/files/' . $rc['file']['uuid'][0] . '/' . $rc['file']['uuid'];
     if( file_exists($storage_filename) ) {
         $rc['file']['binary_content'] = file_get_contents($storage_filename);    
     }

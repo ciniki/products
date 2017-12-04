@@ -61,7 +61,7 @@ function ciniki_products_types() {
                 'parent_product_flags':{'label':'Flags', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
                 'parent_product_status':{'label':'Status', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
                 'parent_product_barcode':{'label':'Barcode', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
-//              'parent_product_supplier_business_id':{'label':'Supplier Business ID', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
+//              'parent_product_supplier_tnid':{'label':'Supplier Tenant ID', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 //              'parent_product_supplier_product_id':{'label':'Supplier Product ID', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
                 'parent_product_price':{'label':'Price', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
                 'parent_product_unit_discount_amount':{'label':'Unit Discount Amount', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
@@ -159,7 +159,7 @@ function ciniki_products_types() {
                 'child_product_flags':{'label':'Flags', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
                 'child_product_status':{'label':'Status', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
                 'child_product_barcode':{'label':'Barcode', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
-//              'child_product_supplier_business_id':{'label':'Supplier Business ID', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
+//              'child_product_supplier_tnid':{'label':'Supplier Tenant ID', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
 //              'child_product_supplier_product_id':{'label':'Supplier Product ID', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
                 'child_product_price':{'label':'Price', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
                 'child_product_unit_discount_amount':{'label':'Unit Discount Amount', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
@@ -267,11 +267,11 @@ function ciniki_products_types() {
     }
 
     //
-    // Grab the stats for the business from the database and present the list of products.
+    // Grab the stats for the tenant from the database and present the list of products.
     //
     this.showMenu = function(cb) {
         M.api.getJSONCb('ciniki.products.typeList', 
-            {'business_id':M.curBusinessID}, function(rsp) {
+            {'tnid':M.curTenantID}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -286,7 +286,7 @@ function ciniki_products_types() {
     this.editType = function(cb, tid) {
         if( tid != null ) { this.edit.type_id = tid; }
         if( this.edit.type_id > 0 ) {
-            M.api.getJSONCb('ciniki.products.typeGet', {'business_id':M.curBusinessID,
+            M.api.getJSONCb('ciniki.products.typeGet', {'tnid':M.curTenantID,
                 'type_id':this.edit.type_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
@@ -309,7 +309,7 @@ function ciniki_products_types() {
     this.saveType = function() {
         if( this.edit.type_id > 0 ) {
             var c = this.edit.serializeForm('yes');
-            M.api.postJSONCb('ciniki.products.typeUpdate', {'business_id':M.curBusinessID,
+            M.api.postJSONCb('ciniki.products.typeUpdate', {'tnid':M.curTenantID,
                 'type_id':this.edit.type_id}, c, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
@@ -319,7 +319,7 @@ function ciniki_products_types() {
                 });
         } else {
             var c = this.edit.serializeForm('yes');
-            M.api.postJSONCb('ciniki.products.typeAdd', {'business_id':M.curBusinessID,
+            M.api.postJSONCb('ciniki.products.typeAdd', {'tnid':M.curTenantID,
                 'type_id':this.edit.type_id}, c, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
@@ -333,7 +333,7 @@ function ciniki_products_types() {
     this.deleteType = function() {
         if( confirm("Are you sure you want to remove this type?") ) {
             var rsp = M.api.getJSONCb('ciniki.products.typeDelete', 
-                {'business_id':M.curBusinessID, 'type_id':this.edit.type_id}, function(rsp) {
+                {'tnid':M.curTenantID, 'type_id':this.edit.type_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;

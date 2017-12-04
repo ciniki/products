@@ -14,7 +14,7 @@
 // Returns
 // -------
 //
-function ciniki_products_web_processRequestProductsDetails(&$ciniki, $settings, $business_id, $products, $args) {
+function ciniki_products_web_processRequestProductsDetails(&$ciniki, $settings, $tnid, $products, $args) {
 
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuoteIDs');
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
@@ -27,7 +27,7 @@ function ciniki_products_web_processRequestProductsDetails(&$ciniki, $settings, 
     if( !isset($args['object_defs']) ) {
         $strsql = "SELECT id, name_s, name_p, object_def "
             . "FROM ciniki_product_types "
-            . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "ORDER BY id "
             . "";
         $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
@@ -71,9 +71,9 @@ function ciniki_products_web_processRequestProductsDetails(&$ciniki, $settings, 
                     . "OR ciniki_product_audio.wav_audio_id = ciniki_audio.id "
                     . "OR ciniki_product_audio.ogg_audio_id = ciniki_audio.id "
                     . ") "
-                . "AND ciniki_audio.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                . "AND ciniki_audio.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                 . ") "
-            . "WHERE ciniki_product_audio.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "WHERE ciniki_product_audio.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND ciniki_product_audio.product_id IN (" . ciniki_core_dbQuoteIDs($ciniki, $product_ids) . ") "
             . "AND (ciniki_product_audio.webflags&0x01) = 1 "
             . "ORDER BY ciniki_product_audio.product_id, ciniki_product_audio.sequence, ciniki_product_audio.name, "
@@ -115,9 +115,9 @@ function ciniki_products_web_processRequestProductsDetails(&$ciniki, $settings, 
             . "FROM ciniki_products "
             . "LEFT JOIN ciniki_images ON ("
                 . "ciniki_products.primary_image_id = ciniki_images.id "
-                . "AND ciniki_images.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                . "AND ciniki_images.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                 . ") "
-            . "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "WHERE ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND ciniki_products.id IN (" . ciniki_core_dbQuoteIDs($ciniki, $product_ids) . ") "
             . "";
         $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
@@ -137,8 +137,8 @@ function ciniki_products_web_processRequestProductsDetails(&$ciniki, $settings, 
         //
         // Load currency and timezone settings
         //
-/*        ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'intlSettings');
-        $rc = ciniki_businesses_intlSettings($ciniki, $business_id);
+/*        ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'intlSettings');
+        $rc = ciniki_tenants_intlSettings($ciniki, $tnid);
         if( $rc['stat'] != 'ok' ) {
             return $rc;
         }
@@ -174,9 +174,9 @@ function ciniki_products_web_processRequestProductsDetails(&$ciniki, $settings, 
                 . "FROM ciniki_product_prices "
                 . "LEFT JOIN ciniki_customer_pricepoints ON ("
                     . "ciniki_product_prices.pricepoint_id = ciniki_customer_pricepoints.id "
-                    . "AND ciniki_customer_pricepoints.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                    . "AND ciniki_customer_pricepoints.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                     . ") "
-                . "WHERE ciniki_product_prices.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                . "WHERE ciniki_product_prices.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                 . "AND ciniki_product_prices.product_id IN (" . ciniki_core_dbQuoteIDs($ciniki, $product_ids) . ") "
                 . "AND (ciniki_product_prices.webflags&0x01) = 0 "
                 . "AND ((ciniki_product_prices.available_to&$price_flags) > 0 OR (webflags&available_to&0xF0) > 0) "
@@ -215,7 +215,7 @@ function ciniki_products_web_processRequestProductsDetails(&$ciniki, $settings, 
                 . "ciniki_product_prices.unit_discount_amount, "
                 . "ciniki_product_prices.unit_discount_percentage "
                 . "FROM ciniki_product_prices "
-                . "WHERE ciniki_product_prices.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                . "WHERE ciniki_product_prices.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                 . "AND ciniki_product_prices.product_id IN (" . ciniki_core_dbQuoteIDs($ciniki, $product_ids) . ") "
                 . "AND ciniki_product_prices.pricepoint_id = 0 "
                 . "AND (ciniki_product_prices.webflags&0x01) = 0 "
@@ -245,13 +245,13 @@ function ciniki_products_web_processRequestProductsDetails(&$ciniki, $settings, 
         // Get any reserved quantities
         //
         $reserved_quantities = array();
-        if( isset($ciniki['business']['modules']['ciniki.sapos']) ) {
+        if( isset($ciniki['tenant']['modules']['ciniki.sapos']) ) {
             $cur_invoice_id = 0;
             if( isset($ciniki['session']['cart']['sapos_id']) && $ciniki['session']['cart']['sapos_id'] > 0 ) {
                 $cur_invoice_id = $ciniki['session']['cart']['sapos_id'];
             }
             ciniki_core_loadMethod($ciniki, 'ciniki', 'sapos', 'private', 'getReservedQuantities');
-            $rc = ciniki_sapos_getReservedQuantities($ciniki, $business_id, 'ciniki.products.product', $product_ids, $cur_invoice_id);
+            $rc = ciniki_sapos_getReservedQuantities($ciniki, $tnid, 'ciniki.products.product', $product_ids, $cur_invoice_id);
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
             }

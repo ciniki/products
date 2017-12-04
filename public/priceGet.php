@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business the product is attached to.
+// tnid:         The ID of the tenant the product is attached to.
 // price_id:        The ID of the price to get the details for.
 // 
 // Returns
@@ -20,7 +20,7 @@ function ciniki_products_priceGet($ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'price_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Registration'), 
         'customer'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Customer'),
         'invoice'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Invoice'),
@@ -32,16 +32,16 @@ function ciniki_products_priceGet($ciniki) {
     
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.priceGet'); 
+    $rc = ciniki_products_checkAccess($ciniki, $args['tnid'], 'ciniki.products.priceGet'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
 
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'intlSettings');
-    $rc = ciniki_businesses_intlSettings($ciniki, $args['business_id']);
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'intlSettings');
+    $rc = ciniki_tenants_intlSettings($ciniki, $args['tnid']);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -70,9 +70,9 @@ function ciniki_products_priceGet($ciniki) {
         . "FROM ciniki_product_prices "
         . "LEFT JOIN ciniki_customer_pricepoints ON ("
             . "ciniki_product_prices.pricepoint_id = ciniki_customer_pricepoints.id "
-            . "AND ciniki_customer_pricepoints.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "AND ciniki_customer_pricepoints.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . ") "
-        . "WHERE ciniki_product_prices.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE ciniki_product_prices.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND ciniki_product_prices.id = '" . ciniki_core_dbQuote($ciniki, $args['price_id']) . "' "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');

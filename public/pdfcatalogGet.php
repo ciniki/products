@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business the pdf catalog is attached to.
+// tnid:         The ID of the tenant the pdf catalog is attached to.
 // catalog_id:          The ID of the pdf catalog to get the details for.
 //
 // Returns
@@ -20,7 +20,7 @@ function ciniki_products_pdfcatalogGet($ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'),
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'),
         'catalog_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'PDF Catalog'),
         ));
     if( $rc['stat'] != 'ok' ) {
@@ -30,19 +30,19 @@ function ciniki_products_pdfcatalogGet($ciniki) {
 
     //
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.pdfcatalogGet');
+    $rc = ciniki_products_checkAccess($ciniki, $args['tnid'], 'ciniki.products.pdfcatalogGet');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
 
     //
-    // Load business settings
+    // Load tenant settings
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'intlSettings');
-    $rc = ciniki_businesses_intlSettings($ciniki, $args['business_id']);
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'intlSettings');
+    $rc = ciniki_tenants_intlSettings($ciniki, $args['tnid']);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -59,7 +59,7 @@ function ciniki_products_pdfcatalogGet($ciniki) {
     if( $args['catalog_id'] == 0 ) {
         $strsql = "SELECT MAX(sequence) AS sequence "
             . "FROM ciniki_product_pdfcatalogs "
-            . "WHERE ciniki_product_pdfcatalogs.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE ciniki_product_pdfcatalogs.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "";
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'max');
         if( $rc['stat'] != 'ok' ) {
@@ -93,7 +93,7 @@ function ciniki_products_pdfcatalogGet($ciniki) {
             . "ciniki_product_pdfcatalogs.synopsis, "
             . "ciniki_product_pdfcatalogs.description "
             . "FROM ciniki_product_pdfcatalogs "
-            . "WHERE ciniki_product_pdfcatalogs.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE ciniki_product_pdfcatalogs.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND ciniki_product_pdfcatalogs.id = '" . ciniki_core_dbQuote($ciniki, $args['catalog_id']) . "' "
             . "";
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
@@ -115,7 +115,7 @@ function ciniki_products_pdfcatalogGet($ciniki) {
             . "ciniki_product_pdfcatalog_images.page_number "
             . "FROM ciniki_product_pdfcatalog_images "
             . "WHERE ciniki_product_pdfcatalog_images.catalog_id = '" . ciniki_core_dbQuote($ciniki, $args['catalog_id']) . "' "
-            . "AND ciniki_product_pdfcatalog_images.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "AND ciniki_product_pdfcatalog_images.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "ORDER BY ciniki_product_pdfcatalog_images.page_number "
             . "";
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
@@ -131,7 +131,7 @@ function ciniki_products_pdfcatalogGet($ciniki) {
             foreach($catalog['images'] as $img_id => $img) {
                 $catalog['images'][$img_id]['name'] = 'Page ' . $img['page_number'];
                 if( isset($img['image_id']) && $img['image_id'] > 0 ) {
-                    $rc = ciniki_images_loadCacheThumbnail($ciniki, $args['business_id'], $img['image_id'], 75);
+                    $rc = ciniki_images_loadCacheThumbnail($ciniki, $args['tnid'], $img['image_id'], 75);
                     if( $rc['stat'] != 'ok' ) {
                         return $rc;
                     }

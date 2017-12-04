@@ -9,8 +9,8 @@
 #
 # uuid:             The uuid of the log entry.  This is used for replication purposes.
 #
-# business_id:      The ID of the business the change happened on.  Every change
-#                   must be tied to a business for security reasons.
+# tnid:             The ID of the tenant the change happened on.  Every change
+#                   must be tied to a tenant for security reasons.
 #
 # user_id:          The user who made the change.
 #
@@ -46,7 +46,7 @@
 create table ciniki_product_history (
     id bigint not null auto_increment,
     uuid char(36) not null,
-    business_id int not null,
+    tnid int not null,
     user_id int not null,
     session varchar(50) not null,
     action tinyint unsigned not null,
@@ -58,6 +58,6 @@ create table ciniki_product_history (
     notes varchar(1000) not null,
     primary key (id),
     index (user_id), 
-    index (business_id, table_name, table_key, table_field),
+    index (tnid, table_name, table_key, table_field),
     index (log_date)
 ) ENGINE=InnoDB, COMMENT='v1.02';

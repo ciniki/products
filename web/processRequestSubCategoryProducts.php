@@ -12,7 +12,7 @@
 // Returns
 // -------
 //
-function ciniki_products_web_processRequestSubCategoryProducts(&$ciniki, $settings, $business_id, $category, $subcategory) {
+function ciniki_products_web_processRequestSubCategoryProducts(&$ciniki, $settings, $tnid, $category, $subcategory) {
 
     $webflags = 0x01;
     if( isset($ciniki['session']['customer']['id']) && $ciniki['session']['customer']['id'] > 0 ) {
@@ -48,7 +48,7 @@ function ciniki_products_web_processRequestSubCategoryProducts(&$ciniki, $settin
         . "INNER JOIN ciniki_products ON ("
             . "t1.product_id = ciniki_products.id "
             . "AND ciniki_products.parent_id = 0 "
-            . "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND ciniki_products.start_date < UTC_TIMESTAMP() "
             . "AND (ciniki_products.end_date = '0000-00-00 00:00:00' "
                 . "OR ciniki_products.end_date > UTC_TIMESTAMP()"
@@ -58,14 +58,14 @@ function ciniki_products_web_processRequestSubCategoryProducts(&$ciniki, $settin
         . "INNER JOIN ciniki_product_tags AS t2 ON ("
             . "ciniki_products.id = t2.product_id "
             . "AND t2.permalink = '" . ciniki_core_dbQuote($ciniki, $subcategory['permalink']) . "' "
-            . "AND t2.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' ";
+            . "AND t2.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' ";
     if( isset($category['tag_type']) && $category['tag_type'] > 0 ) {
         $strsql .= "AND t2.tag_type = '" . ciniki_core_dbQuote($ciniki, $category['tag_type']) . "' ";
     } else {
         $strsql .= "AND t2.tag_type > 10 AND t2.tag_type < 30 ";
     }
     $strsql .= ") "
-        . "WHERE t1.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "WHERE t1.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND t1.tag_type = 10 "
         . "AND t1.permalink = '" . ciniki_core_dbQuote($ciniki, $category['permalink']) . "' "
         . "ORDER BY ciniki_products.sequence, ciniki_products.name COLLATE latin1_general_cs ASC "

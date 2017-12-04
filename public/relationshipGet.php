@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business to get the relationship from.
+// tnid:         The ID of the tenant to get the relationship from.
 // relationship_id:     The ID of the relationship to get.
 // 
 // Returns
@@ -20,7 +20,7 @@ function ciniki_products_relationshipGet($ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'relationship_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Relationship'),
         'product_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Product'),
         )); 
@@ -31,10 +31,10 @@ function ciniki_products_relationshipGet($ciniki) {
     
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.relationshipGet', 0); 
+    $rc = ciniki_products_checkAccess($ciniki, $args['tnid'], 'ciniki.products.relationshipGet', 0); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -61,7 +61,7 @@ function ciniki_products_relationshipGet($ciniki) {
             . "AND ciniki_product_relationships.related_id = ciniki_products.id "
             . ")) "
         . "WHERE ciniki_product_relationships.id = '" . ciniki_core_dbQuote($ciniki, $args['relationship_id']) . "' "
-        . "AND ciniki_product_relationships.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "AND ciniki_product_relationships.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "";
 
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');

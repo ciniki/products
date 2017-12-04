@@ -1,5 +1,5 @@
 //
-// The products app to manage the products for the business
+// The products app to manage the products for the tenant
 //
 function ciniki_products_files() {
     this.webFlags = {'1':{'name':'Visible'},};
@@ -59,7 +59,7 @@ function ciniki_products_files() {
             return this.data[s];
         };
         this.edit.fieldHistoryArgs = function(s, i) {
-            return {'method':'ciniki.products.fileHistory', 'args':{'business_id':M.curBusinessID, 
+            return {'method':'ciniki.products.fileHistory', 'args':{'tnid':M.curTenantID, 
                 'file_id':this.file_id, 'field':i}};
         };
         this.edit.addButton('save', 'Save', 'M.ciniki_products_files.saveFile();');
@@ -109,7 +109,7 @@ function ciniki_products_files() {
 
         if( c != '' ) {
             var rsp = M.api.postJSONFormData('ciniki.products.fileAdd', 
-                {'business_id':M.curBusinessID, 'product_id':M.ciniki_products_files.add.product_id}, c,
+                {'tnid':M.curTenantID, 'product_id':M.ciniki_products_files.add.product_id}, c,
                     function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
@@ -128,7 +128,7 @@ function ciniki_products_files() {
         if( fid != null ) {
             this.edit.file_id = fid;
         }
-        var rsp = M.api.getJSONCb('ciniki.products.fileGet', {'business_id':M.curBusinessID, 
+        var rsp = M.api.getJSONCb('ciniki.products.fileGet', {'tnid':M.curTenantID, 
             'file_id':this.edit.file_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
@@ -145,7 +145,7 @@ function ciniki_products_files() {
 
         if( c != '' ) {
             var rsp = M.api.postJSONFormData('ciniki.products.fileUpdate', 
-                {'business_id':M.curBusinessID, 'file_id':this.edit.file_id}, c,
+                {'tnid':M.curTenantID, 'file_id':this.edit.file_id}, c,
                     function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
@@ -159,7 +159,7 @@ function ciniki_products_files() {
 
     this.deleteFile = function() {
         if( confirm('Are you sure you want to delete \'' + this.edit.data.name + '\'?  All information about it will be removed and unrecoverable.') ) {
-            var rsp = M.api.getJSONCb('ciniki.products.fileDelete', {'business_id':M.curBusinessID, 
+            var rsp = M.api.getJSONCb('ciniki.products.fileDelete', {'tnid':M.curTenantID, 
                 'file_id':M.ciniki_products_files.edit.file_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
@@ -171,6 +171,6 @@ function ciniki_products_files() {
     };
 
     this.downloadFile = function(fid) {
-        M.api.openFile('ciniki.products.fileDownload', {'business_id':M.curBusinessID, 'file_id':fid});
+        M.api.openFile('ciniki.products.fileDownload', {'tnid':M.curTenantID, 'file_id':fid});
     };
 }

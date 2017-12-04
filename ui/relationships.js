@@ -42,7 +42,7 @@ function ciniki_products_relationships() {
         this.edit.liveSearchCb = function(s, i, value) {
             if( i == 'related_id' || i == 'product_id' ) {
                 var rsp = M.api.getJSONBgCb('ciniki.products.productSearch',
-                    {'business_id':M.curBusinessID, 'start_needle':value, 'limit':25},
+                    {'tnid':M.curTenantID, 'start_needle':value, 'limit':25},
                     function(rsp) {
                         M.ciniki_products_relationships.edit.liveSearchShow(s, i, M.gE(M.ciniki_products_relationships.edit.panelUID + '_' + i), rsp.products);
                     });
@@ -63,7 +63,7 @@ function ciniki_products_relationships() {
             this.removeLiveSearch(s, fid);
         };
         this.edit.fieldHistoryArgs = function(s, i) {
-            return {'method':'ciniki.products.relationshipHistory', 'args':{'business_id':M.curBusinessID, 
+            return {'method':'ciniki.products.relationshipHistory', 'args':{'tnid':M.curTenantID, 
                 'product_id':this.product_id, 'relationship_id':this.relationship_id, 'field':i}};
         };
         this.edit.addButton('save', 'Save', 'M.ciniki_products_relationships.saveRelationship();');
@@ -106,7 +106,7 @@ function ciniki_products_relationships() {
         if( this.edit.relationship_id > 0 ) {
             this.edit.sections._buttons.buttons.delete.visible = 'yes';
             var rsp = M.api.getJSONCb('ciniki.products.relationshipGet', 
-                {'business_id':M.curBusinessID, 'product_id':this.edit.product_id, 
+                {'tnid':M.curTenantID, 'product_id':this.edit.product_id, 
                 'relationship_id':this.edit.relationship_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
@@ -140,7 +140,7 @@ function ciniki_products_relationships() {
             var c = this.edit.serializeForm('no');
             if( c != '' ) {
                 var rsp = M.api.postJSONCb('ciniki.products.relationshipUpdate', 
-                    {'business_id':M.curBusinessID, 
+                    {'tnid':M.curTenantID, 
                     'relationship_id':this.edit.relationship_id}, c, function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
@@ -155,7 +155,7 @@ function ciniki_products_relationships() {
             var c = this.edit.serializeForm('yes');
             if( c != '' ) {
                 var rsp = M.api.postJSONCb('ciniki.products.relationshipAdd', 
-                    {'business_id':M.curBusinessID, 'product_id':this.edit.product_id}, c, function(rsp) {
+                    {'tnid':M.curTenantID, 'product_id':this.edit.product_id}, c, function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
                             return false;
@@ -171,7 +171,7 @@ function ciniki_products_relationships() {
     this.deleteRelationship = function() {
         if( confirm("Are you sure you want to remove this similar product?") ) {
             var rsp = M.api.getJSONCb('ciniki.products.relationshipDelete', 
-                {'business_id':M.curBusinessID, 'relationship_id':this.edit.relationship_id}, function(rsp) {
+                {'tnid':M.curTenantID, 'relationship_id':this.edit.relationship_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;

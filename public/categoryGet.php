@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business to get the relationship from.
+// tnid:         The ID of the tenant to get the relationship from.
 // relationship_id:     The ID of the relationship to get.
 // 
 // Returns
@@ -20,7 +20,7 @@ function ciniki_products_categoryGet($ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'category'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Category'),
         'subcategory'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'', 'name'=>'Category'),
         )); 
@@ -31,10 +31,10 @@ function ciniki_products_categoryGet($ciniki) {
     
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.categoryGet', 0); 
+    $rc = ciniki_products_checkAccess($ciniki, $args['tnid'], 'ciniki.products.categoryGet', 0); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -47,7 +47,7 @@ function ciniki_products_categoryGet($ciniki) {
         . "FROM ciniki_product_categories "
         . "WHERE category = '" . ciniki_core_dbQuote($ciniki, $args['category']) . "' "
         . "AND subcategory = '" . ciniki_core_dbQuote($ciniki, $args['subcategory']) . "' "
-        . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'category');
@@ -79,7 +79,7 @@ function ciniki_products_categoryGet($ciniki) {
     //
     $strsql = "SELECT id, name_s, name_p, object_def "
         . "FROM ciniki_product_types "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "ORDER BY id "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
@@ -107,21 +107,21 @@ function ciniki_products_categoryGet($ciniki) {
         . "FROM ciniki_product_tags AS t1 "
         . "LEFT JOIN ciniki_product_tags AS t2 ON ("
             . "t1.product_id = t2.product_id "
-            . "AND t2.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "AND t2.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND t2.tag_type > 10 AND t2.tag_type < 30 "
         . ") "
         . "LEFT JOIN ciniki_product_categories ON ("
             . "t1.permalink = ciniki_product_categories.category "
             . "AND t2.permalink = ciniki_product_categories.subcategory "
-            . "AND ciniki_product_categories.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "AND ciniki_product_categories.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . ") "
         . "LEFT JOIN ciniki_products ON ("
             . "t2.product_id = ciniki_products.id "
             . "AND ciniki_products.parent_id = 0 "
             . "AND (ciniki_products.webflags&0x01) > 0 "
-            . "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "AND ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . ") "
-        . "WHERE t1.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE t1.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND t1.permalink = '" . ciniki_core_dbQuote($ciniki, $args['category']) . "' "
         . "AND t1.tag_type = 10 "
         . "GROUP BY type_id, t2.tag_type, t2.tag_name "

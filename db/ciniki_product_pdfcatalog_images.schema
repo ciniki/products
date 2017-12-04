@@ -7,7 +7,7 @@
 # ------
 # id:               The ID of the product image.
 # uuid:             The Universal Unique ID.
-# business_id:      The ID of the business the product is attached to.
+# tnid:             The ID of the tenant the product is attached to.
 #
 # catalog_id:       The ID of the catalog from the ciniki_product_pdfcatalogs table.
 # 
@@ -21,7 +21,7 @@
 create table ciniki_product_pdfcatalog_images (
     id int not null auto_increment,
     uuid char(36) not null,
-    business_id int not null,
+    tnid int not null,
     catalog_id int not null,
     page_number int not null,
     image_id int not null,
@@ -29,5 +29,5 @@ create table ciniki_product_pdfcatalog_images (
     last_updated datetime not null,
     primary key (id),
     index (catalog_id),
-    index sync (business_id, uuid, last_updated)
+    index sync (tnid, uuid, last_updated)
 ) ENGINE='InnoDB', COMMENT='v1.01';

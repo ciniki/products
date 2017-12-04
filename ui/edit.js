@@ -68,14 +68,14 @@ function ciniki_products_edit() {
             'tags':[]};
         this.edit.liveSearchCb = function(s, i, value) {
             if( s == 'info' ) { 
-                M.api.getJSONBgCb('ciniki.products.productCategorySearch', {'business_id':M.curBusinessID, 
+                M.api.getJSONBgCb('ciniki.products.productCategorySearch', {'tnid':M.curTenantID, 
                     'start_needle':value, 'limit':'25'}, function(rsp) { 
                         M.ciniki_products_edit.edit.liveSearchShow(s, i, M.gE(M.ciniki_products_edit.edit.panelUID + '_' + i), rsp.categories); 
                 }); 
                 return true;
             }
             if( i == 'supplier_id' ) {
-                M.api.getJSONBgCb('ciniki.products.supplierSearch', {'business_id':M.curBusinessID, 
+                M.api.getJSONBgCb('ciniki.products.supplierSearch', {'tnid':M.curTenantID, 
                     'start_needle':value, 'limit':25}, function(rsp) {
                         M.ciniki_products_edit.edit.liveSearchShow(s, i, M.gE(M.ciniki_products_edit.edit.panelUID + '_' + i), rsp.suppliers);
                     });
@@ -110,7 +110,7 @@ function ciniki_products_edit() {
 //          return this.tags[i];
 //      };
         this.edit.fieldHistoryArgs = function(s, i) {
-            return {'method':'ciniki.products.productHistory', 'args':{'business_id':M.curBusinessID,
+            return {'method':'ciniki.products.productHistory', 'args':{'tnid':M.curTenantID,
                 'product_id':this.product_id, 'field':i}};
         }
         this.edit.addDropImage = function(iid) {
@@ -149,14 +149,14 @@ function ciniki_products_edit() {
         }
 
         var pc = (args.parent_id==null||args.parent_id==0)?'parent':'child';
-        // Use the business product types to setup the edit form
-        if( M.curBusiness.products != null && M.curBusiness.products.settings.types != null ) {
+        // Use the tenant product types to setup the edit form
+        if( M.curTenant.products != null && M.curTenant.products.settings.types != null ) {
             this.edit.formtabs = {'label':'', 'field':'type_id', 'tabs':{}};
             this.edit.forms = {};
             this.edit.formtab = 0;
             this.edit.default_formtab = 0;
-            for(i in M.curBusiness.products.settings.types) {
-                var type = M.curBusiness.products.settings.types[i].type;
+            for(i in M.curTenant.products.settings.types) {
+                var type = M.curTenant.products.settings.types[i].type;
                 if( this.edit.formtab == 0 ) {
                     this.edit.formtab = type.id;
                     this.edit.default_formtab = type.id;
@@ -190,10 +190,10 @@ function ciniki_products_edit() {
             '3':{'name':'Promotional Item', 'active':'no'},
             };
         var flags_visible = 'no';
-        if( M.curBusiness.modules['ciniki.sapos'] != null && (M.curBusiness.modules['ciniki.sapos'].flags&0x08) > 0 ) {
+        if( M.curTenant.modules['ciniki.sapos'] != null && (M.curTenant.modules['ciniki.sapos'].flags&0x08) > 0 ) {
             webFlags['2'].active = 'yes';
         }
-        if( M.curBusiness.modules['ciniki.products'] != null && (M.curBusiness.modules['ciniki.products'].flags&0x10) > 0 && fields.flags != null ) {
+        if( M.curTenant.modules['ciniki.products'] != null && (M.curTenant.modules['ciniki.products'].flags&0x10) > 0 && fields.flags != null ) {
             flags_visible = 'yes';
             flags['3'].active = 'yes';
         }
@@ -203,7 +203,7 @@ function ciniki_products_edit() {
         if( type[pc]['subcategories-11'] != null ) {
             webFlags['6'].active = 'yes';
         }
-        if( M.curBusiness.modules['ciniki.customers'] != null && (M.curBusiness.modules['ciniki.customers'].flags&0x10) > 0 ) {
+        if( M.curTenant.modules['ciniki.customers'] != null && (M.curTenant.modules['ciniki.customers'].flags&0x10) > 0 ) {
             webFlags['11'].active = 'yes';
         }
         form['info'] = {'label':'', 'aside':'yes', 'fields':{
@@ -230,11 +230,11 @@ function ciniki_products_edit() {
         //
         // Setup the tax types
         //
-        if( M.curBusiness.modules['ciniki.taxes'] != null ) {
+        if( M.curTenant.modules['ciniki.taxes'] != null ) {
             form['info'].fields.taxtype_id.options = {'0':'No Taxes'};
-            if( M.curBusiness.taxes != null && M.curBusiness.taxes.settings.types != null ) {
-                for(i in M.curBusiness.taxes.settings.types) {
-                    form['info'].fields.taxtype_id.options[M.curBusiness.taxes.settings.types[i].type.id] = M.curBusiness.taxes.settings.types[i].type.name;
+            if( M.curTenant.taxes != null && M.curTenant.taxes.settings.types != null ) {
+                for(i in M.curTenant.taxes.settings.types) {
+                    form['info'].fields.taxtype_id.options[M.curTenant.taxes.settings.types[i].type.id] = M.curTenant.taxes.settings.types[i].type.name;
                 }
             }
         } else {
@@ -258,7 +258,7 @@ function ciniki_products_edit() {
                 'tags':{'label':'', 'hidelabel':'yes', 'type':'tags', 'tags':this.edit.tags.tags, 'hint':'Enter a new tag:'},
                 }};
         }
-        if( (M.curBusiness.modules['ciniki.products'].flags&0x04) > 0 && (fields.inventory_flags != null || fields.inventory_current_num != null) ) {
+        if( (M.curTenant.modules['ciniki.products'].flags&0x04) > 0 && (fields.inventory_flags != null || fields.inventory_current_num != null) ) {
             form['inventory'] = {'label':'', 'fields':{}};
             if( fields.inventory_flags != null ) { form.inventory.fields['inventory_flags'] = 
                 {'label':'Options', 'type':'flags', 'flags':this.inventoryFlags}; }
@@ -342,26 +342,26 @@ function ciniki_products_edit() {
         if( pid != null ) { this.edit.product_id = pid; }
         if( list != null ) { this.edit.prevnext.list = list; }
         // Check if inventory enabled
-//      if( (M.curBusiness.modules['ciniki.products'].flags&0x04) > 0 ) {
+//      if( (M.curTenant.modules['ciniki.products'].flags&0x04) > 0 ) {
 //          this.edit.forms.generic.inventory.active = 'yes';
 //      } else {
 //          this.edit.forms.generic.inventory.active = 'no';
 //      }
 //      // Check if suppliers enabled
-//      if( (M.curBusiness.modules['ciniki.products'].flags&0x08) > 0 ) {
+//      if( (M.curTenant.modules['ciniki.products'].flags&0x08) > 0 ) {
 //          this.edit.forms.generic.supplier.active = 'yes';
 //      } else {
 //          this.edit.forms.generic.supplier.active = 'no';
 //      }
-        // Check if shopping cart is enabled for business
-//      if( M.curBusiness.modules['ciniki.sapos'] != null 
-//          && (M.curBusiness.modules['ciniki.sapos'].flags&0x08) > 0 ) {
+        // Check if shopping cart is enabled for tenant
+//      if( M.curTenant.modules['ciniki.sapos'] != null 
+//          && (M.curTenant.modules['ciniki.sapos'].flags&0x08) > 0 ) {
 //          this.edit.forms.generic.info.fields.webflags.flags['2'].active = 'yes';
 //      } else {
 //          this.edit.forms.generic.info.fields.webflags.flags['2'].active = 'no';
 //      }
         if( this.edit.product_id > 0 ) {
-            M.api.getJSONCb('ciniki.products.productGet', {'business_id':M.curBusinessID,
+            M.api.getJSONCb('ciniki.products.productGet', {'tnid':M.curTenantID,
                 'product_id':this.edit.product_id, 'categories':'yes', 'subcategories':'yes', 'tags':'yes'}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
@@ -423,7 +423,7 @@ function ciniki_products_edit() {
                 this.edit.data.supplier_id = supplier_id;
                 this.edit.data.supplier_name = unescape(supplier_name);
             }
-            M.api.getJSONCb('ciniki.products.productTags', {'business_id':M.curBusinessID}, function(rsp) {
+            M.api.getJSONCb('ciniki.products.productTags', {'tnid':M.curTenantID}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -470,7 +470,7 @@ function ciniki_products_edit() {
         var sid = this.edit.formValue('supplier_id');
         if( (sid == 0 && name != '')
             || (this.edit.data.supplier_name != null && this.edit.data.supplier_name != name && name != '' ) ) {
-            M.api.getJSONCb('ciniki.products.supplierAdd', {'business_id':M.curBusinessID,
+            M.api.getJSONCb('ciniki.products.supplierAdd', {'tnid':M.curTenantID,
                 'name':encodeURIComponent(name)}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
@@ -489,7 +489,7 @@ function ciniki_products_edit() {
             var c = this.edit.serializeForm('no');
             if( c != '' ) {
                 M.api.postJSONCb('ciniki.products.productUpdate',
-                    {'business_id':M.curBusinessID, 'product_id':this.edit.product_id}, c, function(rsp) {
+                    {'tnid':M.curTenantID, 'product_id':this.edit.product_id}, c, function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
                             return false;
@@ -510,7 +510,7 @@ function ciniki_products_edit() {
         } else {
             var c = this.edit.serializeForm('yes');
             M.api.postJSONCb('ciniki.products.productAdd',
-                {'business_id':M.curBusinessID}, c, function(rsp) {
+                {'tnid':M.curTenantID}, c, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;
@@ -533,7 +533,7 @@ function ciniki_products_edit() {
     this.deleteProduct = function() {
         if( this.edit.product_id < 1 ) { return false; }
         if( confirm("Are you sure you want to remove this product?") ) {
-            M.api.getJSONCb('ciniki.products.productDelete', {'business_id':M.curBusinessID,
+            M.api.getJSONCb('ciniki.products.productDelete', {'tnid':M.curTenantID,
                 'product_id':this.edit.product_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);

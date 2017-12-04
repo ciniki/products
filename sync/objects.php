@@ -9,7 +9,7 @@
 // Returns
 // -------
 //
-function ciniki_products_sync_objects($ciniki, &$sync, $business_id, $args) {
+function ciniki_products_sync_objects($ciniki, &$sync, $tnid, $args) {
     
     $objects = array();
     $objects['product'] = array(
@@ -22,7 +22,7 @@ function ciniki_products_sync_objects($ciniki, &$sync, $business_id, $args) {
             'flags'=>array(),
             'status'=>array(),
             'barcode'=>array(),
-            'supplier_business_id'=>array(),
+            'supplier_tnid'=>array(),
             'supplier_product_id'=>array(),
             'price'=>array(),
             'cost'=>array(),

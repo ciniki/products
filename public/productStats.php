@@ -22,7 +22,7 @@ function ciniki_products_productStats($ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'status'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Status'), 
         'limit'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'25', 'name'=>'Limit'), 
         )); 
@@ -33,10 +33,10 @@ function ciniki_products_productStats($ciniki) {
     
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-    $rc = ciniki_products_checkAccess($ciniki, $args['business_id'], 'ciniki.products.productStats', 0); 
+    $rc = ciniki_products_checkAccess($ciniki, $args['tnid'], 'ciniki.products.productStats', 0); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -61,14 +61,14 @@ function ciniki_products_productStats($ciniki) {
         . "FROM ciniki_product_tags "
         . "LEFT JOIN ciniki_products ON ("
             . "ciniki_product_tags.product_id = ciniki_products.id "
-            . "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "AND ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . ") "
         . "LEFT JOIN ciniki_product_categories ON ("
             . "ciniki_product_tags.permalink = ciniki_product_categories.category "
             . "AND ciniki_product_categories.subcategory = '' "
-            . "AND ciniki_product_categories.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "AND ciniki_product_categories.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . ") "
-        . "WHERE ciniki_product_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE ciniki_product_tags.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND ciniki_product_tags.tag_type = 10 "
         . "GROUP BY ciniki_product_tags.tag_name "
         . "ORDER BY ciniki_product_categories.sequence, ciniki_product_tags.tag_name "
@@ -98,7 +98,7 @@ function ciniki_products_productStats($ciniki) {
             . "ciniki_products.name, "
             . "IF((inventory_flags&0x01)=1,inventory_current_num,'') AS inventory_current_num "
             . "FROM ciniki_products "
-            . "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "ORDER BY code, name "
             . "";
         $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
@@ -124,9 +124,9 @@ function ciniki_products_productStats($ciniki) {
                 $rsp['products'][$pid]['product']['bo'] = '';
             }
             $product_ids = array_unique($product_ids);
-            if( isset($ciniki['business']['modules']['ciniki.sapos']) ) {
+            if( isset($ciniki['tenant']['modules']['ciniki.sapos']) ) {
                 ciniki_core_loadMethod($ciniki, 'ciniki', 'sapos', 'private', 'getReservedQuantities');
-                $rc = ciniki_sapos_getReservedQuantities($ciniki, $args['business_id'], 
+                $rc = ciniki_sapos_getReservedQuantities($ciniki, $args['tnid'], 
                     'ciniki.products.product', $product_ids, 0);
                 if( $rc['stat'] != 'ok' ) {
                     return $rc;
@@ -155,7 +155,7 @@ function ciniki_products_productStats($ciniki) {
                 . "ciniki_products.id = ciniki_product_tags.product_id "
                 . "AND ciniki_product_tags.tag_type = 10 "
                 . ") "
-            . "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND ISNULL(tag_name) "
             . "GROUP BY tag_name "
             . "";
@@ -176,9 +176,9 @@ function ciniki_products_productStats($ciniki) {
         . "COUNT(ciniki_products.id) AS num_products "
         . "FROM ciniki_products "
         . "LEFT JOIN ciniki_product_suppliers ON (ciniki_products.supplier_id = ciniki_product_suppliers.id "
-            . "AND ciniki_product_suppliers.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "AND ciniki_product_suppliers.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . ") "
-        . "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "";
     if( isset($args['status']) && $args['status'] != '' ) {
         $strsql .= "AND ciniki_products.status = '" . ciniki_core_dbQuote($ciniki, $args['status']) . "' ";

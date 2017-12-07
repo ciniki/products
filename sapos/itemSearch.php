@@ -73,6 +73,7 @@ function ciniki_products_sapos_itemSearch($ciniki, $tnid, $args) {
     $strsql = "SELECT ciniki_products.id, "
         . "ciniki_products.code, "
         . "ciniki_products.name, "
+        . "ciniki_products.short_description AS synopsis, "
         . "ciniki_products.price AS unit_amount, "
         . "ciniki_products.unit_discount_amount, "
         . "ciniki_products.unit_discount_percentage, "
@@ -106,7 +107,7 @@ function ciniki_products_sapos_itemSearch($ciniki, $tnid, $args) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
         array('container'=>'products', 'fname'=>'id',
-            'fields'=>array('id', 'code', 'name', 'unit_amount', 
+            'fields'=>array('id', 'code', 'name', 'unit_amount', 'synopsis',
                 'unit_discount_amount', 'unit_discount_percentage', 'taxtype_id',
                 'inventory_flags', 'inventory_available'=>'inventory_current_num')),
         array('container'=>'prices', 'fname'=>'price_id',
@@ -212,6 +213,7 @@ function ciniki_products_sapos_itemSearch($ciniki, $tnid, $args) {
 //              'description'=>($product['code']!=''?$product['code'].' - ':'') . $product['name'],
                 'code'=>$product['code'],
                 'description'=>$product['name'],
+                'synopsis'=>$product['synopsis'],
                 'quantity'=>1,
                 'inventory_available'=>'',
                 'unit_amount'=>$product['unit_amount'],

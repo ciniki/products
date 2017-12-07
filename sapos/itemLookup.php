@@ -25,6 +25,7 @@ function ciniki_products_sapos_itemLookup($ciniki, $tnid, $args) {
             . "ciniki_products.parent_id, "
             . "ciniki_products.code, "
             . "ciniki_products.name, "
+            . "ciniki_products.short_description AS synopsis, "
             . "ciniki_products.flags AS product_flags, "
             . "ciniki_product_prices.id AS price_id, "
             . "ciniki_product_prices.pricepoint_id AS pricepoint_id, "
@@ -51,7 +52,7 @@ function ciniki_products_sapos_itemLookup($ciniki, $tnid, $args) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
         $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
             array('container'=>'products', 'fname'=>'id',
-                'fields'=>array('id', 'price_id', 'parent_id', 'code', 'description'=>'name', 'product_flags',
+                'fields'=>array('id', 'price_id', 'parent_id', 'code', 'description'=>'name', 'synopsis', 'product_flags',
                     'pricepoint_id', 
                     'unit_amount', 'unit_discount_amount', 'unit_discount_percentage',
                     'inventory_flags', 'inventory_current_num', 
@@ -102,6 +103,7 @@ function ciniki_products_sapos_itemLookup($ciniki, $tnid, $args) {
             . "ciniki_products.parent_id, "
             . "ciniki_products.code, "
             . "ciniki_products.name, "
+            . "ciniki_products.short_description AS synopsis, "
             . "ciniki_products.flags AS product_flags, "
             . "ciniki_product_prices.id AS price_id, "
             . "ciniki_product_prices.pricepoint_id AS pricepoint_id, "
@@ -123,7 +125,7 @@ function ciniki_products_sapos_itemLookup($ciniki, $tnid, $args) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
         $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
             array('container'=>'products', 'fname'=>'id',
-                'fields'=>array('id', 'price_id', 'parent_id', 'code', 'description'=>'name', 'product_flags',
+                'fields'=>array('id', 'price_id', 'parent_id', 'code', 'description'=>'name', 'synopsis', 'product_flags',
                     'pricepoint_id', 
                     'unit_amount', 'unit_discount_amount', 'unit_discount_percentage',
                     'inventory_flags', 'inventory_current_num', 
@@ -172,6 +174,7 @@ function ciniki_products_sapos_itemLookup($ciniki, $tnid, $args) {
             . "ciniki_products.parent_id, "
             . "ciniki_products.code, "
             . "ciniki_products.name, "
+            . "ciniki_products.short_description AS synopsis, "
             . "ciniki_products.flags AS product_flags, "
             . "ciniki_products.price, "
             . "ciniki_products.flags AS product_flags, "
@@ -192,7 +195,7 @@ function ciniki_products_sapos_itemLookup($ciniki, $tnid, $args) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
         $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
             array('container'=>'products', 'fname'=>'id',
-                'fields'=>array('id', 'parent_id', 'code', 'description'=>'name', 'product_flags',
+                'fields'=>array('id', 'parent_id', 'code', 'description'=>'name', 'synopsis', 'product_flags',
                     'unit_amount'=>'price', 'unit_discount_amount', 'unit_discount_percentage',
                     'inventory_flags', 'inventory_current_num', 
                     'taxtype_id')),

@@ -157,7 +157,7 @@ function ciniki_products_productUpdate(&$ciniki) {
         //
         if( ciniki_core_checkModuleFlags($ciniki, 'ciniki.products', 0x20) ) {
             if( !isset($args['history_notes']) || $args['history_notes'] == '' ) {
-                return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.169', 'msg'=>'You must specify the inventory notes when changing inventory quantity.', 'err'=>$rc['err']));
+                return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.169', 'msg'=>'You must specify the inventory notes when changing inventory quantity.'));
             }
         }
         foreach($modules as $module => $m) {

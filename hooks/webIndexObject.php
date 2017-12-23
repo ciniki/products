@@ -62,6 +62,7 @@ function ciniki_products_hooks_webIndexObject($ciniki, $tnid, $args) {
             'meta'=>'',
             'primary_image_id'=>$rc['item']['primary_image_id'],
             'synopsis'=>$rc['item']['short_description'],
+            'description'=>$rc['item']['long_description'],
             'object'=>'ciniki.products.product',
             'object_id'=>$rc['item']['id'],
             'primary_words'=>$rc['item']['code'] . ' ' . $rc['item']['name'],
@@ -89,6 +90,34 @@ function ciniki_products_hooks_webIndexObject($ciniki, $tnid, $args) {
                     $object['label'] = $row['tag_name'];
                 }
                 $object['primary_words'] .= ' ' . $row['tag_name'];
+            }
+        }
+
+        //
+        // Get the audio for the product
+        //
+        $strsql = "SELECT a.id, a.uuid, a.type "
+            . "FROM ciniki_product_audio AS pa "
+            . "LEFT JOIN ciniki_audio AS a ON ("
+                . "(pa.mp3_audio_id = a.id OR pa.wav_audio_id = a.id OR pa.ogg_audio_id = a.id ) "
+                . "AND a.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+                . ") "
+            . "WHERE pa.product_id = '" . ciniki_core_dbQuote($ciniki, $args['object_id']) . "' "
+            . "AND pa.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+            . "";
+        $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'audio');
+        if( $rc['stat'] != 'ok' ) {
+            return $rc;
+        }
+        if( isset($rc['rows']) ) {
+            foreach($rc['rows'] as $row) {
+                if( $row['type'] == 20 ) {
+                    $object['ogg_audio_uuid'] = $row['uuid'];
+                } elseif( $row['type'] == 30 ) {
+                    $object['wav_audio_uuid'] = $row['uuid'];
+                } elseif( $row['type'] == 40 ) {
+                    $object['mp3_audio_uuid'] = $row['uuid'];
+                }
             }
         }
 

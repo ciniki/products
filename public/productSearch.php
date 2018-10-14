@@ -109,9 +109,9 @@ function ciniki_products_productSearch($ciniki) {
                 if( isset($quantities[$product['product']['id']]) ) {
                     $products[$pid]['product']['rsv'] = (float)$quantities[$product['product']['id']]['quantity_reserved'];
                     if( isset($product['product']['inventory_current_num']) && $product['product']['inventory_current_num'] != '' ) {
-                        $bo = $products[$pid]['product']['rsv'];
-                    } else {
                         $bo = $products[$pid]['product']['rsv'] - $product['product']['inventory_current_num'];
+                    } else {
+                        $bo = $products[$pid]['product']['rsv'];
                     }
                     if( $bo > 0 ) {
                         $products[$pid]['product']['bo'] = $bo;

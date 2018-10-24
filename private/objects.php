@@ -17,9 +17,9 @@ function ciniki_products_objects($ciniki) {
         'sync'=>'yes',
         'table'=>'ciniki_products',
         'fields'=>array(
-            'parent_id'=>array('ref'=>'ciniki.products.product'),
+            'parent_id'=>array('ref'=>'ciniki.products.product', 'default'=>0),
             'name'=>array(),
-            'code'=>array(),
+            'code'=>array('default'=>''),
             'type_id'=>array(),
 //          'type'=>array(),
             'category'=>array('default'=>''),

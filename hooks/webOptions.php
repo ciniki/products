@@ -95,6 +95,38 @@ function ciniki_products_hooks_webOptions(&$ciniki, $tnid, $args) {
             ),
         ));
 
+    //
+    // Check if sliders supported in website
+    //
+    if( ciniki_core_checkModuleFlags($ciniki, 'ciniki.web', 0x02) ) {
+        //
+        // Get the list of sliders
+        //
+        $strsql = "SELECT id, name "
+            . "FROM ciniki_web_sliders "
+            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+            . "ORDER BY name ";
+        $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'slider');
+        if( $rc['stat'] != 'ok' ) {
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.170', 'msg'=>'Unable to load slider', 'err'=>$rc['err']));
+        }
+        $sliders = array(array('label' => 'None', 'value' => 0));
+        if( isset($rc['rows']) ) {
+            foreach($rc['rows'] as $row) {
+                $sliders[] = array('label' => $row['name'], 'value' => $row['id']);
+            }
+        }
+       
+        $pages['ciniki.products']['options'][] = array(
+            'label' => 'Slider',
+            'setting' => 'page-products-slider-id',
+            'type' => 'select',
+            'value' => (isset($settings['page-products-slider-id'])?$settings['page-products-slider-id']:'0'),
+            'options' => $sliders,
+            );
+        
+    }
+
     return array('stat'=>'ok', 'pages'=>$pages);
 }
 ?>

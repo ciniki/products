@@ -62,7 +62,7 @@ create table ciniki_product_prices (
     tnid int not null,
     product_id int not null,
     name varchar(150) not null,
-    price_point_id int not null,
+    pricepoint_id int not null,
     available_to tinyint unsigned not null,
     min_quantity int not null,
     unit_amount decimal(19,4) not null,

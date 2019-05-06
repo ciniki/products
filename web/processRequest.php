@@ -509,6 +509,14 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $tnid, $args) {
     // Display the list of categories
     //
     if( $display == 'categories' ) {
+
+        //
+        // Check if slider is specified
+        //
+        if( isset($settings['page-products-slider-id']) && $settings['page-products-slider-id'] > 0 ) {
+            $page['blocks'][] = array('type'=>'slider', 'slider-id'=>$settings['page-products-slider-id']);
+        }
+
         //
         // Get the images for categories
         //

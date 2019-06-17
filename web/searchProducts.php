@@ -122,7 +122,7 @@ function ciniki_products_web_searchProducts($ciniki, $settings, $tnid, $args) {
     }
 
     if( isset($args['limit']) && $args['limit'] != '' && $args['limit'] > 0 && preg_match("/^[0-9]+$/",$args['limit']) ) {
-        $strsql .= "LIMIT " . $args['limit'] . " ";
+        $strsql .= "LIMIT " . intval($args['limit']) . " ";
     } else {
         $strsql .= "LIMIT 15";
     }

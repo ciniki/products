@@ -28,7 +28,7 @@ function ciniki_products_web_newProducts($ciniki, $settings, $tnid, $limit) {
         . "ORDER BY ciniki_products.start_date DESC "
         . "";
     if( $limit != '' && $limit > 0 && is_int($limit) ) {
-        $strsql .= "LIMIT $limit ";
+        $strsql .= "LIMIT " . intval($limit) . " ";
     } else {
         $strsql .= "LIMIT 6";
     }

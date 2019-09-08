@@ -249,7 +249,9 @@ function ciniki_products_productList($ciniki) {
             foreach($products as $pid => $product) {
                 if( isset($quantities[$product['product']['id']]) ) {
                     $products[$pid]['product']['rsv'] = (float)$quantities[$product['product']['id']]['quantity_reserved'];
-                    $bo = $products[$pid]['product']['rsv'] - $product['product']['inventory_current_num'];
+                    if( $product['product']['inventory_current_num'] != '' ) {
+                        $bo = $products[$pid]['product']['rsv'] - $product['product']['inventory_current_num'];
+                    }
                     if( $bo > 0 ) {
                         $products[$pid]['product']['bo'] = $bo;
                     }

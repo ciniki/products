@@ -252,7 +252,7 @@ function ciniki_products_productList($ciniki) {
                     if( $product['product']['inventory_current_num'] != '' ) {
                         $bo = $products[$pid]['product']['rsv'] - $product['product']['inventory_current_num'];
                     }
-                    if( $bo > 0 ) {
+                    if( isset($bo) && $bo > 0 ) {
                         $products[$pid]['product']['bo'] = $bo;
                     }
                 }

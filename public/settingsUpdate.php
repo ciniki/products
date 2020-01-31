@@ -4,18 +4,10 @@
 // -----------
 // This method will update one or more settings for the products module.
 //
-// Info
-// ----
-// Status:          defined
-//
 // Arguments
 // ---------
 // user_id:         The user making the request
 // 
-// Returns
-// -------
-// <rsp stat='ok' id='34' />
-//
 function ciniki_products_settingsUpdate(&$ciniki) {
     //  
     // Find all the required and optional arguments
@@ -58,6 +50,7 @@ function ciniki_products_settingsUpdate(&$ciniki) {
     //
     $changelog_fields = array(
         'dropbox-products',
+        'invoice-description-code',
         );
     //
     // Check each valid setting and see if a new value was passed in the arguments for it.

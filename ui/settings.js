@@ -22,8 +22,16 @@ function ciniki_products_settings() {
             'ciniki_products_settings', 'main',
             'mc', 'medium', 'sectioned', 'ciniki.products.settings.main');
         this.main.sections = {
-            'dropbox':{'label':'Dropbox Profiles', 'fields':{
-                'dropbox-products':{'label':'Directory', 'type':'text'},
+            'invoices':{'label':'Invoice Settings', 
+                'visible':function() { return M.modFlagSet('ciniki.products', 0x0200); },
+                'fields':{
+                    'invoice-description-code':{'label':'Include code in description', 'type':'toggle', 'default':'no', 'toggles':{'no':'No', 'yes':'Yes'}},
+            }},
+            
+            'dropbox':{'label':'Dropbox Profiles', 
+                'visible':function() { return M.modFlagSet('ciniki.products', 0x0100); },
+                'fields':{
+                    'dropbox-products':{'label':'Directory', 'type':'text'},
             }},
         };
 

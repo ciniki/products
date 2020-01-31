@@ -203,6 +203,15 @@ function ciniki_products_sapos_itemSearch($ciniki, $tnid, $args) {
                 } elseif( isset($price['available_to_text']) && $price['available_to_text'] != '' ) {
                     $details['price_description'] = $price['available_to_text'];
                 }
+                // Check if sapos product codes turned off, then check if should be preppended to description
+                if( !ciniki_core_checkModuleFlags($ciniki, 'ciniki.sapos', 0x0400)
+                    && (!isset($settings['invoice-description-code']) || $settings['invoice-description-code'] == 'yes' )
+                    && $details['code'] != '' 
+                    ) {
+                    $details['description'] = $details['code'] . ' - ' . $details['description'];
+                    $details['code'] = '';
+                }
+
                 $items[] = array('item'=>$details);
             }
         } else {
@@ -223,10 +232,18 @@ function ciniki_products_sapos_itemSearch($ciniki, $tnid, $args) {
                 'taxtype_id'=>$product['taxtype_id'], 
                 'notes'=>'',
                 );
+            // Check if sapos product codes turned off, then check if should be preppended to description
+            if( !ciniki_core_checkModuleFlags($ciniki, 'ciniki.sapos', 0x0400)
+                && (!isset($settings['invoice-description-code']) || $settings['invoice-description-code'] == 'yes' )
+                && $details['code'] != '' 
+                ) {
+                $details['description'] = $details['code'] . ' - ' . $details['description'];
+                $details['code'] = '';
+            }
+
             $items[] = array('item'=>$details);
         }
     }
-
 
     return array('stat'=>'ok', 'items'=>$items);        
 }

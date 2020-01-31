@@ -18,6 +18,16 @@ function ciniki_products_sapos_itemLookup($ciniki, $tnid, $args) {
     }
 
     //
+    // Load the tenant settings
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQueryDash');
+    $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_products_settings', 'tnid', $tnid, 'ciniki.products', 'settings', '');
+    if( $rc['stat'] != 'ok' ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.171', 'msg'=>'Unable to load settings', 'err'=>$rc['err']));
+    }
+    $settings = isset($rc['settings']) ? $rc['settings'] : array();
+    
+    //
     // Lookup the requested product if specified along with a price_id
     //
     if( $args['object'] == 'ciniki.products.product' && isset($args['price_id']) && $args['price_id'] > 0 ) {
@@ -87,6 +97,14 @@ function ciniki_products_sapos_itemLookup($ciniki, $tnid, $args) {
         // Check if product is a promotional item
         if( ($product['product_flags']&0x04) > 0 ) {
             $product['flags'] |= 0x4000;
+        }
+
+        // Check if sapos product codes turned off, then check if should be preppended to description
+        if( !ciniki_core_checkModuleFlags($ciniki, 'ciniki.sapos', 0x0400)
+            && (!isset($settings['invoice-description-code']) || $settings['invoice-description-code'] == 'yes' )
+            && $product['code'] != '' 
+            ) {
+            $product['description'] = $product['code'] . ' - ' . $product['description'];
         }
 
         return array('stat'=>'ok', 'item'=>$product);
@@ -162,6 +180,14 @@ function ciniki_products_sapos_itemLookup($ciniki, $tnid, $args) {
             $product['flags'] |= 0x4000;
         }
 
+        // Check if sapos product codes turned off, then check if should be preppended to description
+        if( !ciniki_core_checkModuleFlags($ciniki, 'ciniki.sapos', 0x0400)
+            && (!isset($settings['invoice-description-code']) || $settings['invoice-description-code'] == 'yes' )
+            && $product['code'] != '' 
+            ) {
+            $product['description'] = $product['code'] . ' - ' . $product['description'];
+        }
+
         return array('stat'=>'ok', 'item'=>$product);
     }
 
@@ -232,6 +258,14 @@ function ciniki_products_sapos_itemLookup($ciniki, $tnid, $args) {
         } else {
             $product['limited_units'] = 'no';
             $product['units_available'] = 0;
+        }
+
+        // Check if sapos product codes turned off, then check if should be preppended to description
+        if( !ciniki_core_checkModuleFlags($ciniki, 'ciniki.sapos', 0x0400)
+            && (!isset($settings['invoice-description-code']) || $settings['invoice-description-code'] == 'yes' )
+            && $product['code'] != '' 
+            ) {
+            $product['description'] = $product['code'] . ' - ' . $product['description'];
         }
 
         // Check if product is a promotional item

@@ -110,7 +110,7 @@ function ciniki_products_hooks_uiSettings($ciniki, $tnid, $args) {
         $rsp['menu_items'][] = $menu_item;
     } 
 
-    if( ciniki_core_checkModuleFlags($ciniki, 'ciniki.products', 0x0100) 
+    if( ciniki_core_checkModuleFlags($ciniki, 'ciniki.products', 0x0200) 
         && (isset($args['permissions']['owners'])
             || isset($args['permissions']['resellers'])
             || ($ciniki['session']['user']['perms']&0x01) == 0x01

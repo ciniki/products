@@ -83,10 +83,12 @@ function ciniki_products_web_processRequestCategoryProducts(&$ciniki, $settings,
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
-    if( isset($rc['products']) ) {
-        $products = $rc['products'];
-    } else {
-        $products = array();
+    $products = isset($rc['products']) ? $rc['products'] : array();
+
+    foreach($products as $pid => $product) {
+        if( $product['price'] > 0 ) {
+            $products[$pid]['display_price'] = '$' . number_format($product['price'], 2);
+        }
     }
 
     return array('stat'=>'ok', 'products'=>$products);

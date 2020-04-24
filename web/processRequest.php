@@ -30,6 +30,11 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $tnid, $args) {
         'path'=>(isset($settings['page-products-path'])&&$settings['page-products-path']!=''?$settings['page-products-path']:'yes'),
         );
 
+    if( $args['page_title'] == '' ) {
+        $page['title'] = 'Products';
+        $page['breadcrumbs'][] = array('name'=>$page['title'], 'url'=>$args['base_url']);
+    }
+
     //
     // Check if a file was specified to be downloaded
     //
@@ -129,8 +134,14 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $tnid, $args) {
 
     $display = '';
     $category_display = 'default';
-    if( isset($settings['page-products-categories-format']) && $settings['page-products-categories-format'] == 'list' ) {
+    if( isset($settings['page-products-categories-format']) 
+        && $settings['page-products-categories-format'] == 'list' 
+        ) {
         $category_display = 'cilist';
+    } elseif( isset($settings['page-products-categories-format']) 
+        && $settings['page-products-categories-format'] == 'tradingcards' 
+        ) {
+        $category_display = 'tradingcards';
     }
     $subcategory_display = 'default';
     $product_display = 'default';
@@ -383,6 +394,7 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $tnid, $args) {
                     'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
                 $display = '';
             } else {
+                error_log('test');
                 //
                 // Go through the product types looking for names
                 //
@@ -592,14 +604,28 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $tnid, $args) {
         if( !isset($rc['categories']) ) {
             $page['blocks'][] = array('type'=>'content', 'content'=>"I'm sorry, but we currently don't have any products available.");
         } elseif( $category_display == 'tradingcards' ) {
-            $page['blocks'][] = array('type'=>'tradingcards', 'title'=>'', 'base_url'=>$base_url, 'cards'=>$rc['categories'],
-                'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
+            $page['blocks'][] = array('type'=>'tradingcards', 
+                'title'=>'', 
+                'base_url'=>$base_url, 
+                'cards'=>$rc['categories'],
+                'thumbnail_format'=>$thumbnail_format, 
+                'thumbnail_padding_color'=>$thumbnail_padding_color,
+                );
         } elseif( $category_display == 'cilist' ) {
-            $page['blocks'][] = array('type'=>'imagelist', 'title'=>'', 'base_url'=>$base_url, 'list'=>$rc['categories'],
-                'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
+            $page['blocks'][] = array('type'=>'imagelist',
+                'title'=>'',
+                'base_url'=>$base_url,
+                'list'=>$rc['categories'],
+                'thumbnail_format'=>$thumbnail_format,
+                'thumbnail_padding_color'=>$thumbnail_padding_color,
+                );
         } else {
-            $page['blocks'][] = array('type'=>'tagimages', 'base_url'=>$base_url, 'tags'=>$rc['categories'],
-                'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
+            $page['blocks'][] = array('type'=>'tagimages',
+                'base_url'=>$base_url,
+                'tags'=>$rc['categories'],
+                'thumbnail_format'=>$thumbnail_format,
+                'thumbnail_padding_color'=>$thumbnail_padding_color,
+                );
         }
     }
 
@@ -771,8 +797,29 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $tnid, $args) {
         } elseif( $display == 'categoryproducts' ) {
             // FIXME: Add query for category products
         } elseif( $display != 'product' ) {
-            $page['blocks'][] = array('type'=>'imagelist', 'section'=>'imageproductlist', 'prices'=>'yes', 'title'=>'', 'base_url'=>$base_url, 'list'=>$rc['products'],
-                'noimage'=>'yes', 'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
+            if( isset($settings['page-products-list-format']) && $settings['page-products-list-format'] == 'tradingcards' ) {
+                $page['blocks'][] = array('type'=>'tradingcards', 
+                    'section'=>'imageproductlist', 
+                    'prices'=>'yes', 
+                    'title'=>'', 
+                    'base_url'=>$base_url, 
+                    'cards'=>$rc['products'],
+                    'noimage'=>'yes', 
+                    'thumbnail_format'=>$thumbnail_format, 
+                    'thumbnail_padding_color'=>$thumbnail_padding_color,
+                    );
+            } else {
+                $page['blocks'][] = array('type'=>'imagelist', 
+                    'section'=>'imageproductlist', 
+                    'prices'=>'yes', 
+                    'title'=>'', 
+                    'base_url'=>$base_url, 
+                    'list'=>$rc['products'],
+                    'noimage'=>'yes', 
+                    'thumbnail_format'=>$thumbnail_format, 
+                    'thumbnail_padding_color'=>$thumbnail_padding_color,
+                    );
+            }
         }
     }
 

@@ -79,7 +79,7 @@ function ciniki_products_sapos_cartItemLookup($ciniki, $tnid, $customer, $args) 
 //            . "ciniki_product_prices.id AS price_id, "
 //            . "ciniki_product_prices.name AS price_name, "
             . "0 AS pricepoint_id, "
-            . "0x01 AS available_to, "
+            . "1 AS available_to, "
             . "ciniki_products.price AS unit_amount, "
             . "ciniki_products.unit_discount_amount, "
             . "ciniki_products.unit_discount_percentage, "
@@ -153,7 +153,9 @@ function ciniki_products_sapos_cartItemLookup($ciniki, $tnid, $customer, $args) 
         //
         // Check the available_to is correct for the specified customer
         //
-        if( ($product['available_to']&0xF0) > 0 ) {
+        error_log(print_r($product, true));
+        file_put_contents("/tmp/bt", print_r(debug_backtrace(), true));
+        if( isset($product['available_to']) && ($product['available_to']&0xF0) > 0 ) {
             if( ($product['available_to']&$customer['price_flags']) == 0 ) {
                 return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.141', 'msg'=>"I'm sorry, but this product is not available to you."));
             }

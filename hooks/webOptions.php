@@ -77,6 +77,16 @@ function ciniki_products_hooks_webOptions(&$ciniki, $tnid, $args) {
             'toggles'=>array(
                 array('value'=>'thumbnails', 'label'=>'Thumbnails'),
                 array('value'=>'list', 'label'=>'List'),
+                array('value'=>'tradingcards', 'label'=>'Trading Cards'),
+                ),
+            ),
+        array('label'=>'List Format',
+            'setting'=>'page-products-list-format',
+            'type'=>'toggle',
+            'value'=>(isset($settings['page-products-list-format'])?$settings['page-products-list-format']:'imagelist'),
+            'toggles'=>array(
+                array('value'=>'imagelist', 'label'=>'Image List'),
+                array('value'=>'tradingcards', 'label'=>'Trading Cards'),
                 ),
             ),
         array('label'=>'Thumbnail Format',

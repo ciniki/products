@@ -394,7 +394,6 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $tnid, $args) {
                     'thumbnail_format'=>$thumbnail_format, 'thumbnail_padding_color'=>$thumbnail_padding_color);
                 $display = '';
             } else {
-                error_log('test');
                 //
                 // Go through the product types looking for names
                 //
@@ -961,9 +960,15 @@ function ciniki_products_web_processRequest(&$ciniki, $settings, $tnid, $args) {
             // Display the product
             //
             else {
+//                if( isset($settings['page-products--buttons']) || $settings['page-products-share-buttons'] == 'yes' ) {
                 if( isset($product['image_id']) && $product['image_id'] > 0 ) {
-                    $page['blocks'][] = array('type'=>'image', 'section'=>'primary-image', 'primary'=>'yes', 'image_id'=>$product['image_id'],
-                        'title'=>$product['name'], 'caption'=>'');
+                    $page['blocks'][] = array('type'=>'image', 
+                        'section'=>'primary-image', 
+                        'primary'=>'yes', 
+                        'image_id'=>$product['image_id'],
+                        'title'=>$product['name'], 
+                        'caption'=>'',
+                        );
                 }
                 if( isset($product['description']) && $product['description'] != '' ) {
                     $page['blocks'][] = array('type'=>'content', 'section'=>'content', 'content'=>$product['description']);

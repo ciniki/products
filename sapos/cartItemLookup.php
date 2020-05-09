@@ -153,7 +153,6 @@ function ciniki_products_sapos_cartItemLookup($ciniki, $tnid, $customer, $args) 
         //
         // Check the available_to is correct for the specified customer
         //
-        error_log(print_r($product, true));
         file_put_contents("/tmp/bt", print_r(debug_backtrace(), true));
         if( isset($product['available_to']) && ($product['available_to']&0xF0) > 0 ) {
             if( ($product['available_to']&$customer['price_flags']) == 0 ) {

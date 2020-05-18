@@ -106,7 +106,7 @@ function ciniki_products_audio() {
         //
         var appContainer = M.createContainer(appPrefix, 'ciniki_products_audio', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         }
 
@@ -175,15 +175,15 @@ function ciniki_products_audio() {
     };
 
     this.deleteAudio = function() {
-        if( confirm('Are you sure you want to delete this audio?') ) {
+        M.confirm('Are you sure you want to delete this audio?',null,function() {
             var rsp = M.api.getJSONCb('ciniki.products.audioDelete', {'tnid':M.curTenantID, 
-                'product_audio_id':this.edit.product_audio_id}, function(rsp) {
+                'product_audio_id':M.ciniki_products_audio.edit.product_audio_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;
                     }
                     M.ciniki_products_audio.edit.close();
                 });
-        }
+        });
     };
 }

@@ -187,7 +187,7 @@ function ciniki_products_duplicates() {
         //
         var appContainer = M.createContainer(appPrefix, 'ciniki_products_duplicates', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         } 
 
@@ -336,7 +336,7 @@ function ciniki_products_duplicates() {
 
     this.deleteProduct = function(pid) {
         if( pid != null && pid > 0 ) {
-            if( confirm("Are you sure you want to remove this product?") ) {
+            M.confirm("Are you sure you want to remove this product?",null,function() {
                 var rsp = M.api.getJSONCb('ciniki.products.productDelete', 
                     {'tnid':M.curTenantID, 'product_id':pid}, function(rsp) {
                         if( rsp.stat != 'ok' ) {
@@ -345,7 +345,7 @@ function ciniki_products_duplicates() {
                         }
                         M.ciniki_products_duplicates.match1.close();
                     });
-            }
+            });
         }
     }
 }

@@ -99,16 +99,16 @@ function ciniki_products_pdfcatalogs() {
         }
     }
     this.catalog.remove = function() {
-        if( confirm("Are you sure you want to remove this catalog?") ) {
+        M.confirm("Are you sure you want to remove this catalog?",null,function() {
             M.api.getJSONCb('ciniki.products.pdfcatalogDelete', {'tnid':M.curTenantID,
-                'catalog_id':this.catalog_id}, function(rsp) {
+                'catalog_id':M.ciniki_products_pdfcatalogs.catalog.catalog_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;
                     }
                     M.ciniki_products_pdfcatalogs.catalog.close();
                 });
-        }
+        });
     }
     this.catalog.addButton('save', 'Save', 'M.ciniki_products_pdfcatalogs.catalog.save();');
     this.catalog.addClose('Cancel');
@@ -189,16 +189,16 @@ function ciniki_products_pdfcatalogs() {
         }
     }
     this.image.remove = function() {
-        if( confirm("Are you sure you want to remove this image?") ) {
+        M.confirm("Are you sure you want to remove this image?",null,function() {
             M.api.getJSONCb('ciniki.products.pdfcatalogImageDelete', {'tnid':M.curTenantID,
-                'catalog_image_id':this.catalog_image_id}, function(rsp) {
+                'catalog_image_id':M.ciniki_products_pdfcatalogs.image.catalog_image_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;
                     }
                     M.ciniki_products_pdfcatalogs.image.close();
                 });
-        }
+        });
     }
     this.image.addButton('save', 'Save', 'M.ciniki_products_pdfcatalogs.image.save();');
     this.image.addClose('Cancel');
@@ -208,7 +208,7 @@ function ciniki_products_pdfcatalogs() {
         if( aG != null ) { args = eval(aG); }
         var aC = M.createContainer(aP, 'ciniki_products_pdfcatalogs', 'yes');
         if( aC == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         }
 

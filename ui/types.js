@@ -259,7 +259,7 @@ function ciniki_products_types() {
         //
         var appContainer = M.createContainer(appPrefix, 'ciniki_products_types', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         } 
 
@@ -331,15 +331,15 @@ function ciniki_products_types() {
     };
 
     this.deleteType = function() {
-        if( confirm("Are you sure you want to remove this type?") ) {
+        M.confirm("Are you sure you want to remove this type?",null,function() {
             var rsp = M.api.getJSONCb('ciniki.products.typeDelete', 
-                {'tnid':M.curTenantID, 'type_id':this.edit.type_id}, function(rsp) {
+                {'tnid':M.curTenantID, 'type_id':M.ciniki_products_types.edit.type_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;
                     }
                     M.ciniki_products_types.edit.close();
                 });
-        }
+        });
     };
 }

@@ -66,7 +66,7 @@ function ciniki_products_settings() {
         //
         var appContainer = M.createContainer(appPrefix, 'ciniki_products_settings', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         } 
 

@@ -87,7 +87,7 @@ function ciniki_products_winekits() {
         //
         var appContainer = M.createContainer(appPrefix, 'ciniki_products_winekits', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         } 
 

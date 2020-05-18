@@ -283,7 +283,7 @@ function ciniki_products_inventory() {
         //
         var appContainer = M.createContainer(appPrefix, 'ciniki_products_inventory', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         } 
 

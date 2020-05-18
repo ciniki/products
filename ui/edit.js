@@ -144,7 +144,7 @@ function ciniki_products_edit() {
         if( aG != null ) { args = eval(aG); }
         var aC = M.createContainer(aP, 'ciniki_products_edit', 'yes');
         if( aC == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         }
 
@@ -532,15 +532,15 @@ function ciniki_products_edit() {
 
     this.deleteProduct = function() {
         if( this.edit.product_id < 1 ) { return false; }
-        if( confirm("Are you sure you want to remove this product?") ) {
+        M.confirm("Are you sure you want to remove this product?",null,function() {
             M.api.getJSONCb('ciniki.products.productDelete', {'tnid':M.curTenantID,
-                'product_id':this.edit.product_id}, function(rsp) {
+                'product_id':M.ciniki_products_product.edit.product_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;
                     }
                     M.ciniki_products_product.product.close();
                 });
-        }
+        });
     };
 }

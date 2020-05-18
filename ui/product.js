@@ -246,7 +246,7 @@ function ciniki_products_product() {
         if( aG != null ) { args = eval(aG); }
         var aC = M.createContainer(aP, 'ciniki_products_product', 'yes');
         if( aC == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         }
 

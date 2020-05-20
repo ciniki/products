@@ -534,7 +534,7 @@ function ciniki_products_edit() {
         if( this.edit.product_id < 1 ) { return false; }
         M.confirm("Are you sure you want to remove this product?",null,function() {
             M.api.getJSONCb('ciniki.products.productDelete', {'tnid':M.curTenantID,
-                'product_id':M.ciniki_products_product.edit.product_id}, function(rsp) {
+                'product_id':M.ciniki_products_edit.edit.product_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;

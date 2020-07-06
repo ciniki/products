@@ -60,13 +60,13 @@ function ciniki_products_sapos_cartItemLookup($ciniki, $tnid, $customer, $args) 
                     'pricepoint_id', 'available_to',
                     'unit_amount', 'unit_discount_amount', 'unit_discount_percentage',
                     'inventory_flags', 'inventory_current_num', 'shipping_flags',
-                    'taxtype_id')),
+                    'taxtype_id', 'object_def')),
             ));
         if( $rc['stat'] != 'ok' ) {
             return $rc;
         }
         if( !isset($rc['products']) || count($rc['products']) < 1 ) {
-            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.136', 'msg'=>'No product found.'));        
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.177', 'msg'=>'No product found.'));        
         }
         $product = array_pop($rc['products']);
     }
@@ -112,18 +112,23 @@ function ciniki_products_sapos_cartItemLookup($ciniki, $tnid, $customer, $args) 
                     'pricepoint_id', 'available_to',
                     'unit_amount', 'unit_discount_amount', 'unit_discount_percentage',
                     'inventory_flags', 'inventory_current_num', 'shipping_flags',
-                    'taxtype_id')),
+                    'taxtype_id', 'object_def')),
             ));
         if( $rc['stat'] != 'ok' ) {
             return $rc;
         }
         if( !isset($rc['products']) || count($rc['products']) < 1 ) {
-            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.136', 'msg'=>'No product found.'));        
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.176', 'msg'=>'No product found.'));        
         }
         $product = array_pop($rc['products']);
     }
 
     if( isset($product) ) {
+        if( $product['object_def'] != '' ) {
+            $product_type = unserialize($product['object_def']);
+        } else {    
+            $product_type = array();
+        }
         //
         // Check the pricepoint_id is valid for this customer, only if specified
         //
@@ -177,6 +182,13 @@ function ciniki_products_sapos_cartItemLookup($ciniki, $tnid, $customer, $args) 
             if( $product['inventory_current_num'] <= 0 && ($product['flags']&0x46) == 0x46 ) {
                 $product['flags'] |= 0x0100;
             }
+            //
+            // Check if the shipping_flags are enabled and are set to pickup only
+            //
+            if( isset($product_type['parent']['products']['shipping_flags']) && ($product['shipping_flags']&0x03) == 0x02 ) {
+                // Turn on shipping required for item
+                $product['flags'] &= ~0x40;
+            }
         } else {
             $product['limited_units'] = 'no';
             $product['units_available'] = 0;
@@ -185,14 +197,6 @@ function ciniki_products_sapos_cartItemLookup($ciniki, $tnid, $customer, $args) 
         // Check if product is a promotional item
         if( ($product['product_flags']&0x04) > 0 ) {
             $product['flags'] |= 0x4000;
-        }
-
-        //
-        // Check if the shipping_flags are set to pickup only
-        //
-        if( ($product['shipping_flags']&0x03) == 0x02 ) {
-            // Turn on shipping required for item
-            $product['flags'] &= ~0x40;
         }
 
         return array('stat'=>'ok', 'item'=>$product);

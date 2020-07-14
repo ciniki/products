@@ -18,9 +18,12 @@
 #
 # name:             The name/description of the price and who it is for.
 #
-# pricepoint_id:    The ID of the customer price point for this price. This refers to the
+# pricepoint_id:    (DEPRECATED) The ID of the customer price point for this price. This refers to the
 #                   ciniki_customers_pricepoints table.  If the field is zero then no
 #                   pricepoint is used.  Pricepoints can be used in conjunction with available_to.
+#
+#                   **NOTE**: the use of pricepoint_id has been removed from sapos and customers modules.
+#                             It needs to be removed from here someday.
 #
 # available_to:     The flags that control who has access to this pricing.  
 #

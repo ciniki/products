@@ -67,21 +67,15 @@ function ciniki_products_productDelete(&$ciniki) {
     $uuid = $rc['product']['uuid'];
 
     //
-    // Check for wine production orders
+    // Check if any modules are currently using this product
     //
-    if( isset($modules['ciniki.wineproductions']) ) {
-        $strsql = "SELECT 'wineproductions', COUNT(*) "
-            . "FROM ciniki_wineproductions "
-            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
-            . "AND product_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
-            . "";
-        $rc = ciniki_core_dbCount($ciniki, $strsql, 'ciniki.products', 'num');
-        if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.88', 'msg'=>'Unable to check for wine orders', 'err'=>$rc['err']));
-        }
-        if( isset($rc['num']['wineproductions']) && $rc['num']['wineproductions'] > 0 ) {
-            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.89', 'msg'=>'Unable to delete, wine orders still exist for this product.'));
-        }
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectCheckUsed');
+    $rc = ciniki_core_objectCheckUsed($ciniki, $args['tnid'], 'ciniki.products.product', $args['product_id']);
+    if( $rc['stat'] != 'ok' ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.179', 'msg'=>'Unable to check if product is still being used.', 'err'=>$rc['err']));
+    }
+    if( $rc['used'] != 'no' ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.180', 'msg'=>"The product is still in use. " . $rc['msg']));
     }
 
     //

@@ -118,6 +118,7 @@ function ciniki_products_web_processRequestProductsDetails(&$ciniki, $settings, 
                 . "AND ciniki_images.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                 . ") "
             . "WHERE ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+            . "AND ciniki_products.status < 60 "
             . "AND ciniki_products.id IN (" . ciniki_core_dbQuoteIDs($ciniki, $product_ids) . ") "
             . "";
         $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(

@@ -53,6 +53,7 @@ function ciniki_products_web_processRequestSubCategoryProducts(&$ciniki, $settin
             . "AND (ciniki_products.end_date = '0000-00-00 00:00:00' "
                 . "OR ciniki_products.end_date > UTC_TIMESTAMP()"
                 . ") "
+            . "AND ciniki_products.status < 60 "
             . "AND (ciniki_products.webflags&$webflags) > 0 "
             . ") "
         . "INNER JOIN ciniki_product_tags AS t2 ON ("

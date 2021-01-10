@@ -229,7 +229,7 @@ function ciniki_products_productExportExcel($ciniki) {
         . "long_description, "
         . "start_date, "
         . "end_date, "
-        . "IF((ciniki_products.webflags&0x01)=1,'Hidden','Visible') AS visible, "
+        . "IF((ciniki_products.webflags&0x01)=1,'Visible','Hidden') AS visible, "
         . "IF((ciniki_products.webflags&0x02)=2,'Yes','No') AS sellonline "
         . "FROM ciniki_products "
         . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "

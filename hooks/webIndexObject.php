@@ -38,7 +38,7 @@ function ciniki_products_hooks_webIndexObject($ciniki, $tnid, $args) {
             . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND id = '" . ciniki_core_dbQuote($ciniki, $args['object_id']) . "' "
             . "AND status = 10 "
-            . "AND (flags&0x01) = 0x01 "
+            . "AND (webflags&0x01) = 0x01 "
             . "";
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'item');
         if( $rc['stat'] != 'ok' ) {

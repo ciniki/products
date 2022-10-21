@@ -158,7 +158,7 @@ function ciniki_products_product() {
                     if( d.price.name != '' ) {
                         if( txt != '' ) {
                             txt += ' <span class="subdue">' + d.price.name + (atxt!=''?' [' + d.price.available_to_text + ']':'') + '</span>';
-                        } else if( atxt != '' ) {
+                        } else if( d.price.available_to_text != '' ) {
                             txt += d.price.name + ' <span class="subdue">' + d.price.available_to_text + '</span>';
                             
                         }

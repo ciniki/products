@@ -264,7 +264,8 @@ function ciniki_products_productLoad($ciniki, $tnid, $product_id, $args) {
         //
         // Get the price list for the product
         //
-        $strsql = "SELECT ciniki_product_prices.id, ciniki_product_prices.name, "
+        $strsql = "SELECT ciniki_product_prices.id, "
+            . "ciniki_product_prices.name, "
             . "ciniki_product_prices.available_to, "
             . "ciniki_product_prices.available_to AS available_to_text, "
             . "ciniki_product_prices.unit_amount, "

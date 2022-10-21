@@ -23,6 +23,7 @@ function ciniki_products_hooks_webIndexList($ciniki, $tnid, $args) {
         . "FROM ciniki_products "
         . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND status = 10 "
+        . "AND (webflags&0x01) = 0x01 "
         . "";
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
         array('container'=>'objects', 'fname'=>'oid', 'fields'=>array('object', 'object_id')),

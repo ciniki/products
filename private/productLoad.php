@@ -108,7 +108,7 @@ function ciniki_products_productLoad($ciniki, $tnid, $product_id, $args) {
     $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
         array('container'=>'products', 'fname'=>'id', 'name'=>'product',
             'fields'=>array('id', 'parent_id', 'name', 'code', 'type_id', 'type_text', 'object_def',
-                'category', 'flags', 'status', 'status_text',
+                'sequence', 'category', 'flags', 'status', 'status_text',
                 'supplier_id', 'supplier_item_number', 
                 'supplier_minimum_order', 'supplier_order_multiple',
                 'manufacture_min_time', 'manufacture_max_time', 

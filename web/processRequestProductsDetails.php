@@ -144,8 +144,6 @@ function ciniki_products_web_processRequestProductsDetails(&$ciniki, $settings, 
             return $rc;
         }
         $intl_timezone = $rc['settings']['intl-default-timezone'];
-        $intl_currency_fmt = numfmt_create($rc['settings']['intl-default-locale'], NumberFormatter::CURRENCY);
-        $intl_currency = $rc['settings']['intl-default-currency'];
 */
         //
         // Get any complex prices for products
@@ -364,7 +362,6 @@ function ciniki_products_web_processRequestProductsDetails(&$ciniki, $settings, 
                     if( isset($reserved_quantities[$pid]['quantity_reserved']) && $reserved_quantities[$pid]['quantity_reserved'] > 0 ) {
                         $products[$pid]['prices'][$price_id]['units_available'] -= $reserved_quantities[$pid]['quantity_reserved'];
                     }
-//                    $products[$pid]['prices'][$price_id]['unit_amount_display'] = numfmt_format_currency($intl_currency_fmt, $price['unit_amount'], $intl_currency);
                 }
             }
             elseif( $args['prices'] != 'required' ) {

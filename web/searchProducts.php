@@ -27,6 +27,7 @@ function ciniki_products_web_searchProducts($ciniki, $settings, $tnid, $args) {
     }
     $intl_timezone = $rc['settings']['intl-default-timezone'];
     $intl_currency_fmt = numfmt_create($rc['settings']['intl-default-locale'], NumberFormatter::CURRENCY);
+    numfmt_set_attribute($intl_currency_fmt, NumberFormatter::ROUNDING_MODE, NumberFormatter::ROUND_HALFUP);
     $intl_currency = $rc['settings']['intl-default-currency'];
 
     $args['search_str'] = preg_replace('/ /', '\1%\2', trim($args['search_str']));

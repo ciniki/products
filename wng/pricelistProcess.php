@@ -52,22 +52,24 @@ function ciniki_products_wng_pricelistProcess(&$ciniki, $tnid, &$request, $secti
     $strsql = "SELECT products.id, "
         . "products.name, "
         . "products.code, "
+        . "products.flags, "
+        . "products.status, "
+        . "products.webflags, "
         . "products.price "
         . "FROM ciniki_products AS products "
         . "WHERE id IN (" . ciniki_core_dbQuoteIDs($ciniki, $product_ids) . ") "
+        . "AND (webflags&0x01) = 0x01 " //visible
         . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
         array('container'=>'prices', 'fname'=>'id', 
-            'fields'=>array('id', 'name', 'code', 'unit_amount'=>'price')),
+            'fields'=>array('id', 'name', 'code', 'flags', 'status', 'webflags', 'unit_amount'=>'price')),
         ));
     if( $rc['stat'] != 'ok' ) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.183', 'msg'=>'Unable to load prices', 'err'=>$rc['err']));
     }
     $products = isset($rc['prices']) ? $rc['prices'] : array();
-    foreach($products as $pid => $price) {
-    }
     $prices = [];
     for($i = 1; $i < 50; $i++) {
         if( isset($s["product-id-{$i}"]) && $s["product-id-{$i}"] != '' && $s["product-id-{$i}"] > 0 
@@ -78,7 +80,9 @@ function ciniki_products_wng_pricelistProcess(&$ciniki, $tnid, &$request, $secti
             $price['object_id'] = $price['id'];
             $price['price_id'] = 0;
             $price['limited_units'] = 'no';
-            $price['cart'] = 'yes';
+            if( ($price['webflags']&0x02) == 0x02 && $price['status'] == 10 ) { // Sell online & Active
+                $price['cart'] = 'yes';
+            }
             $prices[] = $price;
         }
     }

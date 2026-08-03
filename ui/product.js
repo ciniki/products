@@ -147,14 +147,6 @@ function ciniki_products_product() {
                         && (this.object_def.prices.available_to['ui_hide'] == null || this.object_def.prices.available_to['ui-hide'] != 'yes' ) ) {
                         atxt = '';
                     }
-                    if( M.curTenant.modules['ciniki.customers'] != null 
-                        && (M.curTenant.modules['ciniki.customers'].flags&0x1000) ) {
-                        if( d.price.pricepoint_id == 0 ) {
-                            txt += 'None';
-                        } else {
-                            txt += (d.price.pricepoint_id_text==''?'Unknown':d.price.pricepoint_id_text);
-                        }
-                    }
                     if( d.price.name != '' ) {
                         if( txt != '' ) {
                             txt += ' <span class="subdue">' + d.price.name + (atxt!=''?' [' + d.price.available_to_text + ']':'') + '</span>';

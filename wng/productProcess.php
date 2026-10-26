@@ -64,6 +64,7 @@ function ciniki_products_wng_productProcess(&$ciniki, $tnid, &$request, $section
     }
     $strsql .= "AND (products.webflags&0x01) = 0x01 " //visible
             . "AND products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+            . "ORDER BY products.id, prices.name "
             . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.products', array(

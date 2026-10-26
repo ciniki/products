@@ -65,6 +65,7 @@ function ciniki_products_wng_categoryProcess(&$ciniki, $tnid, &$request, $sectio
         . "WHERE categories.tag_name = '" . ciniki_core_dbQuote($ciniki, $s['category']) . "' "
         . "AND categories.tag_type = 10 "   // Category
         . "AND categories.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+        . "ORDER BY products.sequence, products.name, prices.name "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(

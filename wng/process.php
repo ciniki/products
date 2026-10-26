@@ -33,6 +33,9 @@ function ciniki_products_wng_process(&$ciniki, $tnid, &$request, $section) {
     if( $section['ref'] == 'ciniki.products.pricelist' ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'wng', 'pricelistProcess');
         return ciniki_products_wng_pricelistProcess($ciniki, $tnid, $request, $section);
+    } elseif( $section['ref'] == 'ciniki.products.category' ) {
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'wng', 'categoryProcess');
+        return ciniki_products_wng_categoryProcess($ciniki, $tnid, $request, $section);
     }
 
     return array('stat'=>'ok');

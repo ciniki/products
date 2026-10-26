@@ -49,10 +49,27 @@ function ciniki_products_wng_sections(&$ciniki, $tnid, $args) {
     }
     $products = isset($rc['products']) ? $rc['products'] : array();
 
+    //
+    // Get the list of categories
+    //
+    $strsql = "SELECT DISTINCT tag_name AS category "
+        . "FROM ciniki_product_tags "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+        . "AND tag_type = 10 "  // Category
+        . "";
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
+    $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.products', array(
+        array('container'=>'categories', 'fname'=>'category', 'fields'=>array('id'=>'category', 'name'=>'category')),
+        ));
+    if( $rc['stat'] != 'ok' ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.184', 'msg'=>'Unable to load categories', 'err'=>$rc['err']));
+    }
+    $categories = isset($rc['categories']) ? $rc['categories'] : array();
+
     array_unshift($products, ['id'=>0, 'name'=>'None']);
 
     //
-    // The latest blog section
+    // Show a pricelist for a few products
     //
     $sections['ciniki.products.pricelist'] = array(
         'name' => 'Price List',
@@ -97,7 +114,26 @@ function ciniki_products_wng_sections(&$ciniki, $tnid, $args) {
                 ),
             ),
         );
-        
+
+    //
+    // Show a pricelist for a few products
+    //
+    $sections['ciniki.products.category'] = array(
+        'name' => 'Category',
+        'module' => 'Products',
+        'settings' => array(
+            'title' => array('label'=>'Title', 'type'=>'text'),
+            'category' => array('label'=>'Category', 'type'=>'select', 
+                'complex_options' => array('value'=>'id', 'name'=>'name'), 
+                'options'=>$categories,
+                ),
+//            'layout' => array('label'=>'Format', 'type'=>'select', 'options'=>array(
+//                'flexcards' => 'Flex Cards',
+//                'tradingcards' => 'Trading Cards',
+//                )),
+            ),
+        );
+
     return array('stat'=>'ok', 'sections'=>$sections);
 }
 ?>

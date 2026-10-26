@@ -155,7 +155,7 @@ function ciniki_products_objects($ciniki) {
         'fields'=>array(
             'name'=>array('name'=>'Name'),
             'product_id'=>array('name'=>'Product', 'ref'=>'ciniki.products.product'),
-            'pricepoint_id'=>array('name'=>'Price Point', 'ref'=>'ciniki.customers.pricepoint'),
+//            'pricepoint_id'=>array('name'=>'Price Point', 'ref'=>'ciniki.customers.pricepoint'),
             'available_to'=>array('name'=>'Available to'),
             'min_quantity'=>array('name'=>'Minimum Quantity'),
             'unit_amount'=>array('name'=>'Unit Amount'),

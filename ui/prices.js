@@ -26,7 +26,7 @@ function ciniki_products_prices() {
         this.edit.sections = { 
             'price':{'label':'Price', 'fields':{
                 'name':{'label':'Name', 'type':'text'},
-                'pricepoint_id':{'label':'Price Point', 'type':'select', 'options':{}},
+//                'pricepoint_id':{'label':'Price Point', 'type':'select', 'options':{}},
                 'available_to':{'label':'Availablity', 'type':'flags', 'default':1, 'flags':{}},
                 'min_quantity':{'label':'Minimum Quantity', 'type':'text', 'size':'small'},
                 'unit_amount':{'label':'Unit Amount', 'type':'text', 'size':'small'},

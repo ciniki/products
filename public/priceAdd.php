@@ -24,7 +24,6 @@ function ciniki_products_priceAdd(&$ciniki) {
         'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'product_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Product'),
         'name'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Name'),
-        'pricepoint_id'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'0', 'name'=>'Price Point'),
         'available_to'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'1', 'name'=>'Available To'),
         'min_quantity'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'1', 'name'=>'Minimum Quantity'),
         'unit_amount'=>array('required'=>'yes', 'blank'=>'no', 'type'=>'currency', 'name'=>'Unit Amount'),

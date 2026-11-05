@@ -140,7 +140,6 @@ function ciniki_products_types() {
                 }},
             'parent_pricing':{'label':'Parent Pricing', 'aside':'yes', 'fields':{
                 'parent_price_name':{'label':'Name', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
-                'parent_price_pricepoint_id':{'label':'Price Point', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
                 'parent_price_available_to':{'label':'Available To', 'type':'toggle', 'default':'off', 'toggles':this.fieldHiddenOptions},
                 'parent_price_available_to-default':{'label':'Available To Default', 'type':'text'},
                 'parent_price_min_quantity':{'label':'Min Quantity', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
@@ -221,7 +220,6 @@ function ciniki_products_types() {
                 }},
             'child_pricing':{'label':'Child Pricing', 'fields':{
                 'child_price_name':{'label':'Name', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
-                'child_price_pricepoint_id':{'label':'Price Point', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
                 'child_price_available_to':{'label':'Available To', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
                 'child_price_min_quantity':{'label':'Min Quantity', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},
                 'child_price_unit_amount':{'label':'Amount', 'type':'toggle', 'default':'off', 'toggles':this.fieldOptions},

@@ -26,7 +26,6 @@ function ciniki_products_prices() {
         this.edit.sections = { 
             'price':{'label':'Price', 'fields':{
                 'name':{'label':'Name', 'type':'text'},
-//                'pricepoint_id':{'label':'Price Point', 'type':'select', 'options':{}},
                 'available_to':{'label':'Availablity', 'type':'flags', 'default':1, 'flags':{}},
                 'min_quantity':{'label':'Minimum Quantity', 'type':'text', 'size':'small'},
                 'unit_amount':{'label':'Unit Amount', 'type':'text', 'size':'small'},
@@ -114,22 +113,6 @@ function ciniki_products_prices() {
                     }
                 } else {
                     this.edit.sections.price.fields[i].active = 'no';
-                }
-            }
-        }
-        //
-        // Setup the pricepoint field
-        //
-        if( M.curTenant.modules['ciniki.customers'] != null
-            && (M.curTenant.modules['ciniki.customers'].flags&0x1000) > 0 
-            ) {
-            if( M.curTenant.customers.settings != null 
-                && M.curTenant.customers.settings.pricepoints != null 
-                ) {
-                this.edit.sections.price.fields.pricepoint_id.options = {'0':'None'};
-                var pp = M.curTenant.customers.settings.pricepoints;
-                for(i in pp) {
-                    this.edit.sections.price.fields.pricepoint_id.options[pp[i].pricepoint.id] = pp[i].pricepoint.name;
                 }
             }
         }

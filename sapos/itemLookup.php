@@ -38,7 +38,6 @@ function ciniki_products_sapos_itemLookup($ciniki, $tnid, $args) {
             . "ciniki_products.short_description AS synopsis, "
             . "ciniki_products.flags AS product_flags, "
             . "ciniki_product_prices.id AS price_id, "
-            . "ciniki_product_prices.pricepoint_id AS pricepoint_id, "
             . "ciniki_product_prices.name AS price_name, "
             . "ciniki_product_prices.unit_amount, "
             . "ciniki_product_prices.unit_discount_amount, "
@@ -63,7 +62,6 @@ function ciniki_products_sapos_itemLookup($ciniki, $tnid, $args) {
         $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
             array('container'=>'products', 'fname'=>'id',
                 'fields'=>array('id', 'price_id', 'parent_id', 'code', 'description'=>'name', 'synopsis', 'product_flags',
-                    'pricepoint_id', 
                     'unit_amount', 'unit_discount_amount', 'unit_discount_percentage',
                     'inventory_flags', 'inventory_current_num', 
                     'taxtype_id')),
@@ -73,87 +71,6 @@ function ciniki_products_sapos_itemLookup($ciniki, $tnid, $args) {
         }
         if( !isset($rc['products']) || count($rc['products']) < 1 ) {
             return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.149', 'msg'=>'No product found.'));        
-        }
-        $product = array_pop($rc['products']);
-
-        // Check if product has inventory or unlimited
-        if( ($product['inventory_flags']&0x01) > 0 ) {
-            if( ($product['inventory_flags']&0x02) > 0 ) {
-                $product['limited_units'] = 'no';
-                $product['flags'] = 0x46;   // Inventoried and backorder available
-            } else {
-                $product['limited_units'] = 'yes';
-                $product['flags'] = 0x42;   // Inventoried, no backorder
-            }
-            $product['units_available'] = $product['inventory_current_num'];
-            if( $product['inventory_current_num'] <= 0 && $product['flags'] == 0x46 ) {
-                $product['flags'] |= 0x0100;
-            }
-        } else {
-            $product['limited_units'] = 'no';
-            $product['units_available'] = 0;
-        }
-
-        // Check if product is a promotional item
-        if( ($product['product_flags']&0x04) > 0 ) {
-            $product['flags'] |= 0x4000;
-        }
-
-        // Check if sapos product codes turned off, then check if should be preppended to description
-        if( !ciniki_core_checkModuleFlags($ciniki, 'ciniki.sapos', 0x0400)
-            && (!isset($settings['invoice-description-code']) || $settings['invoice-description-code'] == 'yes' )
-            && $product['code'] != '' 
-            ) {
-            $product['description'] = $product['code'] . ' - ' . $product['description'];
-        }
-
-        return array('stat'=>'ok', 'item'=>$product);
-    }
-
-    //
-    // Lookup an existing object and pricepoint
-    //
-    if( $args['object'] == 'ciniki.products.product' 
-        && isset($args['object_id']) && $args['object_id'] > 0
-        && isset($args['pricepoint_id']) && $args['pricepoint_id'] > 0 
-        ) {
-        $strsql = "SELECT ciniki_products.id, "
-            . "ciniki_products.parent_id, "
-            . "ciniki_products.code, "
-            . "ciniki_products.name, "
-            . "ciniki_products.short_description AS synopsis, "
-            . "ciniki_products.flags AS product_flags, "
-            . "ciniki_product_prices.id AS price_id, "
-            . "ciniki_product_prices.pricepoint_id AS pricepoint_id, "
-            . "ciniki_product_prices.name AS price_name, "
-            . "ciniki_product_prices.unit_amount, "
-            . "ciniki_product_prices.unit_discount_amount, "
-            . "ciniki_product_prices.unit_discount_percentage, "
-            . "inventory_flags, inventory_current_num, "
-            . "ciniki_product_prices.taxtype_id "
-            . "FROM ciniki_products "
-            . "LEFT JOIN ciniki_product_prices ON ("
-                . "ciniki_products.id = ciniki_product_prices.product_id "
-                . "AND ciniki_product_prices.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
-                . "AND ciniki_product_prices.pricepoint_id = '" . ciniki_core_dbQuote($ciniki, $args['pricepoint_id']) . "' "
-                . ") "
-            . "WHERE ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
-            . "AND ciniki_products.id = '" . ciniki_core_dbQuote($ciniki, $args['object_id']) . "' "
-            . "";
-        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
-        $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
-            array('container'=>'products', 'fname'=>'id',
-                'fields'=>array('id', 'price_id', 'parent_id', 'code', 'description'=>'name', 'synopsis', 'product_flags',
-                    'pricepoint_id', 
-                    'unit_amount', 'unit_discount_amount', 'unit_discount_percentage',
-                    'inventory_flags', 'inventory_current_num', 
-                    'taxtype_id')),
-            ));
-        if( $rc['stat'] != 'ok' ) {
-            return $rc;
-        }
-        if( !isset($rc['products']) || count($rc['products']) < 1 ) {
-            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.150', 'msg'=>'No product found.'));        
         }
         $product = array_pop($rc['products']);
 

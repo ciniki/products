@@ -271,21 +271,15 @@ function ciniki_products_productLoad($ciniki, $tnid, $product_id, $args) {
             . "ciniki_product_prices.available_to AS available_to_text, "
             . "ciniki_product_prices.unit_amount, "
             . "ciniki_product_prices.unit_discount_amount, "
-            . "ciniki_product_prices.unit_discount_percentage, "
-            . "pricepoint_id, IFNULL(ciniki_customer_pricepoints.name, '') AS pricepoint_id_text "
+            . "ciniki_product_prices.unit_discount_percentage "
             . "FROM ciniki_product_prices "
-            . "LEFT JOIN ciniki_customer_pricepoints ON ("
-                . "ciniki_product_prices.pricepoint_id = ciniki_customer_pricepoints.id "
-                . "AND ciniki_customer_pricepoints.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
-                . ") "
             . "WHERE ciniki_product_prices.product_id = '" . ciniki_core_dbQuote($ciniki, $product_id) . "' "
             . "AND ciniki_product_prices.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
-            . "ORDER BY ciniki_customer_pricepoints.sequence, ciniki_product_prices.name "
+            . "ORDER BY ciniki_product_prices.name "
             . "";
         $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.products', array(
             array('container'=>'prices', 'fname'=>'id', 'name'=>'price',
-                'fields'=>array('id', 'name', 'available_to', 'available_to_text', 'unit_amount', 'unit_discount_amount', 'unit_discount_percentage',
-                    'pricepoint_id', 'pricepoint_id_text'),
+                'fields'=>array('id', 'name', 'available_to', 'available_to_text', 'unit_amount', 'unit_discount_amount', 'unit_discount_percentage'),
                 'flags'=>array('available_to_text'=>$maps['price']['available_to'])),
             ));
         if( $rc['stat'] != 'ok' ) {

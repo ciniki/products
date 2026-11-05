@@ -30,21 +30,6 @@ function ciniki_products_sapos_itemSearch($ciniki, $tnid, $args) {
     $maps = $rc['maps'];
 
     //
-    // Check if pricepoints are enabled
-    //
-    if( isset($ciniki['tenant']['modules']['ciniki.customers'])
-        && ($ciniki['tenant']['modules']['ciniki.customers']['flags']&0x1000) > 0 ) {
-        ciniki_core_loadMethod($ciniki, 'ciniki', 'customers', 'private', 'pricepoints');
-        $rc = ciniki_customers_pricepoints($ciniki, $tnid);
-        if( $rc['stat'] != 'ok' ) {
-            return $rc;
-        }
-        if( isset($rc['pricepoints']) ) {
-            $pricepoints = $rc['pricepoints'];
-        }
-    }
-
-    //
     // FIXME: Query for the taxes for products
     //
 //  ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQueryDash');
@@ -83,7 +68,6 @@ function ciniki_products_sapos_itemSearch($ciniki, $tnid, $args) {
         . "ciniki_product_prices.id AS price_id, "
         . "ciniki_product_prices.name AS price_name, "
         . "ciniki_product_prices.available_to AS available_to_text, "
-        . "ciniki_product_prices.pricepoint_id, "
         . "ciniki_product_prices.unit_amount AS price_unit_amount, "
         . "ciniki_product_prices.unit_discount_amount AS price_unit_discount_amount, "
         . "ciniki_product_prices.unit_discount_percentage AS price_unit_discount_percentage, "
@@ -92,7 +76,6 @@ function ciniki_products_sapos_itemSearch($ciniki, $tnid, $args) {
         . "LEFT JOIN ciniki_product_prices ON ("
             . "ciniki_products.id = ciniki_product_prices.product_id "
             . "AND ciniki_product_prices.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
-            . (isset($args['pricepoint_id'])&&$args['pricepoint_id']>0?"AND ciniki_product_prices.pricepoint_id = '" . ciniki_core_dbQuote($ciniki, $args['pricepoint_id']) . "' ":'')
             . ") "
         . "WHERE ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND (ciniki_products.name LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
@@ -112,7 +95,7 @@ function ciniki_products_sapos_itemSearch($ciniki, $tnid, $args) {
                 'inventory_flags', 'inventory_available'=>'inventory_current_num')),
         array('container'=>'prices', 'fname'=>'price_id',
             'fields'=>array('id'=>'price_id', 'name'=>'price_name', 
-                'unit_amount'=>'price_unit_amount', 'available_to_text', 'pricepoint_id',
+                'unit_amount'=>'price_unit_amount', 'available_to_text', 
                 'unit_discount_amount'=>'price_unit_discount_amount', 
                 'unit_discount_percentage'=>'price_unit_discount_percentage',
                 'taxtype_id'=>'price_taxtype_id'),
@@ -185,21 +168,8 @@ function ciniki_products_sapos_itemSearch($ciniki, $tnid, $args) {
                     'taxtype_id'=>$price['taxtype_id'], 
                     'notes'=>'',
                     );
-//              error_log(print_r($pricepoints, true));
                 if( $price['name'] != '' ) {
                     $details['price_description'] = $price['name'];
-                } elseif( isset($price['pricepoint_id']) && $price['pricepoint_id'] > 0 
-                    && isset($pricepoints) && isset($pricepoints[$price['pricepoint_id']]) 
-                    && isset($pricepoints[$price['pricepoint_id']]['name']) 
-                    && $pricepoints[$price['pricepoint_id']]['name'] != '' 
-                    ) {
-                    $details['price_description'] = $pricepoints[$price['pricepoint_id']]['name'];
-                } elseif( isset($price['pricepoint_id']) && $price['pricepoint_id'] > 0 
-                    && isset($pricepoints) && isset($pricepoints[$price['pricepoint_id']]) 
-                    && isset($pricepoints[$price['pricepoint_id']]['code']) 
-                    && $pricepoints[$price['pricepoint_id']]['code'] != '' 
-                    ) {
-                    $details['price_description'] = $pricepoints[$price['pricepoint_id']]['code'];
                 } elseif( isset($price['available_to_text']) && $price['available_to_text'] != '' ) {
                     $details['price_description'] = $price['available_to_text'];
                 }

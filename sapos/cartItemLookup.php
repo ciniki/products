@@ -31,7 +31,6 @@ function ciniki_products_sapos_cartItemLookup($ciniki, $tnid, $customer, $args) 
             . "ciniki_products.flags AS product_flags, "
             . "ciniki_product_prices.id AS price_id, "
             . "ciniki_product_prices.name AS price_name, "
-            . "ciniki_product_prices.pricepoint_id, "
             . "ciniki_product_prices.available_to, "
             . "ciniki_product_prices.unit_amount, "
             . "ciniki_product_prices.unit_discount_amount, "
@@ -58,7 +57,7 @@ function ciniki_products_sapos_cartItemLookup($ciniki, $tnid, $customer, $args) 
         $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
             array('container'=>'products', 'fname'=>'id',
                 'fields'=>array('id', 'price_id', 'notes', 'parent_id', 'code', 'description'=>'name', 'product_flags',
-                    'pricepoint_id', 'available_to',
+                    'available_to',
                     'unit_amount', 'unit_discount_amount', 'unit_discount_percentage',
                     'inventory_flags', 'inventory_current_num', 'shipping_flags',
                     'taxtype_id', 'object_def')),
@@ -81,7 +80,6 @@ function ciniki_products_sapos_cartItemLookup($ciniki, $tnid, $customer, $args) 
             . "ciniki_products.flags AS product_flags, "
 //            . "ciniki_product_prices.id AS price_id, "
 //            . "ciniki_product_prices.name AS price_name, "
-            . "0 AS pricepoint_id, "
             . "1 AS available_to, "
             . "ciniki_products.price AS unit_amount, "
             . "ciniki_products.unit_discount_amount, "
@@ -110,7 +108,7 @@ function ciniki_products_sapos_cartItemLookup($ciniki, $tnid, $customer, $args) 
         $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
             array('container'=>'products', 'fname'=>'id',
                 'fields'=>array('id', 'parent_id', 'code', 'description'=>'name', 'product_flags',
-                    'pricepoint_id', 'available_to',
+                    'available_to',
                     'unit_amount', 'unit_discount_amount', 'unit_discount_percentage',
                     'inventory_flags', 'inventory_current_num', 'shipping_flags',
                     'taxtype_id', 'object_def')),
@@ -131,36 +129,6 @@ function ciniki_products_sapos_cartItemLookup($ciniki, $tnid, $customer, $args) 
         } else {    
             $product_type = array();
         }
-        //
-        // Check the pricepoint_id is valid for this customer, only if specified
-        //
-        if( $product['pricepoint_id'] > 0 ) {
-            if( !isset($customer['pricepoint']['id']) || $customer['pricepoint']['id'] == 0 ) {
-                return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.137', 'msg'=>"I'm sorry, but this product is not available to you."));
-            }
-            if( $product['pricepoint_id'] != $customer['pricepoint']['id'] ) {
-                if( !isset($customer['pricepoint']['sequence']) || $customer['pricepoint']['sequence'] == '' ) {
-                    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.138', 'msg'=>"I'm sorry, but this product is not available to you."));
-                }
-                // Get the sequence for this pricepoint and see if it's lower than customers pricepoint_sequence
-                $strsql = "SELECT sequence "
-                    . "FROM ciniki_customer_pricepoints "
-                    . "WHERE id = '" . ciniki_core_dbQuote($ciniki, $product['pricepoint_id']) . "' "
-                    . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
-                    . "";
-                $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.customers', 'pricepoint');
-                if( $rc['stat'] != 'ok' ) { 
-                    return $rc;
-                }
-                if( !isset($rc['pricepoint']) ) {
-                    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.139', 'msg'=>"I'm sorry but we seem to be having difficulty updating your shopping cart.  Please call customer support."));
-                }
-                if( $rc['pricepoint']['sequence'] > $customer['pricepoint']['sequence'] ) {
-                    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.140', 'msg'=>"I'm sorry, but this product is not available to you."));
-                }
-            }
-        }
-
         //
         // Check the available_to is correct for the specified customer
         //

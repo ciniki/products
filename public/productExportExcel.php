@@ -114,35 +114,12 @@ function ciniki_products_productExportExcel($ciniki) {
     }
 
     //
-    // Load pricepoints
-    //
-    $pricepoints = array();
-    $use_pricepoints = 'no';
-    if( ($ciniki['tenant']['modules']['ciniki.customers']['flags']&0x1000) > 0 ) {
-        $strsql = "SELECT id, name, code "
-            . "FROM ciniki_customer_pricepoints "
-            . "WHERE ciniki_customer_pricepoints.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
-            . "";
-        $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.customers', array(
-            array('container'=>'pricepoints', 'fname'=>'id', 
-                'fields'=>array('id', 'name', 'code')),
-            )); 
-        if( $rc['stat'] != 'ok' ) {
-            return $rc;
-        }
-        if( isset($rc['pricepoints']) && count($rc['pricepoints']) > 0 ) {
-            $use_pricepoints = 'yes';
-            $pricepoints = $rc['pricepoints'];
-        }
-    }
-
-    //
     // Get the prices
     //
     $prices = array();
     $num_price_columns = 0;
     if( $use_prices == 'yes' ) {
-        $strsql = "SELECT id, product_id, name, pricepoint_id, available_to, min_quantity, "
+        $strsql = "SELECT id, product_id, name, available_to, min_quantity, "
             . "unit_amount, unit_discount_amount, unit_discount_percentage, "
             . "taxtype_id, start_date, end_date, "
             . "IF((ciniki_product_prices.webflags&0x01)=1,'Hidden','Visible') AS visible "
@@ -150,29 +127,15 @@ function ciniki_products_productExportExcel($ciniki) {
             . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "ORDER BY product_id "
             . "";
-        if( $use_pricepoints == 'yes' ) {
-            $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
-                array('container'=>'products', 'fname'=>'product_id', 
-                    'fields'=>array('id'=>'product_id')),
-                array('container'=>'pricepoints', 'fname'=>'pricepoint_id', 
-                    'fields'=>array('id'=>'pricepoint_id')),
-                array('container'=>'prices', 'fname'=>'id', 
-                    'fields'=>array('id', 'name', 'pricepoint_id', 'available_to', 'min_quantity',
-                        'unit_amount', 'unit_discount_amount', 'unit_discount_percentage',
-                        'taxtype_id', 'start_date', 'end_date',
-                        'visible')),
-                ));
-        } else {
-            $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
-                array('container'=>'products', 'fname'=>'product_id', 
-                    'fields'=>array('id'=>'product_id')),
-                array('container'=>'prices', 'fname'=>'id', 
-                    'fields'=>array('id', 'name', 'pricepoint_id', 'available_to', 'min_quantity',
-                        'unit_amount', 'unit_discount_amount', 'unit_discount_percentage',
-                        'taxtype_id', 'start_date', 'end_date',
-                        'visible')),
-                ));
-        }
+        $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
+            array('container'=>'products', 'fname'=>'product_id', 
+                'fields'=>array('id'=>'product_id')),
+            array('container'=>'prices', 'fname'=>'id', 
+                'fields'=>array('id', 'name', 'available_to', 'min_quantity',
+                    'unit_amount', 'unit_discount_amount', 'unit_discount_percentage',
+                    'taxtype_id', 'start_date', 'end_date',
+                    'visible')),
+            ));
         if( $rc['stat'] != 'ok' ) {
             return $rc;
         }
@@ -269,16 +232,6 @@ function ciniki_products_productExportExcel($ciniki) {
     //
     // Add the price columns
     //
-    if( $use_pricepoints == 'yes' ) {
-        $i = 0;
-        foreach($pricepoints as $pricepoint) {
-            $i++;
-            $columns['pricepoint_' . $pricepoint['id'] . '_amount'] = array('name'=>$pricepoint['code'], 'type'=>'pricepoint', 'id'=>$pricepoint['id'], 'field'=>'unit_amount');
-            $columns['pricepoint_' . $pricepoint['id'] . '_discount_amount'] = array('name'=>$pricepoint['code'] . ' Discount $', 'type'=>'pricepoint', 'id'=>$pricepoint['id'], 'field'=>'unit_discount_amount');
-            $columns['pricepoint_' . $pricepoint['id'] . '_discount_percentage'] = array('name'=>$pricepoint['code'] . ' Discount %', 'type'=>'pricepoint', 'id'=>$pricepoint['id'], 'field'=>'unit_discount_percentage');
-        }
-    } elseif( $use_prices == 'yes' ) {
-    }
     if( in_array('sell_unit', $product_fields) ) { $columns['sell_unit'] = array('name'=>'Sell Unit', 'type'=>'productfield'); }
     if( in_array('supplier_id', $product_fields) ) { $columns['supplier_id'] = array('name'=>'Supplier', 'type'=>'productfield'); }
     if( in_array('supplier_item_number', $product_fields) ) { $columns['supplier_item_number'] = array('name'=>'Item Number', 'type'=>'productfield'); }
@@ -333,15 +286,6 @@ function ciniki_products_productExportExcel($ciniki) {
         foreach($columns as $field => $column) {
             if( $field == 'type' ) {
                 $sheet->setCellValueByColumnAndRow($col++, $row, (isset($types[$product['type_id']])?$types[$product['type_id']]['name_s']:''), false);
-            } 
-            elseif( $column['type'] == 'pricepoint' ) {
-                $value = '';
-                if( isset($prices[$pid]['pricepoints'][$column['id']]['prices']) ) {
-                    foreach($prices[$pid]['pricepoints'][$column['id']]['prices'] as $prid => $price ) {
-                        $value .= ($value!=''?', ':'') . $price[$column['field']];
-                    }
-                }
-                $sheet->setCellValueByColumnAndRow($col++, $row, $value, false);
             } 
             elseif( $field == 'barcode' ) {
                 $sheet->setCellValueExplicitByColumnAndRow($col++, $row, "" . $product[$field], PHPExcel_Cell_DataType::TYPE_STRING);
